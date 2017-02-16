@@ -1,8 +1,8 @@
-a(x, y) begin
+fun a(x, y) begin
   return x + y
 end
 
-b(y) begin
+fun b(y) begin
   y := 5;
   write(y);
   return y
