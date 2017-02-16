@@ -1,0 +1,10 @@
+S := strmake (100, 'a');
+
+flag := true;
+
+for i := 0, i < strlen (S) && flag, i := i+1 do
+  flag := strget(S, i) == 'a'
+od;
+
+write (flag);
+write (strlen (strdup (S)))

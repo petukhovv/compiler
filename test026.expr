@@ -1,0 +1,11 @@
+fun A (m, n)
+begin
+  if m == 0 then return n+1
+  elif m > 0 && n == 0 then return A (m-1, 1)
+  else return A (m-1, A(m, n-1))
+  fi
+end
+
+m := read ();
+n := read ();
+write (A (m, n))

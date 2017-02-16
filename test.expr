@@ -1,0 +1,2 @@
+x := read();
+write (x)
