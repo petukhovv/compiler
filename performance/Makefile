@@ -17,7 +17,7 @@ $(CTESTS): %: %.c
 	gcc -o $@-O3 -m32 -O3 $< && /usr/bin/time -o o3.data --append -f '%U' ./$@-O3 > $@.log && diff $@.log orig/`echo $@.log | sed 's/^c/expr/'` 
 
 $(EXPRTESTS): %: %.expr
-	RC_RUNTIME=../../runtime ../../rc.native -o  $< && /usr/bin/time -o expr.data    --append -f '%U' ./$@ > $@.log | tr -d '\n' >> data.gnuplot && diff $@.log orig/$@.log
+	RC_RUNTIME=../../runtime ../../rc -o  $< && /usr/bin/time -o expr.data    --append -f '%U' ./$@ > $@.log | tr -d '\n' >> data.gnuplot && diff $@.log orig/$@.log
 
 clean:
 	rm -f *.log *.s *~ $(TESTS)
