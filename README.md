@@ -1,4 +1,5 @@
 # Репозиторий с тестами для учебного компилятора
+[Дополнительные материалы](https://drive.google.com/drive/folders/0B3UPtzTx9FB1YWlkNS1yWndXcXc?usp=sharing) | [Результаты](https://docs.google.com/spreadsheets/d/1JzJuaO3GWcG0kCF9-eTzIfCDAGbxy5nHtW3UxFWsK9Y/edit?usp=sharing)
 
 ## Структура репозитория
 - `core` - небольшой набор тестов, в котором есть (или будет) хотя бы по одному тесту
