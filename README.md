@@ -44,3 +44,8 @@ $(TESTS): %: %.expr
 clean:
 	rm -f test*.log *.s *~ $(TESTS)
 ```
+
+## Задания
+1. Выражения + ввод / вывод в режиме интерпретатора (`core/test001.expr` - `core/test008.expr`, `expressions/*.expr`, `deep-expressions/*.expr`).
+2. Выражения + ввод / вывод в режиме стековой машины (`core/test001.expr` - `core/test008.expr`, `expressions/*.expr`, `deep-expressions/*.expr`).
+3. Выражения + ввод / вывод в режиме компиляции (`core/test001.expr` - `core/test008.expr`, `expressions/*.expr`, `deep-expressions/*.expr`).
