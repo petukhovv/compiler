@@ -1,5 +1,7 @@
 # Репозиторий с тестами для учебного компилятора
-[Дополнительные материалы](https://drive.google.com/drive/folders/0B3UPtzTx9FB1YWlkNS1yWndXcXc?usp=sharing) | [Результаты](https://docs.google.com/spreadsheets/d/1JzJuaO3GWcG0kCF9-eTzIfCDAGbxy5nHtW3UxFWsK9Y/edit?usp=sharing)
+[Пример репозитория с компилятором](https://github.com/anlun/compiler-example) |
+[Дополнительные материалы](https://drive.google.com/drive/folders/0B3UPtzTx9FB1YWlkNS1yWndXcXc?usp=sharing) |
+[Результаты](https://docs.google.com/spreadsheets/d/1JzJuaO3GWcG0kCF9-eTzIfCDAGbxy5nHtW3UxFWsK9Y/edit?usp=sharing)
 
 _В табличку 'Результаты' нужно записаться до 13 марта._
 
