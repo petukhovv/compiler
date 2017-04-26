@@ -1,4 +1,4 @@
-from Lexer.lexer import lexer
+from src.Lexer.lexer import lexer
 
 RESERVED = 'RESERVED'
 INT = 'INT'
