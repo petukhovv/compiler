@@ -16,6 +16,9 @@ class Combinator:
     def __call__(self, tokens, position):
         return None
 
+    def __add__(self, other):
+        return Concat(self, other)
+
 """
 'Reserved' used for parsing language expressions (keywords and operators = RESERVED-tokens).
 It checks token tag and value.
@@ -25,11 +28,11 @@ class Reserved(Combinator):
         self.value = value
         self.tag = tag
 
-    def __call__(self, tokens, pos):
-        if pos < len(tokens) and \
-           tokens[pos][0] == self.value and \
-           tokens[pos][1] is self.tag:
-            return Result(tokens[pos][0], pos + 1)
+    def __call__(self, tokens, position):
+        if position < len(tokens) and \
+           tokens[position][0] == self.value and \
+           tokens[position][1] is self.tag:
+            return Result(tokens[position][0], position + 1)
         else:
             return None
 
@@ -41,8 +44,27 @@ class Tag(Combinator):
     def __init__(self, tag):
         self.tag = tag
 
-    def __call__(self, tokens, pos):
-        if pos < len(tokens) and tokens[pos][1] is self.tag:
-            return Result(tokens[pos][0], pos + 1)
+    def __call__(self, tokens, position):
+        if position < len(tokens) and tokens[position][1] is self.tag:
+            return Result(tokens[position][0], position + 1)
         else:
             return None
+
+"""
+'Concat' first applies the left parser, and then the right parser.
+If both are successful (result != None), returns a pair (left and right parser);
+if at least one is unsuccessful, it returns None.
+"""
+class Concat(Combinator):
+    def __init__(self, left, right):
+        self.left = left
+        self.right = right
+
+    def __call__(self, tokens, position):
+        left_result = self.left(tokens, position)
+        if left_result:
+            right_result = self.right(tokens, left_result.position)
+            if right_result:
+                combined_value = (left_result.value, right_result.value)
+                return Result(combined_value, right_result.position)
+        return None
