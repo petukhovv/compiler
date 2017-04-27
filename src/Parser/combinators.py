@@ -88,3 +88,34 @@ class Alternate(Combinator):
         else:
             right_result = self.right(tokens, position)
             return right_result
+
+"""
+'Opt' applies the parser, if it succeeds, returns the result;
+if not, returns the result with None-value.
+"""
+class Opt(Combinator):
+    def __init__(self, parser):
+        self.parser = parser
+
+    def __call__(self, tokens, position):
+        result = self.parser(tokens, position)
+        if result:
+            return result
+        else:
+            return Result(None, position)
+
+"""
+'Rep' applies the parser until it returns a successful result.
+"""
+class Rep(Combinator):
+    def __init__(self, parser):
+        self.parser = parser
+
+    def __call__(self, tokens, position):
+        results = []
+        result = self.parser(tokens, position)
+        while result:
+            results.append(result.value)
+            position = result.position
+            result = self.parser(tokens, position)
+        return Result(results, position)
