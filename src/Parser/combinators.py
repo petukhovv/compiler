@@ -19,6 +19,9 @@ class Combinator:
     def __add__(self, other):
         return Concat(self, other)
 
+    def __or__(self, other):
+        return Alternate(self, other)
+
 """
 'Reserved' used for parsing language expressions (keywords and operators = RESERVED-tokens).
 It checks token tag and value.
@@ -68,3 +71,20 @@ class Concat(Combinator):
                 combined_value = (left_result.value, right_result.value)
                 return Result(combined_value, right_result.position)
         return None
+
+"""
+'Alternate' applies the left parser, if it succeeds, returns the result;
+if not, returns the right parser.
+"""
+class Alternate(Combinator):
+    def __init__(self, left, right):
+        self.left = left
+        self.right = right
+
+    def __call__(self, tokens, position):
+        left_result = self.left(tokens, position)
+        if left_result:
+            return left_result
+        else:
+            right_result = self.right(tokens, position)
+            return right_result
