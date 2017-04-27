@@ -1,7 +1,12 @@
 import sys
 import re
 
-
+"""
+Lexer. It breaks the code into tokens by token expressions (regexps).
+Order of tokens in token expressions is important!
+Lexer applies only the first match found (the first must be language expressions: +, :=, and, if, while, etc;
+then - identifiers (e. g. variable names) and numbers).
+"""
 def lexer(code, token_expressions):
     pos = 0
     tokens = []
