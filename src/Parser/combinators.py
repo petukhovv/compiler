@@ -15,3 +15,20 @@ __call__ will override by subclasses.
 class Combinator:
     def __call__(self, tokens, position):
         return None
+
+"""
+'Reserved' used for parsing language expressions (keywords and operators = RESERVED-tokens).
+It checks token tag and value.
+"""
+class Reserved(Combinator):
+    def __init__(self, value, tag):
+        self.value = value
+        self.tag = tag
+
+    def __call__(self, tokens, pos):
+        if pos < len(tokens) and \
+           tokens[pos][0] == self.value and \
+           tokens[pos][1] is self.tag:
+            return Result(tokens[pos][0], pos + 1)
+        else:
+            return None
