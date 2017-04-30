@@ -7,7 +7,7 @@ Order of tokens in token expressions is important!
 Lexer applies only the first match found (the first must be language expressions: +, :=, and, if, while, etc;
 then - identifiers (e. g. variable names) and numbers).
 """
-def lexer(code, token_expressions):
+def lex(code, token_expressions):
     pos = 0
     tokens = []
     while pos < len(code):

@@ -1,4 +1,4 @@
-from src.Lexer.lexer import lexer
+from src.Lexer.lexer import lex
 from src.consts import *
 
 """
@@ -44,4 +44,4 @@ token_expressions = [
 Function-wrapper to run the Lexer (with the token expressions listed here).
 """
 def tokenize(code):
-    return lexer(code, token_expressions)
+    return lex(code, token_expressions)
