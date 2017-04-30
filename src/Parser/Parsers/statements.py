@@ -1,6 +1,8 @@
-from src.Parser.Language.Parsers.arithmetic_exprs import aexp
-from src.Parser.Language.Parsers.basic import *
-from src.Parser.Language.Parsers.boolean_exprs import bexp
+from src.Parser.Parsers.arithmetic_exprs import aexp
+from src.Parser.Parsers.basic import *
+from src.Parser.Parsers.boolean_exprs import bexp
+
+from src.Parser.AST.statements import *
 
 """
 Parsing simple assign statement.

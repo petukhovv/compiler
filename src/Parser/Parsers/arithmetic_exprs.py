@@ -1,5 +1,7 @@
 from src.Parser.Parsers.basic import *
 
+from src.Parser.AST.arithmetic_exprs import *
+
 """
 Returns the parser appropriate to the keyword list (ops).
 """

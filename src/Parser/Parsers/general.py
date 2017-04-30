@@ -1,4 +1,4 @@
-from src.Parser.Parsers import stmt_list
+from src.Parser.Parsers.statements import stmt_list
 from src.Parser.combinators import *
 
 
