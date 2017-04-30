@@ -57,14 +57,15 @@ def aexp_group():
 
 """
 Parse the arithmetic expression.
-Try to first parse as just arithmetic expressions, if not possible - as a parentheses group.
+Try to first parse as just arithmetic expressions,
+if not possible - as a parentheses group of arithmetic expressions.
 """
 def aexp_term():
     return aexp_value() | aexp_group()
 
 """
 Parse the binary operation arithmetic expression.
-Convert operator to fabric of binary operations.
+Convert operator to fabric of AST-classes 'BinopAexp'.
 """
 def process_binop(operator):
     return lambda l, r: BinopAexp(operator, l, r)
