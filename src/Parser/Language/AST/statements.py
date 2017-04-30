@@ -17,3 +17,14 @@ class AssignStatement(Statement):
 
     def __repr__(self):
         return 'AssignStatement(%s, %s)' % (self.name, self.aexp)
+
+"""
+Compound statement class for AST.
+"""
+class CompoundStatement(Statement):
+    def __init__(self, first, second):
+        self.first = first
+        self.second = second
+
+    def __repr__(self):
+        return 'CompoundStatement(%s, %s)' % (self.first, self.second)

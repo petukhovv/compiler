@@ -36,12 +36,12 @@ class AndBexp(Bexp):
 Example: x < 11 or x > 100
 """
 class OrBexp(Bexp):
-        def __init__(self, left, right):
-            self.left = left
-            self.right = right
+    def __init__(self, left, right):
+        self.left = left
+        self.right = right
 
-        def __repr__(self):
-            return 'OrBexp(%s, %s)' % (self.left, self.right)
+    def __repr__(self):
+        return 'OrBexp(%s, %s)' % (self.left, self.right)
 
 """
 'Not' operation boolean expression class for AST.
