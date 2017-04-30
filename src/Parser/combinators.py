@@ -19,6 +19,9 @@ class Combinator:
     def __add__(self, other):
         return Concat(self, other)
 
+    def __mul__(self, other):
+        return Exp(self, other)
+
     def __or__(self, other):
         return Alternate(self, other)
 
@@ -163,3 +166,26 @@ class Phrase(Combinator):
             return result
         else:
             return None
+
+"""
+'Exp' is necessary to parse lists according to the input two parsers: for target elements and for separators.
+"""
+class Exp(Combinator):
+    def __init__(self, parser, separator):
+        self.parser = parser
+        self.separator = separator
+
+    def __call__(self, tokens, pos):
+        result = self.parser(tokens, pos)
+
+        def process_next(parsed):
+            (sepfunc, right) = parsed
+            return sepfunc(result.value, right)
+        next_parser = self.separator + self.parser ^ process_next
+
+        next_result = result
+        while next_result:
+            next_result = next_parser(tokens, result.pos)
+            if next_result:
+                result = next_result
+        return result
