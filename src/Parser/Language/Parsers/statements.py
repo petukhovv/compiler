@@ -40,3 +40,14 @@ def if_stmt():
            keyword('then') + Lazy(stmt_list) + \
            Opt(keyword('else') + Lazy(stmt_list)) + \
            keyword('end') ^ process
+
+"""
+Parsing 'while' statement.
+"""
+def while_stmt():
+    def process(parsed):
+        ((((_, condition), _), body), _) = parsed
+        return WhileStatement(condition, body)
+    return keyword('while') + bexp() + \
+           keyword('do') + Lazy(stmt_list) + \
+           keyword('end') ^ process
