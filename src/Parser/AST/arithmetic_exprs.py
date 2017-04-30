@@ -23,6 +23,7 @@ class IntAexp(Aexp):
 
 """
 Variable arithmetic expression class for AST.
+eval - runtime function for Evaluator (return variable from environment by name).
 Example: x
 """
 class VarAexp(Aexp):
@@ -31,6 +32,12 @@ class VarAexp(Aexp):
 
     def __repr__(self):
         return 'VarAexp(%s)' % self.name
+
+    def eval(self, env):
+        if self.name in env:
+            return env[self.name]
+        else:
+            return 0
 
 """
 Binary operation arithmetic expression class for AST.
