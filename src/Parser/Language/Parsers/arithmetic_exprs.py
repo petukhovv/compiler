@@ -68,3 +68,11 @@ Convert operator to fabric of binary operations.
 """
 def process_binop(operator):
     return lambda l, r: BinopAexp(operator, l, r)
+
+"""
+Main arithmetic expressions parser.
+"""
+def aexp():
+    return precedence(aexp_term(),
+                      aexp_precedence_levels,
+                      process_binop)
