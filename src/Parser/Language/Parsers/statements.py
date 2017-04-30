@@ -51,3 +51,14 @@ def while_stmt():
     return keyword('while') + bexp() + \
            keyword('do') + Lazy(stmt_list) + \
            keyword('end') ^ process
+
+"""
+Main statement parser.
+Try to first parse as 'assign' statement,
+if not possible - as 'if' statement,
+if not possible - as 'while' statement.
+"""
+def stmt():
+    return assign_stmt() | \
+           if_stmt() | \
+           while_stmt()
