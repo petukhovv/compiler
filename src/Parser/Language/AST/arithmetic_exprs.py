@@ -1,5 +1,8 @@
 from equality import *
 
+"""
+Base class for arithmetic expression classes.
+"""
 class Aexp(Equality):
     pass
 
