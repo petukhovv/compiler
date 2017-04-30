@@ -22,3 +22,17 @@ Parse the arithmetic expression in parentheses.
 """
 def aexp_group():
     return keyword('(') + Lazy(aexp) + keyword(')') ^ process_group
+
+"""
+Parse the arithmetic expression.
+Try to first parse as just arithmetic expressions, if not possible - as a parentheses group.
+"""
+def aexp_term():
+    return aexp_value() | aexp_group()
+
+"""
+Parse the binary operation arithmetic expression.
+Convert operator to fabric of binary operations.
+"""
+def process_binop(operator):
+    return lambda l, r: BinopAexp(operator, l, r)
