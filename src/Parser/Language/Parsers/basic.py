@@ -9,6 +9,7 @@ def keyword(kw):
 
 """
 Integers parsing (Tag combinator with 'INT' tag).
+A Process combinator (^ operator) is also used to convert token into an integer.
 """
 num = Tag(INT) ^ (lambda i: int(i))
 
