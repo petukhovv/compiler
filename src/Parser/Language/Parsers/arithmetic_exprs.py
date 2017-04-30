@@ -3,7 +3,7 @@ from src.Parser.Language.AST.arithmetic_exprs import *
 from src.Parser.Language.Parsers.basic import *
 
 """
-
+Returns the parser appropriate to the keyword list (ops).
 """
 def any_operator_in_list(ops):
     op_parsers = [keyword(op) for op in ops]
@@ -17,6 +17,22 @@ aexp_precedence_levels = [
     ['*', '/'],
     ['+', '-'],
 ]
+
+"""
+Prioritizes operations (brackets) according to the precedence levels.
+Example:
+    Input: 4 * a + b / 2 - (6 + c)
+    1) E0(4) * E0(a) + E0(b) / E0(2) - E0(6+c)
+    2) E1(4*a) + E1(b/2) - E1(6+c)
+    3) E2((4*a)+(b/2)-(6+c))
+"""
+def precedence(value_parser, precedence_levels, combine):
+    def op_parser(precedence_level):
+        return any_operator_in_list(precedence_level) ^ combine
+    parser = value_parser * op_parser(precedence_levels[0])
+    for precedence_level in precedence_levels[1:]:
+        parser = parser * op_parser(precedence_level)
+    return parser
 
 """
 Converts the values returned by 'num' and 'id' to the object of AST classes.
