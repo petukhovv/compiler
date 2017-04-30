@@ -1,7 +1,6 @@
-from src.Parser.Language.AST.boolean_exprs import *
 from src.Parser.Language.Parsers.arithmetic_exprs import aexp, any_operator_in_list, precedence, process_group
 
-from src.Parser.Language.Parsers.basic import *
+from src.Parser.Parsers.basic import *
 
 """
 Precedence levels for binary operations.
