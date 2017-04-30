@@ -41,6 +41,7 @@ class VarAexp(Aexp):
 
 """
 Binary operation arithmetic expression class for AST.
+eval - runtime function for Evaluator (return result of applying the operation to left and right values).
 Example: x + 54
 """
 class BinopAexp(Aexp):
@@ -51,3 +52,18 @@ class BinopAexp(Aexp):
 
     def __repr__(self):
         return 'BinopAexp(%s, %s, %s)' % (self.op, self.left, self.right)
+
+    def eval(self, env):
+        left_value = self.left.eval(env)
+        right_value = self.right.eval(env)
+        if self.op == '+':
+            value = left_value + right_value
+        elif self.op == '-':
+            value = left_value - right_value
+        elif self.op == '*':
+            value = left_value * right_value
+        elif self.op == '/':
+            value = left_value / right_value
+        else:
+            raise RuntimeError('unknown operator: ' + self.op)
+        return value
