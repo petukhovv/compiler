@@ -22,6 +22,9 @@ class Combinator:
     def __or__(self, other):
         return Alternate(self, other)
 
+    def __xor__(self, function):
+        return Process(self, function)
+
 """
 'Reserved' used for parsing language expressions (keywords and operators = RESERVED-tokens).
 It checks token tag and value.
