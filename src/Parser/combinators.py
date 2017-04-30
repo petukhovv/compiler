@@ -134,8 +134,8 @@ class Process(Combinator):
         self.parser = parser
         self.function = function
 
-    def __call__(self, tokens, pos):
-        result = self.parser(tokens, pos)
+    def __call__(self, tokens, position):
+        result = self.parser(tokens, position)
         if result:
             result.value = self.function(result.value)
             return result
@@ -148,10 +148,10 @@ class Lazy(Combinator):
         self.parser = None
         self.parser_function = parser_function
 
-    def __call__(self, tokens, pos):
+    def __call__(self, tokens, position):
         if not self.parser:
             self.parser = self.parser_function()
-        return self.parser(tokens, pos)
+        return self.parser(tokens, position)
 
 """
 'Phrase' applies the parser and returns its result only if the parser has absorbed all the tokens.
@@ -160,9 +160,9 @@ class Phrase(Combinator):
     def __init__(self, parser):
         self.parser = parser
 
-    def __call__(self, tokens, pos):
-        result = self.parser(tokens, pos)
-        if result and result.pos == len(tokens):
+    def __call__(self, tokens, position):
+        result = self.parser(tokens, position)
+        if result and result.position == len(tokens):
             return result
         else:
             return None
@@ -175,8 +175,8 @@ class Exp(Combinator):
         self.parser = parser
         self.separator = separator
 
-    def __call__(self, tokens, pos):
-        result = self.parser(tokens, pos)
+    def __call__(self, tokens, position):
+        result = self.parser(tokens, position)
 
         def process_next(parsed):
             (sepfunc, right) = parsed
@@ -185,7 +185,7 @@ class Exp(Combinator):
 
         next_result = result
         while next_result:
-            next_result = next_parser(tokens, result.pos)
+            next_result = next_parser(tokens, result.position)
             if next_result:
                 result = next_result
         return result
