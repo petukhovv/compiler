@@ -1,13 +1,5 @@
 from src.Lexer.lexer import lexer
-
-"""
-RESERVED is language expressions.
-INT is whole numbers (integers).
-ID is identifiers (e. g. variable names).
-"""
-RESERVED = 'RESERVED'
-INT = 'INT'
-ID = 'ID'
+from src.consts import *
 
 """
 'None' - whitespace characters. It's ignored when parsing.
