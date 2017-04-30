@@ -41,7 +41,7 @@ class VarAexp(Aexp):
 
 """
 Binary operation arithmetic expression class for AST.
-eval - runtime function for Evaluator (return result of applying the operation to left and right values).
+eval - runtime function for Evaluator (return result of applying the arithmetic operation to left and right values).
 Example: x + 54
 """
 class BinopAexp(Aexp):
