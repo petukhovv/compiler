@@ -149,3 +149,17 @@ class Lazy(Combinator):
         if not self.parser:
             self.parser = self.parser_function()
         return self.parser(tokens, pos)
+
+"""
+'Phrase' applies the parser and returns its result only if the parser has absorbed all the tokens.
+"""
+class Phrase(Combinator):
+    def __init__(self, parser):
+        self.parser = parser
+
+    def __call__(self, tokens, pos):
+        result = self.parser(tokens, pos)
+        if result and result.pos == len(tokens):
+            return result
+        else:
+            return None
