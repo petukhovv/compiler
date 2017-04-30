@@ -136,3 +136,16 @@ class Process(Combinator):
         if result:
             result.value = self.function(result.value)
             return result
+
+"""
+'Lazy' applies the parser to the place of the call (lazy call).
+"""
+class Lazy(Combinator):
+    def __init__(self, parser_function):
+        self.parser = None
+        self.parser_function = parser_function
+
+    def __call__(self, tokens, pos):
+        if not self.parser:
+            self.parser = self.parser_function()
+        return self.parser(tokens, pos)
