@@ -32,9 +32,12 @@ token_expressions = [
     (r'if', RESERVED),
     (r'then', RESERVED),
     (r'else', RESERVED),
+    (r'fi', RESERVED),
     (r'while', RESERVED),
     (r'do', RESERVED),
-    (r'end', RESERVED),
+    (r'od', RESERVED),
+    (r'repeat', RESERVED),
+    (r'until', RESERVED),
     (r'read', RESERVED),
     (r'write', RESERVED),
 

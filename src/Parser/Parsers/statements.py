@@ -39,7 +39,7 @@ def if_stmt():
     return keyword('if') + bexp() + \
            keyword('then') + Lazy(stmt_list) + \
            Opt(keyword('else') + Lazy(stmt_list)) + \
-           keyword('end') ^ process
+           keyword('fi') ^ process
 
 """
 Parsing 'while' statement.
@@ -50,7 +50,17 @@ def while_stmt():
         return WhileStatement(condition, body)
     return keyword('while') + bexp() + \
            keyword('do') + Lazy(stmt_list) + \
-           keyword('end') ^ process
+           keyword('od') ^ process
+
+"""
+Parsing 'repeat' statement.
+"""
+def repeat_stmt():
+    def process(parsed):
+        (((_, body), _), condition) = parsed
+        return RepeatStatement(condition, body)
+    return keyword('repeat') + Lazy(stmt_list) + \
+        keyword('until') + bexp() ^ process
 
 """
 Parsing 'read' statement.
@@ -78,4 +88,5 @@ def stmt():
     return assign_stmt() | \
            if_stmt() | \
            while_stmt() | \
+           repeat_stmt() | \
            write_stmt()

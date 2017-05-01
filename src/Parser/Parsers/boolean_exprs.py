@@ -2,6 +2,7 @@ from src.Parser.Parsers.arithmetic_exprs import aexp, any_operator_in_list, prec
 from src.Parser.Parsers.basic import *
 
 from src.Parser.AST.boolean_exprs import *
+from src.Parser.AST.arithmetic_exprs import IntAexp
 
 """
 Precedence levels for binary operations.
@@ -19,11 +20,17 @@ def process_relop(parsed):
     return RelopBexp(op, left, right)
 
 """
+Convert single value to object of AST-class 'RelopBexp' with '==' operator and '0' right value.
+"""
+def process_boolop(parsed):
+    return RelopBexp('==', parsed, IntAexp(0))
+
+"""
 Parsing boolean expression (arithmetic expression + compare operator + arithmetic expression).
 """
 def bexp_relop():
     relops = ['<', '<=', '>', '>=', '==', '!=']
-    return aexp() + any_operator_in_list(relops) + aexp() ^ process_relop
+    return (aexp() ^ process_boolop) | (aexp() + any_operator_in_list(relops) + aexp() ^ process_relop)
 
 """
 Parsing 'not' expression (convert expression to object of AST-class 'NotBexp').

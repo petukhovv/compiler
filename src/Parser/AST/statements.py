@@ -81,6 +81,25 @@ class WhileStatement(Statement):
             condition_value = self.condition.eval(env)
 
 """
+'Repeat' statement class for AST.
+eval - runtime function for Evaluator (body eval while condition).
+"""
+class RepeatStatement(Statement):
+    def __init__(self, condition, body):
+        self.condition = condition
+        self.body = body
+
+    def __repr__(self):
+        return 'RepeatStatement(%s, %s)' % (self.condition, self.body)
+
+    def eval(self, env):
+        while True:
+            self.body.eval(env)
+            condition_value = self.condition.eval(env)
+            if condition_value:
+                break
+
+"""
 'Read' statement class for AST.
 eval - runtime function for Evaluator (get value from stdin).
 """
