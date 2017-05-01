@@ -82,7 +82,7 @@ class WhileStatement(Statement):
 
 """
 'Read' statement class for AST.
-eval - runtime function for Evaluator (body eval while condition).
+eval - runtime function for Evaluator (get value from stdin).
 """
 class ReadStatement(Statement):
     def __init__(self, name):
@@ -100,7 +100,7 @@ class ReadStatement(Statement):
 
 """
 'Write' statement class for AST.
-eval - runtime function for Evaluator (body eval while condition).
+eval - runtime function for Evaluator (write value to stdout).
 """
 class WriteStatement(Statement):
     def __init__(self, name):
