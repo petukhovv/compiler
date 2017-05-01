@@ -12,7 +12,7 @@ def assign_stmt():
     def process(parsed):
         ((name, _), exp) = parsed
         return AssignStatement(name, exp)
-    return id + keyword(':=') + aexp() ^ process
+    return id + keyword(':=') + (aexp() | read_stmt()) ^ process
 
 """
 Parsing statement list (by ';' separator).
@@ -56,11 +56,7 @@ def while_stmt():
 Parsing 'read' statement.
 """
 def read_stmt():
-    def process(parsed):
-        (((_, _), name), _) = parsed
-        return ReadStatement(name)
-    return keyword('read') + keyword('(') + \
-        id + keyword(')') ^ process
+    return keyword('read') + keyword('(') + keyword(')') ^ (lambda parsed: ReadStatement())
 
 """
 Parsing 'write' statement.
@@ -82,5 +78,4 @@ def stmt():
     return assign_stmt() | \
            if_stmt() | \
            while_stmt() | \
-           read_stmt() | \
            write_stmt()

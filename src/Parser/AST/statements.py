@@ -85,16 +85,13 @@ class WhileStatement(Statement):
 eval - runtime function for Evaluator (get value from stdin).
 """
 class ReadStatement(Statement):
-    def __init__(self, name):
-        self.name = name
-
     def __repr__(self):
-        return 'ReadStatement(%s)' % self.name
+        return 'ReadStatement'
 
     def eval(self, env):
         value = sys.stdin.readline()
         try:
-            env[self.name] = int(value)
+            return int(value)
         except ValueError:
             raise RuntimeError(value + ' is not integer')
 
@@ -112,7 +109,7 @@ class WriteStatement(Statement):
     def eval(self, env):
         try:
             value = env[self.name]
-            sys.stdout.write(str(value))
+            sys.stdout.write(str(value) + '\n')
         except KeyError:
             raise RuntimeError(self.name + ' is not defined')
         return
