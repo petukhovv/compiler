@@ -31,7 +31,7 @@ class RelopBexp(Bexp):
             value = left_value > right_value
         elif self.op == '>=':
             value = left_value >= right_value
-        elif self.op == '=':
+        elif self.op == '==':
             value = left_value == right_value
         elif self.op == '!=':
             value = left_value != right_value

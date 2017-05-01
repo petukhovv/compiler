@@ -108,4 +108,6 @@ class WriteStatement(Statement):
 
     def eval(self, env):
         value = self.aexp.eval(env)
+        if type(value) is bool:
+            value = int(value)
         sys.stdout.write(str(value) + '\n')

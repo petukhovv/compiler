@@ -25,7 +25,7 @@ token_expressions = [
     (r'>=', RESERVED),
     (r'>', RESERVED),
     (r'!=', RESERVED),
-    (r'=', RESERVED),
+    (r'==', RESERVED),
     (r'\&\&', RESERVED),
     (r'\|\|', RESERVED),
     (r'!', RESERVED),

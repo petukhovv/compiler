@@ -22,7 +22,7 @@ def process_relop(parsed):
 Parsing boolean expression (arithmetic expression + compare operator + arithmetic expression).
 """
 def bexp_relop():
-    relops = ['<', '<=', '>', '>=', '=', '!=']
+    relops = ['<', '<=', '>', '>=', '==', '!=']
     return aexp() + any_operator_in_list(relops) + aexp() ^ process_relop
 
 """
