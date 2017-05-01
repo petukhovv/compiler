@@ -17,7 +17,7 @@ def lex(code, token_expressions):
             regex = re.compile(pattern)
             match = regex.match(code, pos)
             if match:
-                text = match.group(0)
+                text = match.group(1)
                 if tag:
                     token = (text, tag)
                     tokens.append(token)
@@ -26,5 +26,5 @@ def lex(code, token_expressions):
             sys.stderr.write('Illegal character: %s\n' % code[pos])
             sys.exit(1)
         else:
-            pos = match.end(0)
+            pos = match.end(1)
     return tokens

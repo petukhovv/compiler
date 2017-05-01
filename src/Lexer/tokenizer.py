@@ -2,49 +2,57 @@ from src.Lexer.lexer import lex
 from src.consts import *
 
 """
-'None' - whitespace characters. It's ignored when parsing.
-'RESERVED' - language expressions.
-'INT' - whole numbers (integers).
-'ID' - identifiers.
+Wrapper for tokenization.
+Make one parentheses group with optional right context.
 """
+def token(regexp, tag, right_context=''):
+    return r'(' + regexp + ')' + right_context + '', tag
+
+"""
+Wrapper for tokenization language keywords.
+Keyword is token with non-alphanumeric right context.
+"""
+def keyword(keyword):
+    return token(keyword, RESERVED, right_context='\W')
+
 token_expressions = [
-    (r'[ \n\t]+', None),
-    (r'#[^\n]*', None),
+    token('[ \n\t]+', None),
+    token('#[^\n]*', None),
 
-    (r'\:=', RESERVED),
-    (r'\(', RESERVED),
-    (r'\)', RESERVED),
-    (r';', RESERVED),
-    (r'\+', RESERVED),
-    (r'-', RESERVED),
-    (r'\*', RESERVED),
-    (r'/', RESERVED),
-    (r'%', RESERVED),
-    (r'<=', RESERVED),
-    (r'<', RESERVED),
-    (r'>=', RESERVED),
-    (r'>', RESERVED),
-    (r'!=', RESERVED),
-    (r'==', RESERVED),
-    (r'\&\&', RESERVED),
-    (r'\|\|', RESERVED),
-    (r'!', RESERVED),
-    (r'if', RESERVED),
-    (r'then', RESERVED),
-    (r'else', RESERVED),
-    (r'fi', RESERVED),
-    (r'while', RESERVED),
-    (r'do', RESERVED),
-    (r'od', RESERVED),
-    (r'repeat', RESERVED),
-    (r'until', RESERVED),
-    (r'read', RESERVED),
-    (r'write', RESERVED),
-    (r'skip', RESERVED),
+    token('\:=', RESERVED),
+    token('\(', RESERVED),
+    token('\)', RESERVED),
+    token(';', RESERVED),
+    token('\+', RESERVED),
+    token('-', RESERVED),
+    token('\*', RESERVED),
+    token('/', RESERVED),
+    token('%', RESERVED),
+    token('<=', RESERVED),
+    token('<', RESERVED),
+    token('>=', RESERVED),
+    token('>', RESERVED),
+    token('!=', RESERVED),
+    token('==', RESERVED),
+    token('\&\&', RESERVED),
+    token('\|\|', RESERVED),
+    token('!', RESERVED),
 
-    (r'[0-9]+', INT),
+    keyword('if'),
+    keyword('then'),
+    keyword('else'),
+    keyword('fi'),
+    keyword('while'),
+    keyword('do'),
+    keyword('od'),
+    keyword('repeat'),
+    keyword('until'),
+    keyword('read'),
+    keyword('write'),
+    keyword('skip'),
 
-    (r'[A-Za-z][A-Za-z0-9_]*', ID)
+    token('\d+', INT),
+    token('[A-Za-z]\w*', ID)
 ]
 
 """
