@@ -1,8 +1,10 @@
 from src.Parser.Parsers.arithmetic_exprs import aexp
 from src.Parser.Parsers.basic import *
-from src.Parser.Parsers.boolean_exprs import bexp, bexp_relop
+from src.Parser.Parsers.boolean_exprs import bexp
 
 from src.Parser.AST.statements import *
+
+from pprint import pprint
 
 """
 Parsing simple assign statement.
@@ -36,7 +38,7 @@ def if_stmt():
         else:
             false_stmt = None
         return IfStatement(condition, true_stmt, false_stmt)
-    return keyword('if') + bexp() + \
+    return keyword('if') + bexp(allow_single=True) + \
            keyword('then') + Lazy(stmt_list) + \
            Opt(keyword('else') + Lazy(stmt_list)) + \
            keyword('fi') ^ process
@@ -48,7 +50,7 @@ def while_stmt():
     def process(parsed):
         ((((_, condition), _), body), _) = parsed
         return WhileStatement(condition, body)
-    return keyword('while') + bexp() + \
+    return keyword('while') + bexp(allow_single=True) + \
            keyword('do') + Lazy(stmt_list) + \
            keyword('od') ^ process
 
@@ -60,7 +62,7 @@ def repeat_stmt():
         (((_, body), _), condition) = parsed
         return RepeatStatement(condition, body)
     return keyword('repeat') + Lazy(stmt_list) + \
-        keyword('until') + bexp() ^ process
+        keyword('until') + bexp(allow_single=True) ^ process
 
 """
 Parsing 'read' statement.

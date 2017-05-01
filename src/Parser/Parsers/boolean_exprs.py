@@ -20,17 +20,18 @@ def process_relop(parsed):
     return RelopBexp(op, left, right)
 
 """
-Convert single value to object of AST-class 'RelopBexp' with '==' operator and '0' right value.
-"""
-def process_boolop(parsed):
-    return RelopBexp('==', parsed, IntAexp(0))
-
-"""
 Parsing boolean expression (arithmetic expression + compare operator + arithmetic expression).
 """
 def bexp_relop():
     relops = ['<', '<=', '>', '>=', '==', '!=']
-    return (aexp() ^ process_boolop) | (aexp() + any_operator_in_list(relops) + aexp() ^ process_relop)
+    return aexp() + any_operator_in_list(relops) + aexp() ^ process_relop
+
+"""
+Parsing single value expression (arithmetic expression).
+Convert single value to object of AST-class 'RelopBexp' with '==' operator and '0' right value.
+"""
+def bexp_boolop():
+    return aexp() ^ (lambda parsed: RelopBexp('!=', parsed, IntAexp(0)))
 
 """
 Parsing 'not' expression (convert expression to object of AST-class 'NotBexp').
@@ -50,8 +51,11 @@ Try to first parse as 'not' expression,
 if not possible - as just binary expressions,
 if not possible - as a parentheses group of binary expressions.
 """
-def bexp_term():
-    return bexp_not() | bexp_relop() | bexp_group()
+def bexp_term(allow_single):
+    if allow_single:
+        return bexp_not() | bexp_relop() | bexp_boolop() | bexp_group()
+    else:
+        return bexp_not() | bexp_relop() | bexp_group()
 
 """
 Parse the binary operation binary expression.
@@ -68,7 +72,7 @@ def process_logic(op):
 """
 Main binary expressions parser.
 """
-def bexp():
-    return precedence(bexp_term(),
+def bexp(allow_single = False):
+    return precedence(bexp_term(allow_single),
                       bexp_precedence_levels,
                       process_logic)
