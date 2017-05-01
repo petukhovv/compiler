@@ -49,8 +49,20 @@ def while_stmt():
         ((((_, condition), _), body), _) = parsed
         return WhileStatement(condition, body)
     return keyword('while') + bexp(allow_single=True) + \
-           keyword('do') + Lazy(stmt_list) + \
-           keyword('od') ^ process
+        keyword('do') + Lazy(stmt_list) + \
+        keyword('od') ^ process
+
+"""
+Parsing 'for' statement.
+"""
+def for_stmt():
+    def process(parsed):
+        ((((((((_, stmt1), _), stmt2), _), stmt3), _), body), _) = parsed
+        return ForStatement(stmt1, stmt2, stmt3, body)
+    return keyword('for') + (assign_stmt() | skip_stmt()) + keyword(',') + \
+        bexp(allow_single=True) + keyword(',') + \
+        assign_stmt() + keyword('do') + \
+        Lazy(stmt_list) + keyword('od') ^ process
 
 """
 Parsing 'repeat' statement.
@@ -95,5 +107,6 @@ def stmt():
            if_stmt() | \
            while_stmt() | \
            repeat_stmt() | \
+           for_stmt() | \
            write_stmt() | \
            skip_stmt()

@@ -37,6 +37,7 @@ token_expressions = [
     token('\&\&', RESERVED),
     token('\|\|', RESERVED),
     token('!', RESERVED),
+    token(',', RESERVED),
 
     keyword('if'),
     keyword('then'),
@@ -47,6 +48,7 @@ token_expressions = [
     keyword('od'),
     keyword('repeat'),
     keyword('until'),
+    keyword('for'),
     keyword('read'),
     keyword('write'),
     keyword('skip'),

@@ -75,10 +75,29 @@ class WhileStatement(Statement):
         return 'WhileStatement(%s, %s)' % (self.condition, self.body)
 
     def eval(self, env):
-        condition_value = self.condition.eval(env)
-        while condition_value:
+        while self.condition.eval(env):
             self.body.eval(env)
-            condition_value = self.condition.eval(env)
+
+"""
+'For' statement class for AST.
+eval - runtime function for Evaluator ('for' loop).
+"""
+class ForStatement(Statement):
+    def __init__(self, stmt1, stmt2, stmt3, body):
+        self.stmt1 = stmt1
+        self.stmt2 = stmt2
+        self.stmt3 = stmt3
+        self.body = body
+
+    def __repr__(self):
+        return 'ForStatement(%s, %s, %s, %s)' % (self.stmt1, self.stmt2, self.stmt3, self.body)
+
+    def eval(self, env):
+        self.stmt1.eval(env)
+        while self.stmt2.eval(env):
+            self.body.eval(env)
+            self.stmt3.eval(env)
+        return
 
 """
 'Repeat' statement class for AST.
