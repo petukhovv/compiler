@@ -14,7 +14,7 @@ def any_operator_in_list(ops):
 Precedence levels for arithmetic operations.
 """
 aexp_precedence_levels = [
-    ['*', '/'],
+    ['*', '/', '%'],
     ['+', '-'],
 ]
 

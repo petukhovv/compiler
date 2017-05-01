@@ -64,6 +64,8 @@ class BinopAexp(Aexp):
             value = left_value * right_value
         elif self.op == '/':
             value = left_value / right_value
+        elif self.op == '%':
+            value = left_value % right_value
         else:
             raise RuntimeError('unknown operator: ' + self.op)
         return value
