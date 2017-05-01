@@ -4,8 +4,6 @@ from src.Parser.Parsers.boolean_exprs import bexp
 
 from src.Parser.AST.statements import *
 
-from pprint import pprint
-
 """
 Parsing simple assign statement.
 Example: x := 56
@@ -71,6 +69,12 @@ def read_stmt():
     return keyword('read') + keyword('(') + keyword(')') ^ (lambda parsed: ReadStatement())
 
 """
+Parsing 'skip' statement.
+"""
+def skip_stmt():
+    return keyword('skip') ^ (lambda parsed: SkipStatement())
+
+"""
 Parsing 'write' statement.
 """
 def write_stmt():
@@ -91,4 +95,5 @@ def stmt():
            if_stmt() | \
            while_stmt() | \
            repeat_stmt() | \
-           write_stmt()
+           write_stmt() | \
+           skip_stmt()

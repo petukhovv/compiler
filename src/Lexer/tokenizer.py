@@ -40,6 +40,7 @@ token_expressions = [
     (r'until', RESERVED),
     (r'read', RESERVED),
     (r'write', RESERVED),
+    (r'skip', RESERVED),
 
     (r'[0-9]+', INT),
 

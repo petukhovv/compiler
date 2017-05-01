@@ -130,3 +130,14 @@ class WriteStatement(Statement):
         if type(value) is bool:
             value = int(value)
         sys.stdout.write(str(value) + '\n')
+
+"""
+'Skip' statement class for AST.
+eval - runtime function for Evaluator (empty function).
+"""
+class SkipStatement(Statement):
+    def __repr__(self):
+        return 'SkipStatement(%s)'
+
+    def eval(self, env):
+        return
