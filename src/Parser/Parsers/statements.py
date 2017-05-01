@@ -66,7 +66,7 @@ def write_stmt():
         (((_, _), name), _) = parsed
         return WriteStatement(name)
     return keyword('write') + \
-        keyword('(') + id + keyword(')') ^ process
+        keyword('(') + aexp() + keyword(')') ^ process
 
 """
 Main statement parser.

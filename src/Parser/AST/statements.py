@@ -100,16 +100,12 @@ class ReadStatement(Statement):
 eval - runtime function for Evaluator (write value to stdout).
 """
 class WriteStatement(Statement):
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, aexp):
+        self.aexp = aexp
 
     def __repr__(self):
-        return 'WriteStatement(%s)' % self.name
+        return 'WriteStatement(%s)' % self.aexp
 
     def eval(self, env):
-        try:
-            value = env[self.name]
-            sys.stdout.write(str(value) + '\n')
-        except KeyError:
-            raise RuntimeError(self.name + ' is not defined')
-        return
+        value = self.aexp.eval(env)
+        sys.stdout.write(str(value) + '\n')
