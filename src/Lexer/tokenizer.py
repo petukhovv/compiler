@@ -34,6 +34,8 @@ token_expressions = [
     (r'while', RESERVED),
     (r'do', RESERVED),
     (r'end', RESERVED),
+    (r'read', RESERVED),
+    (r'write', RESERVED),
 
     (r'[0-9]+', INT),
 

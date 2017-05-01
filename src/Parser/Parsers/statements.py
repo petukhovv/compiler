@@ -53,6 +53,26 @@ def while_stmt():
            keyword('end') ^ process
 
 """
+Parsing 'read' statement.
+"""
+def read_stmt():
+    def process(parsed):
+        (((_, _), name), _) = parsed
+        return ReadStatement(name)
+    return keyword('read') + keyword('(') + \
+        id + keyword(')') ^ process
+
+"""
+Parsing 'write' statement.
+"""
+def write_stmt():
+    def process(parsed):
+        (((_, _), name), _) = parsed
+        return WriteStatement(name)
+    return keyword('write') + \
+        keyword('(') + id + keyword(')') ^ process
+
+"""
 Main statement parser.
 Try to first parse as 'assign' statement,
 if not possible - as 'if' statement,
@@ -61,4 +81,6 @@ if not possible - as 'while' statement.
 def stmt():
     return assign_stmt() | \
            if_stmt() | \
-           while_stmt()
+           while_stmt() | \
+           read_stmt() | \
+           write_stmt()

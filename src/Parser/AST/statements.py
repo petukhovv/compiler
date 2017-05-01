@@ -1,3 +1,5 @@
+import sys
+
 from equality import *
 
 """
@@ -77,3 +79,40 @@ class WhileStatement(Statement):
         while condition_value:
             self.body.eval(env)
             condition_value = self.condition.eval(env)
+
+"""
+'Read' statement class for AST.
+eval - runtime function for Evaluator (body eval while condition).
+"""
+class ReadStatement(Statement):
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return 'ReadStatement(%s)' % self.name
+
+    def eval(self, env):
+        value = sys.stdin.readline()
+        try:
+            env[self.name] = int(value)
+        except ValueError:
+            raise RuntimeError(value + ' is not integer')
+
+"""
+'Write' statement class for AST.
+eval - runtime function for Evaluator (body eval while condition).
+"""
+class WriteStatement(Statement):
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return 'WriteStatement(%s)' % self.name
+
+    def eval(self, env):
+        try:
+            value = env[self.name]
+            sys.stdout.write(str(value))
+        except KeyError:
+            raise RuntimeError(self.name + ' is not defined')
+        return
