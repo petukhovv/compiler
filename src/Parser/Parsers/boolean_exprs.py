@@ -7,8 +7,8 @@ from src.Parser.AST.boolean_exprs import *
 Precedence levels for binary operations.
 """
 bexp_precedence_levels = [
-    ['and'],
-    ['or'],
+    ['&&'],
+    ['||'],
 ]
 
 """
@@ -29,7 +29,7 @@ def bexp_relop():
 Parsing 'not' expression (convert expression to object of AST-class 'NotBexp').
 """
 def bexp_not():
-    return keyword('not') + Lazy(bexp_term) ^ (lambda parsed: NotBexp(parsed[1]))
+    return keyword('!') + Lazy(bexp_term) ^ (lambda parsed: NotBexp(parsed[1]))
 
 """
 Parse the binary expression in parentheses.
@@ -51,9 +51,9 @@ Parse the binary operation binary expression.
 Convert operator to fabric of AST-classes 'AndBexp' / 'OrBexp'.
 """
 def process_logic(op):
-    if op == 'and':
+    if op == '&&':
         return lambda l, r: AndBexp(l, r)
-    elif op == 'or':
+    elif op == '||':
         return lambda l, r: OrBexp(l, r)
     else:
         raise RuntimeError('unknown logic operator: ' + op)
