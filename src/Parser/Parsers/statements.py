@@ -22,8 +22,13 @@ y := 12;
 z := 512
 """
 def stmt_list():
-    separator = keyword(';') ^ (lambda x: lambda l, r: CompoundStatement(l, r))
-    return Exp(stmt(), separator)
+    def process_stmt(x):
+        return lambda l, r: CompoundStatement(l, r)
+    def process(parsed_list):
+        if len(parsed_list) == 1:
+            return parsed_list[0]
+        return reduce(lambda stmt1, stmt2: CompoundStatement(stmt1, stmt2), parsed_list)
+    return Rep(fun_stmt() | Exp(stmt(), keyword(';') ^ process_stmt)) ^ process
 
 """
 Parsing 'if' statement.
@@ -94,7 +99,50 @@ def write_stmt():
         (((_, _), name), _) = parsed
         return WriteStatement(name)
     return keyword('write') + \
-        keyword('(') + aexp() + keyword(')') ^ process
+        keyword('(') + (fun_call_stmt() | aexp()) + keyword(')') ^ process
+
+"""
+Parsing function arguments statement.
+"""
+def args_stmt():
+    def process(parsed_list):
+        variables = []
+        for parsed in parsed_list:
+            (variable, _) = parsed
+            variables.append(variable)
+        return ArgumentsStatement(variables)
+    return Rep(id + Opt(keyword(','))) ^ process
+
+"""
+Parsing function statement.
+"""
+def fun_stmt():
+    def process(parsed):
+        (((((((_, name), _), args), _), _), body), _) = parsed
+        return FunctionStatement(name, args, body)
+    return keyword('fun') + id + \
+        keyword('(') + Opt(args_stmt()) + keyword(')') + \
+        keyword('begin') + Opt(Lazy(stmt_list)) + \
+        keyword('end') ^ process
+
+"""
+Parsing function call statement.
+"""
+def return_stmt():
+    def process(parsed):
+        (_, expr) = parsed
+        return ReturnStatement(expr)
+    return keyword('return') + Opt(aexp() | bexp()) ^ process
+
+"""
+Parsing function call statement.
+"""
+def fun_call_stmt():
+    def process(parsed):
+        (((name, _), args), _) = parsed
+        return FunctionCallStatement(name, args)
+    return id + \
+        keyword('(') + Opt(args_stmt()) + keyword(')') ^ process
 
 """
 Main statement parser.
@@ -104,9 +152,11 @@ if not possible - as 'while' statement.
 """
 def stmt():
     return assign_stmt() | \
-           if_stmt() | \
-           while_stmt() | \
-           repeat_stmt() | \
-           for_stmt() | \
-           write_stmt() | \
-           skip_stmt()
+        if_stmt() | \
+        while_stmt() | \
+        repeat_stmt() | \
+        for_stmt() | \
+        return_stmt() | \
+        write_stmt() | \
+        fun_call_stmt() | \
+        skip_stmt()

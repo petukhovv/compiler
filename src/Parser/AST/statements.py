@@ -160,3 +160,81 @@ class SkipStatement(Statement):
 
     def eval(self, env):
         return
+
+"""
+'Arguments' statement class for AST.
+eval - runtime function for Evaluator (empty function).
+"""
+class ArgumentsStatement(Statement):
+    def __init__(self, arguments):
+        self.arguments = arguments
+
+    def __repr__(self):
+        return 'ArgumentsStatement(%s)' % self.arguments
+
+    def eval(self):
+        return self.arguments
+
+"""
+'Function' statement class for AST.
+eval - runtime function for Evaluator (empty function).
+"""
+class FunctionStatement(Statement):
+    def __init__(self, name, args, body):
+        self.name = name
+        self.args = args
+        self.body = body
+
+    def __repr__(self):
+        return 'FunctionStatement(%s, %s, %s)' % (self.name, self.args, self.body)
+
+    def eval(self, env):
+        env['f'][self.name] = {
+            'env': {
+                'v': {},
+                'f': {},
+                'r': None
+            },
+            'args': self.args,
+            'body': self.body
+        }
+        return
+
+"""
+'Return' statement class for AST.
+eval - runtime function for Evaluator (empty function).
+"""
+class ReturnStatement(Statement):
+    def __init__(self, expr):
+        self.expr = expr
+
+    def __repr__(self):
+        return 'ReturnStatement(%s)' % self.expr
+
+    def eval(self, env):
+        env['r'] = self.expr.eval(env)
+        return
+
+"""
+'Function call' statement class for AST.
+eval - runtime function for Evaluator (empty function).
+"""
+class FunctionCallStatement(Statement):
+    def __init__(self, name, args):
+        self.name = name
+        self.args = args
+
+    def __repr__(self):
+        return 'FunctionCallStatement(%s, %s)' % (self.name, self.args)
+
+    def eval(self, env):
+        fun = env['f'][self.name]
+        func_env = fun['env']
+        args = fun['args'].eval()
+        call_args = self.args.eval()
+        args_counter = 0
+        for arg in args:
+            func_env['v'][arg] = env['v'][call_args[args_counter]]
+            args_counter += 1
+        fun['body'].eval(func_env)
+        return func_env['r']

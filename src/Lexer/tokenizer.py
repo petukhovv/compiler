@@ -52,6 +52,10 @@ token_expressions = [
     keyword('read'),
     keyword('write'),
     keyword('skip'),
+    keyword('fun'),
+    keyword('begin'),
+    keyword('return'),
+    keyword('end'),
 
     token('\d+', INT),
     token('[A-Za-z]\w*', ID)
