@@ -99,7 +99,7 @@ def write_stmt():
         (((_, _), name), _) = parsed
         return WriteStatement(name)
     return keyword('write') + \
-        keyword('(') + (fun_call_stmt() | aexp()) + keyword(')') ^ process
+        keyword('(') + aexp() + keyword(')') ^ process
 
 """
 Parsing function arguments statement.
@@ -112,6 +112,18 @@ def args_stmt():
             variables.append(variable)
         return ArgumentsStatement(variables)
     return Rep(id + Opt(keyword(','))) ^ process
+
+"""
+Parsing function arguments statement.
+"""
+def args_call_stmt():
+    def process(parsed_list):
+        variables = []
+        for parsed in parsed_list:
+            (variable, _) = parsed
+            variables.append(variable)
+        return ArgumentsStatement(variables)
+    return Rep((aexp() | bexp()) + Opt(keyword(','))) ^ process
 
 """
 Parsing function statement.
@@ -142,7 +154,7 @@ def fun_call_stmt():
         (((name, _), args), _) = parsed
         return FunctionCallStatement(name, args)
     return id + \
-        keyword('(') + Opt(args_stmt()) + keyword(')') ^ process
+        keyword('(') + Opt(Lazy(args_call_stmt)) + keyword(')') ^ process
 
 """
 Main statement parser.

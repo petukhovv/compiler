@@ -1,6 +1,10 @@
+import sys
+
 from src.Parser.Parsers.basic import *
 
 from src.Parser.AST.arithmetic_exprs import *
+
+statements = sys.modules[__package__ + '.statements']
 
 """
 Returns the parser appropriate to the keyword list (ops).
@@ -39,8 +43,9 @@ Converts the values returned by 'num' and 'id' to the object of AST classes.
 First of all, try to parse integer, if unsuccessful, try to parse as a variable (via Alternate combinator).
 """
 def aexp_value():
-    return (num ^ (lambda i: IntAexp(i))) | \
-           (id ^ (lambda v: VarAexp(v)))
+    return statements.fun_call_stmt() | \
+        (num ^ (lambda i: IntAexp(i))) | \
+        (id ^ (lambda v: VarAexp(v)))
 
 """
 Removes parentheses and returns an expression in them.
