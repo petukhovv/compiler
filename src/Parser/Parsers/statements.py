@@ -35,14 +35,21 @@ Parsing 'if' statement.
 """
 def if_stmt():
     def process(parsed):
-        (((((_, condition), _), true_stmt), false_parsed), _) = parsed
-        if false_parsed:
-            (_, false_stmt) = false_parsed
+        ((((((_, condition), _), true_stmt), alternatives_stmt_parsed), false_stmt_parsed), _) = parsed
+        if false_stmt_parsed:
+            (_, false_stmt) = false_stmt_parsed
         else:
             false_stmt = None
-        return IfStatement(condition, true_stmt, false_stmt)
-    return keyword('if') + bexp(allow_single=True) + \
-           keyword('then') + Lazy(stmt_list) + \
+        if alternatives_stmt_parsed:
+            alternatives_stmt = []
+            for alternative_stmt_parsed in alternatives_stmt_parsed:
+                (((_, alternative_condition), _), alternative_body) = alternative_stmt_parsed
+                alternatives_stmt.append(IfStatement(alternative_condition, alternative_body, None))
+        else:
+            alternatives_stmt = None
+        return IfStatement(condition, true_stmt, alternatives_stmt, false_stmt)
+    return keyword('if') + bexp(allow_single=True) + keyword('then') + Lazy(stmt_list) + \
+           Opt(Rep(keyword('elif') + bexp(allow_single=True) + keyword('then') + Lazy(stmt_list))) + \
            Opt(keyword('else') + Lazy(stmt_list)) + \
            keyword('fi') ^ process
 

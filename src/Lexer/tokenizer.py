@@ -42,6 +42,7 @@ token_expressions = [
     keyword('if'),
     keyword('then'),
     keyword('else'),
+    keyword('elif'),
     keyword('fi'),
     keyword('while'),
     keyword('do'),

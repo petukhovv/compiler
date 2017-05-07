@@ -46,9 +46,10 @@ class CompoundStatement(Statement):
 eval - runtime function for Evaluator (true of false statement depending on condition).
 """
 class IfStatement(Statement):
-    def __init__(self, condition, true_stmt, false_stmt):
+    def __init__(self, condition, true_stmt, alternatives_stmt=None, false_stmt=None):
         self.condition = condition
         self.true_stmt = true_stmt
+        self.alternatives_stmt = alternatives_stmt
         self.false_stmt = false_stmt
 
     def __repr__(self):
@@ -59,8 +60,14 @@ class IfStatement(Statement):
         if condition_value:
             self.true_stmt.eval(env)
         else:
+            if self.alternatives_stmt:
+                for alternative_stmt in self.alternatives_stmt:
+                    alternative_condition_value = alternative_stmt.eval(env)
+                    if alternative_condition_value:
+                        return True
             if self.false_stmt:
                 self.false_stmt.eval(env)
+        return condition_value
 
 """
 'While' statement class for AST.
