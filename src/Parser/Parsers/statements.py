@@ -104,26 +104,24 @@ def write_stmt():
 """
 Parsing function arguments statement.
 """
-def args_stmt():
+def args_stmt(alternative_args_parser=None):
     def process(parsed_list):
         variables = []
         for parsed in parsed_list:
             (variable, _) = parsed
             variables.append(variable)
         return ArgumentsStatement(variables)
-    return Rep(id + Opt(keyword(','))) ^ process
+    if alternative_args_parser:
+        args_parser = alternative_args_parser
+    else:
+        args_parser = id
+    return Rep(args_parser + Opt(keyword(','))) ^ process
 
 """
-Parsing function arguments statement.
+Parsing function arguments statement (call point).
 """
 def args_call_stmt():
-    def process(parsed_list):
-        variables = []
-        for parsed in parsed_list:
-            (variable, _) = parsed
-            variables.append(variable)
-        return ArgumentsStatement(variables)
-    return Rep((aexp() | bexp()) + Opt(keyword(','))) ^ process
+    return args_stmt(alternative_args_parser=(aexp() | bexp()))
 
 """
 Parsing function statement.
