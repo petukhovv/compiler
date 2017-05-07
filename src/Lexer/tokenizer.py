@@ -1,4 +1,4 @@
-from src.Lexer.lexer import lex
+from lexer import lex
 from src.consts import *
 
 """

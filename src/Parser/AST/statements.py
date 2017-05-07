@@ -23,7 +23,7 @@ class AssignStatement(Statement):
 
     def eval(self, env):
         value = self.aexp.eval(env)
-        env[self.name] = value
+        env['v'][self.name] = value
 
 """
 Compound statement class for AST.

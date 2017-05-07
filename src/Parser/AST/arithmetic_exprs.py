@@ -34,8 +34,8 @@ class VarAexp(Aexp):
         return 'VarAexp(%s)' % self.name
 
     def eval(self, env):
-        if self.name in env:
-            return env[self.name]
+        if self.name in env['v']:
+            return env['v'][self.name]
         else:
             return 0
 
