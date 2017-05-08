@@ -1,4 +1,4 @@
-from equality import *
+from src.Parser.AST.arrays import *
 
 """
 Base class for statement classes.
@@ -12,16 +12,22 @@ eval - runtime function for Evaluator (return variable by name from environment)
 Example: x := 56
 """
 class AssignStatement(Statement):
-    def __init__(self, name, aexp):
-        self.name = name
+    def __init__(self, variable, aexp):
+        self.variable = variable
         self.aexp = aexp
 
     def __repr__(self):
-        return 'AssignStatement(%s, %s)' % (self.name, self.aexp)
+        return 'AssignStatement(%s, %s)' % (self.variable, self.aexp)
 
     def eval(self, env):
         value = self.aexp.eval(env)
-        env['v'][self.name] = value
+        if isinstance(self.variable, ArrayElement):
+            arr = self.variable
+            index = arr.index.eval(env)
+            env['v'][arr.array][index] = value
+        else:
+            name = self.variable.name
+            env['v'][name] = value
 
 """
 Compound statement class for AST.
