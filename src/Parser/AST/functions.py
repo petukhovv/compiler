@@ -3,14 +3,14 @@ from equality import *
 """
 Base class for statement classes.
 """
-class Statement(Equality):
+class FunctionBase(Equality):
     pass
 
 """
 'Arguments' statement class for AST.
 eval - runtime function for Evaluator (empty function).
 """
-class Arguments(Statement):
+class Arguments(FunctionBase):
     def __init__(self, arguments):
         self.arguments = arguments
 
@@ -24,7 +24,7 @@ class Arguments(Statement):
 'Function' statement class for AST.
 eval - runtime function for Evaluator (empty function).
 """
-class Function(Statement):
+class Function(FunctionBase):
     def __init__(self, name, args, body):
         self.name = name
         self.args = args
@@ -43,7 +43,7 @@ class Function(Statement):
 'Return' statement class for AST.
 eval - runtime function for Evaluator (empty function).
 """
-class ReturnStatement(Statement):
+class ReturnStatement(FunctionBase):
     def __init__(self, expr):
         self.expr = expr
 
@@ -58,7 +58,7 @@ class ReturnStatement(Statement):
 'Function call' statement class for AST.
 eval - runtime function for Evaluator (empty function).
 """
-class FunctionCallStatement(Statement):
+class FunctionCallStatement(FunctionBase):
     def __init__(self, name, args):
         self.name = name
         self.args = args
