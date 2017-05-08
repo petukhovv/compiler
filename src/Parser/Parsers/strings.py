@@ -5,7 +5,8 @@ from src.Parser.AST.strings import *
 string_predefined_functions = {
     'strlen': StrLen,
     'strget': StrGet,
-    'strsub': StrSub
+    'strsub': StrSub,
+    'strdup': StrDup
     # TODO: add 'strdup', 'strset', 'strcat', 'strcmp' and 'strmake'
 }
 
