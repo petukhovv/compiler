@@ -44,8 +44,7 @@ First of all, try to parse integer, if unsuccessful, try to parse as a variable 
 """
 def aexp_value():
     return statements.fun_call_stmt() | \
-        (boolean ^ (lambda i: IntAexp(i))) | \
-        (num ^ (lambda i: IntAexp(i))) | \
+        ((boolean | num) ^ (lambda i: IntAexp(i))) | \
         (id ^ (lambda v: VarAexp(v)))
 
 """
