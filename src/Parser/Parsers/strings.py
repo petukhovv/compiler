@@ -7,7 +7,8 @@ string_predefined_functions = {
     'strget': StrGet,
     'strsub': StrSub,
     'strdup': StrDup,
-    'strset': StrSet
+    'strset': StrSet,
+    'strcat': StrCat
     # TODO: add 'strcat', 'strcmp' and 'strmake'
 }
 
