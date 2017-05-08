@@ -24,26 +24,10 @@ def get_predefined(name):
     return None
 
 """
-Parsing function arguments statement.
-"""
-def args(alternative_args_parser=None):
-    def process(parsed_list):
-        variables = []
-        for parsed in parsed_list:
-            (variable, _) = parsed
-            variables.append(variable)
-        return Arguments(variables)
-    if alternative_args_parser:
-        args_parser = alternative_args_parser
-    else:
-        args_parser = id
-    return Rep(args_parser + Opt(keyword(','))) ^ process
-
-"""
 Parsing function arguments statement (call point).
 """
 def args_call():
-    return args(alternative_args_parser=(aexp() | bexp() | str_exp() | char_exp()))
+    return enumeration(alternative_args_parser=(aexp() | bexp() | str_exp() | char_exp()))
 
 """
 Parsing function statement.
@@ -53,8 +37,8 @@ def fun():
         (((((((_, name), _), args), _), _), body), _) = parsed
         return Function(name, args, body)
     return keyword('fun') + id + \
-        keyword('(') + Opt(args()) + keyword(')') + \
-        keyword('begin') + Opt(Lazy(statements.stmt_list)) + \
+        keyword('(') + Opt(enumeration()) + keyword(')') + \
+           keyword('begin') + Opt(Lazy(statements.stmt_list)) + \
         keyword('end') ^ process
 
 """

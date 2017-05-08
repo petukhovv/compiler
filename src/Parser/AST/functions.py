@@ -7,20 +7,6 @@ class FunctionBase(Equality):
     pass
 
 """
-'Arguments' statement class for AST.
-eval - runtime function for Evaluator (empty function).
-"""
-class Arguments(FunctionBase):
-    def __init__(self, arguments):
-        self.arguments = arguments
-
-    def __repr__(self):
-        return 'Arguments(%s)' % self.arguments
-
-    def eval(self):
-        return self.arguments
-
-"""
 'Function' statement class for AST.
 eval - runtime function for Evaluator (empty function).
 """

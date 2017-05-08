@@ -1,5 +1,6 @@
 from src.Parser.combinators import *
 from src.consts import *
+from src.Parser.AST.common import *
 
 """
 Language keywords parsing (Reserved combinator with 'RESERVED' tag).
@@ -24,3 +25,19 @@ boolean = Tag(BOOLEAN) ^ boolean_parser
 Identifiers parsing (Tag combinator with 'ID' tag).
 """
 id = Tag(ID)
+
+"""
+Parsing enumeration statement.
+"""
+def enumeration(alternative_args_parser=None):
+    def process(parsed_list):
+        variables = []
+        for parsed in parsed_list:
+            (variable, _) = parsed
+            variables.append(variable)
+        return Enumeration(variables)
+    if alternative_args_parser:
+        args_parser = alternative_args_parser
+    else:
+        args_parser = id
+    return Rep(args_parser + Opt(keyword(','))) ^ process
