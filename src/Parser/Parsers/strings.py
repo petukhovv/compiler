@@ -8,8 +8,9 @@ string_predefined_functions = {
     'strsub': StrSub,
     'strdup': StrDup,
     'strset': StrSet,
-    'strcat': StrCat
-    # TODO: add 'strcat', 'strcmp' and 'strmake'
+    'strcat': StrCat,
+    'strcmp': StrCmp
+    # TODO: add 'strcmp' and 'strmake'
 }
 
 """

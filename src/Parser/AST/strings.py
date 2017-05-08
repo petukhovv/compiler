@@ -116,3 +116,18 @@ class StrCat(StringBase):
         str1 = args_node[0].eval(env)
         str2 = args_node[1].eval(env)
         return str1 + str2
+
+class StrCmp(StringBase):
+    def __init__(self, args):
+        self.args = args
+
+    def __repr__(self):
+        return 'StrCmp(%s)' % self.args
+
+    def eval(self, env):
+        args_node = self.args.eval()
+        if len(args_node) == 0 or len(args_node) == 1:
+            raise RuntimeError('strcmp is not call with two arguments')
+        str1 = args_node[0].eval(env)
+        str2 = args_node[1].eval(env)
+        return str1 == str2
