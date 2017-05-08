@@ -1,5 +1,3 @@
-import sys
-
 from equality import *
 
 """
@@ -124,38 +122,6 @@ class RepeatStatement(Statement):
             condition_value = self.condition.eval(env)
             if condition_value:
                 break
-
-"""
-'Read' statement class for AST.
-eval - runtime function for Evaluator (get value from stdin).
-"""
-class ReadStatement(Statement):
-    def __repr__(self):
-        return 'ReadStatement'
-
-    def eval(self, env):
-        value = sys.stdin.readline()
-        try:
-            return int(value)
-        except ValueError:
-            raise RuntimeError(value + ' is not integer')
-
-"""
-'Write' statement class for AST.
-eval - runtime function for Evaluator (write value to stdout).
-"""
-class WriteStatement(Statement):
-    def __init__(self, aexp):
-        self.aexp = aexp
-
-    def __repr__(self):
-        return 'WriteStatement(%s)' % self.aexp
-
-    def eval(self, env):
-        value = self.aexp.eval(env)
-        if type(value) is bool:
-            value = int(value)
-        sys.stdout.write(str(value) + '\n')
 
 """
 'Skip' statement class for AST.

@@ -1,5 +1,6 @@
 from src.Parser.Parsers.strings import str_exp
 from src.Parser.Parsers.functions import *
+from src.Parser.Parsers.io import *
 
 from src.Parser.AST.statements import *
 
@@ -86,26 +87,10 @@ def repeat_stmt():
         keyword('until') + bexp(allow_single=True) ^ process
 
 """
-Parsing 'read' statement.
-"""
-def read_stmt():
-    return keyword('read') + keyword('(') + keyword(')') ^ (lambda parsed: ReadStatement())
-
-"""
 Parsing 'skip' statement.
 """
 def skip_stmt():
     return keyword('skip') ^ (lambda parsed: SkipStatement())
-
-"""
-Parsing 'write' statement.
-"""
-def write_stmt():
-    def process(parsed):
-        (((_, _), name), _) = parsed
-        return WriteStatement(name)
-    return keyword('write') + \
-        keyword('(') + aexp() + keyword(')') ^ process
 
 """
 Main statement parser.
