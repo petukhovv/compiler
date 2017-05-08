@@ -2,6 +2,11 @@ from src.Parser.Parsers.arithmetic_exprs import *
 
 from src.Parser.AST.io import *
 
+io_predefined_functions = {
+    'read': ReadStatement,
+    'write': WriteStatement
+}
+
 """
 Parsing 'read' statement.
 """

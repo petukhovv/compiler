@@ -1,12 +1,27 @@
-import sys
-
-from src.Parser.Parsers.basic import *
-from src.Parser.Parsers.arithmetic_exprs import aexp
 from src.Parser.Parsers.boolean_exprs import bexp
+from src.Parser.Parsers.strings import *
+from src.Parser.Parsers.io import *
 
 from src.Parser.AST.functions import *
 
 statements = sys.modules[__package__ + '.statements']
+
+predefined = {
+    'strings': string_predefined_functions,
+    'io': io_predefined_functions,
+}
+
+def is_predefined(name):
+    for entity in predefined:
+        if name in predefined[entity].keys():
+            return True
+    return False
+
+def get_predefined(name):
+    for entity in predefined:
+        if name in predefined[entity].keys():
+            return predefined[entity][name]
+    return None
 
 """
 Parsing function arguments statement.
@@ -57,6 +72,10 @@ Parsing function call statement.
 def fun_call_stmt():
     def process(parsed):
         (((name, _), args), _) = parsed
-        return FunctionCallStatement(name, args)
+        if is_predefined(name):
+            predefined_function_node = get_predefined(name)
+            return predefined_function_node(name, args)
+        else:
+            return FunctionCallStatement(name, args)
     return id + \
         keyword('(') + Opt(Lazy(args_call)) + keyword(')') ^ process
