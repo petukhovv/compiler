@@ -1,6 +1,6 @@
 from src.Parser.Parsers.boolean_exprs import bexp
-from src.Parser.Parsers.strings import *
 from src.Parser.Parsers.io import *
+from src.Parser.Parsers.arrays import *
 
 from src.Parser.AST.functions import *
 
@@ -8,7 +8,8 @@ statements = sys.modules[__package__ + '.statements']
 
 predefined = {
     'strings': string_predefined_functions,
-    'io': io_predefined_functions
+    'io': io_predefined_functions,
+    'arrays': array_predefined_functions
 }
 
 def is_predefined(name):

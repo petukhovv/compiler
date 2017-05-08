@@ -1,6 +1,6 @@
-from src.Parser.Parsers.strings import str_exp
 from src.Parser.Parsers.functions import *
 from src.Parser.Parsers.io import *
+from src.Parser.Parsers.arrays import *
 
 from src.Parser.AST.statements import *
 
@@ -12,7 +12,7 @@ def assign_stmt():
     def process(parsed):
         ((name, _), exp) = parsed
         return AssignStatement(name, exp)
-    return id + keyword(':=') + (bexp() | aexp() | read_stmt() | str_exp() | char_exp()) ^ process
+    return id + keyword(':=') + (bexp() | aexp() | read_stmt() | str_exp() | char_exp() | arr_exp()) ^ process
 
 """
 Parsing statement list (by ';' separator).
