@@ -80,3 +80,24 @@ class StrDup(StringBase):
             raise RuntimeError('strdup call without arguments')
         str = args_node[0].eval(env)
         return str
+
+class StrSet(StringBase):
+    def __init__(self, args):
+        self.args = args
+
+    def __repr__(self):
+        return 'StrSet(%s)' % self.args
+
+    def eval(self, env):
+        args_node = self.args.eval()
+        if len(args_node) == 0 or len(args_node) == 1 or len(args_node) == 2:
+            raise RuntimeError('strset is not call with three arguments')
+        str = args_node[0].eval(env)
+        var_name = args_node[0].name
+        char_index = args_node[1].eval(env)
+        if char_index < 0 or char_index >= len(str):
+            raise RuntimeError('strset: incorrect index')
+        new_char = args_node[2].eval(env)
+        new_str = list(str)
+        new_str[char_index] = new_char
+        env['v'][var_name] = "".join(new_str)

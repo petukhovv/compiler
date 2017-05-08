@@ -43,7 +43,7 @@ def args(alternative_args_parser=None):
 Parsing function arguments statement (call point).
 """
 def args_call():
-    return args(alternative_args_parser=(aexp() | bexp()))
+    return args(alternative_args_parser=(aexp() | bexp() | str_exp()))
 
 """
 Parsing function statement.
