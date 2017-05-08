@@ -19,6 +19,7 @@ token_expressions = [
     token('[ \n\t]+', None),
     token('#[^\n]*', None),
 
+    token('true|false', BOOLEAN, right_context='\W'),
     token('.*?', STRING, left_context='"', right_context='"'),
     token('.', CHAR, left_context='\'', right_context='\''),
 
