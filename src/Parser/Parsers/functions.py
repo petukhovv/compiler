@@ -8,7 +8,7 @@ statements = sys.modules[__package__ + '.statements']
 
 predefined = {
     'strings': string_predefined_functions,
-    'io': io_predefined_functions,
+    'io': io_predefined_functions
 }
 
 def is_predefined(name):
@@ -73,8 +73,7 @@ def fun_call_stmt():
     def process(parsed):
         (((name, _), args), _) = parsed
         if is_predefined(name):
-            predefined_function_node = get_predefined(name)
-            return predefined_function_node(name, args)
+            return get_predefined(name)(args)
         else:
             return FunctionCallStatement(name, args)
     return id + \
