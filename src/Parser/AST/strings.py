@@ -14,7 +14,7 @@ class Char(StringBase):
         return 'Char(%s)' % self.character
 
     def eval(self, env):
-        return self.character
+        return ord(self.character)
 
 class String(StringBase):
     def __init__(self, characters):
@@ -55,7 +55,7 @@ class StrGet(StringBase):
         char_index = args_node[1].eval(env)
         if char_index < 0 or char_index >= len(str):
             raise RuntimeError('StrGet: incorrect char index')
-        return str[char_index]
+        return ord(str[char_index])
 
 class StrSub(StringBase):
     def __init__(self, args):
@@ -109,7 +109,7 @@ class StrSet(StringBase):
             raise RuntimeError('strset: incorrect index')
         new_char = args_node[2].eval(env)
         new_str = list(str)
-        new_str[char_index] = new_char
+        new_str[char_index] = chr(new_char)
         env['v'][var_name] = "".join(new_str)
 
 class StrCat(StringBase):
@@ -140,7 +140,19 @@ class StrCmp(StringBase):
             raise RuntimeError('strcmp is not call with two arguments')
         str1 = args_node[0].eval(env)
         str2 = args_node[1].eval(env)
-        return str1 == str2
+        str1_list = list(str1)
+        str2_list = list(str2)
+        char_counter = 0
+        for char in str1_list:
+            if char > str2_list[char_counter]:
+                return 1
+            elif char < str2_list[char_counter]:
+                return -1
+            char_counter += 1
+        if len(str1) == len(str2):
+            return 0
+        else:
+            return 1  # str1 is a substring of str2 (str2 is greater than str1)
 
 class StrMake(StringBase):
     def __init__(self, args):
@@ -155,4 +167,4 @@ class StrMake(StringBase):
             raise RuntimeError('strmake is not call with two arguments')
         repeat_count = args_node[0].eval(env)
         char = args_node[1].eval(env)
-        return char * repeat_count
+        return chr(char) * repeat_count
