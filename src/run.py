@@ -28,14 +28,18 @@ if not isfile(target_file):
     sys.stderr.write('Source code file not found (incorrect path: "' + target_file + '").\n')
     exit()
 
-if mode == '-i':
-    program = open(target_file).read()
+def parse_program(program):
     tokens = tokenize(program)
     parse_result = parse(tokens)
     if not parse_result:
         sys.stderr.write('Parse error!\n')
         exit()
-    ast = parse_result.value
+    return parse_result.value
+
+program = open(target_file).read()
+
+if mode == '-i':
+    ast = parse_program(program)
     env = {
         'v': {},  # variables environment
         'f': {}  # functions environment
