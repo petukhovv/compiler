@@ -5,8 +5,8 @@ from src.consts import *
 Wrapper for tokenization.
 Make one parentheses group with optional right context.
 """
-def token(regexp, tag, right_context=''):
-    return r'(' + regexp + ')' + right_context + '', tag
+def token(regexp, tag, right_context='', left_context=''):
+    return r'' + left_context + '(' + regexp + ')' + right_context + '', tag
 
 """
 Wrapper for tokenization language keywords.
@@ -19,6 +19,9 @@ token_expressions = [
     token('[ \n\t]+', None),
     token('#[^\n]*', None),
 
+    token('.*?', STRING, left_context='"', right_context='"'),
+
+    token('"', None),
     token('\:=', RESERVED),
     token('\(', RESERVED),
     token('\)', RESERVED),
