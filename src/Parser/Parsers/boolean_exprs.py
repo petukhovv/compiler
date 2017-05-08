@@ -1,5 +1,5 @@
 from src.Parser.Parsers.arithmetic_exprs import aexp, any_operator_in_list, precedence, process_group
-from src.Parser.Parsers.basic import *
+from src.Parser.Parsers.strings import *
 
 from src.Parser.AST.boolean_exprs import *
 from src.Parser.AST.arithmetic_exprs import IntAexp
@@ -24,7 +24,9 @@ Parsing boolean expression (arithmetic expression + compare operator + arithmeti
 """
 def bexp_relop():
     relops = ['<', '<=', '>', '>=', '==', '!=']
-    return aexp() + any_operator_in_list(relops) + aexp() ^ process_relop
+    return (aexp() | str_exp() | char_exp()) + \
+        any_operator_in_list(relops) + \
+        (aexp() | str_exp() | char_exp()) ^ process_relop
 
 """
 Parsing single value expression (arithmetic expression).
