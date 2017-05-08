@@ -1,7 +1,5 @@
-from src.Parser.Parsers.arithmetic_exprs import aexp
-from src.Parser.Parsers.basic import *
-from src.Parser.Parsers.boolean_exprs import bexp
 from src.Parser.Parsers.strings import str_exp
+from src.Parser.Parsers.functions import *
 
 from src.Parser.AST.statements import *
 
@@ -29,7 +27,7 @@ def stmt_list():
         if len(parsed_list) == 1:
             return parsed_list[0]
         return reduce(lambda stmt1, stmt2: CompoundStatement(stmt1, stmt2), parsed_list)
-    return Rep(fun_stmt() | Exp(stmt(), keyword(';') ^ process_stmt)) ^ process
+    return Rep(fun() | Exp(stmt(), keyword(';') ^ process_stmt)) ^ process
 
 """
 Parsing 'if' statement.
@@ -108,59 +106,6 @@ def write_stmt():
         return WriteStatement(name)
     return keyword('write') + \
         keyword('(') + aexp() + keyword(')') ^ process
-
-"""
-Parsing function arguments statement.
-"""
-def args_stmt(alternative_args_parser=None):
-    def process(parsed_list):
-        variables = []
-        for parsed in parsed_list:
-            (variable, _) = parsed
-            variables.append(variable)
-        return ArgumentsStatement(variables)
-    if alternative_args_parser:
-        args_parser = alternative_args_parser
-    else:
-        args_parser = id
-    return Rep(args_parser + Opt(keyword(','))) ^ process
-
-"""
-Parsing function arguments statement (call point).
-"""
-def args_call_stmt():
-    return args_stmt(alternative_args_parser=(aexp() | bexp()))
-
-"""
-Parsing function statement.
-"""
-def fun_stmt():
-    def process(parsed):
-        (((((((_, name), _), args), _), _), body), _) = parsed
-        return FunctionStatement(name, args, body)
-    return keyword('fun') + id + \
-        keyword('(') + Opt(args_stmt()) + keyword(')') + \
-        keyword('begin') + Opt(Lazy(stmt_list)) + \
-        keyword('end') ^ process
-
-"""
-Parsing function call statement.
-"""
-def return_stmt():
-    def process(parsed):
-        (_, expr) = parsed
-        return ReturnStatement(expr)
-    return keyword('return') + Opt(aexp() | bexp()) ^ process
-
-"""
-Parsing function call statement.
-"""
-def fun_call_stmt():
-    def process(parsed):
-        (((name, _), args), _) = parsed
-        return FunctionCallStatement(name, args)
-    return id + \
-        keyword('(') + Opt(Lazy(args_call_stmt)) + keyword(')') ^ process
 
 """
 Main statement parser.
