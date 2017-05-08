@@ -6,6 +6,16 @@ Base class for string classes.
 class StringBase(Equality):
     pass
 
+class Char(StringBase):
+    def __init__(self, character):
+        self.character = character
+
+    def __repr__(self):
+        return 'Char(%s)' % self.character
+
+    def eval(self, env):
+        return self.character
+
 class String(StringBase):
     def __init__(self, characters):
         self.characters = characters
@@ -137,7 +147,7 @@ class StrMake(StringBase):
         self.args = args
 
     def __repr__(self):
-        return 'StrCmp(%s)' % self.args
+        return 'StrMake(%s)' % self.args
 
     def eval(self, env):
         args_node = self.args.eval()

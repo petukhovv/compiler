@@ -12,7 +12,7 @@ def assign_stmt():
     def process(parsed):
         ((name, _), exp) = parsed
         return AssignStatement(name, exp)
-    return id + keyword(':=') + (bexp() | aexp() | read_stmt() | str_exp()) ^ process
+    return id + keyword(':=') + (bexp() | aexp() | read_stmt() | str_exp() | char_exp()) ^ process
 
 """
 Parsing statement list (by ';' separator).

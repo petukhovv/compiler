@@ -20,8 +20,10 @@ token_expressions = [
     token('#[^\n]*', None),
 
     token('.*?', STRING, left_context='"', right_context='"'),
+    token('.', CHAR, left_context='\'', right_context='\''),
 
     token('"', None),
+    token('\'', None),
     token('\:=', RESERVED),
     token('\(', RESERVED),
     token('\)', RESERVED),

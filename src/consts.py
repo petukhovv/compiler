@@ -5,5 +5,6 @@ ID is identifiers (e. g. variable names).
 """
 RESERVED = 'RESERVED'
 INT = 'INT'
+CHAR = 'CHAR'
 STRING = 'STRING'
 ID = 'ID'

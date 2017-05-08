@@ -13,8 +13,8 @@ string_predefined_functions = {
     'strmake': StrMake
 }
 
-"""
-Main arithmetic expressions parser.
-"""
 def str_exp():
     return Tag(STRING) ^ String
+
+def char_exp():
+    return Tag(CHAR) ^ Char
