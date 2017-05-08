@@ -1,38 +1,43 @@
 import sys
+sys.path.append('src/..')
 
-from pprint import pprint
+from os.path import isfile
 
 from Lexer.tokenizer import tokenize
 from Parser.run import parse
 
-test_id = '026'
+help_commands = '-i - interpret, -s - compile in virtual machine code, -o - compile in executable file'
 
-sys.stdout.write('\nExpected input:\n')
-test_input_file = '../compiler-tests/core/test' + test_id + '.input'
-test_input = open(test_input_file).read()
-sys.stdout.write(test_input + '\n')
+if len(sys.argv) <= 1:
+    sys.stderr.write('Mode not specified (' + help_commands + ').\n')
+    exit()
 
-test_expr_file = '../compiler-tests/core/test' + test_id + '.expr'
-test_expr = open(test_expr_file).read()
-tokens = tokenize(test_expr)
-#pprint(tokens)
-parse_result = parse(tokens)
-if not parse_result:
-    sys.stderr.write('Parse error!\n')
-    sys.exit(1)
-pprint(parse_result.value)
-ast = parse_result.value
-env = {
-    'v': {},    # variables environment
-    'f': {}     # functions environment
-}
-sys.stdout.write('Output:\n')
-ast.eval(env)
-sys.stdout.write('\nExpected output:\n')
+mode = sys.argv[1]
 
-test_output_file = '../compiler-tests/core/orig/test' + test_id + '.log'
-test_output = open(test_output_file).read()
-sys.stdout.write(test_output + '\n')
+if mode not in ['-i', '-s', '-o']:
+    sys.stderr.write('Mode is incorrect (' + help_commands + ').\n')
+    exit()
 
-sys.stdout.write('\n')
-pprint(env)
+if len(sys.argv) <= 2:
+    sys.stderr.write('Source code file not specified.\n')
+    exit()
+
+target_file = sys.argv[2]
+
+if not isfile(target_file):
+    sys.stderr.write('Source code file not found (incorrect path: "' + target_file + '").\n')
+    exit()
+
+if mode == '-i':
+    program = open(target_file).read()
+    tokens = tokenize(program)
+    parse_result = parse(tokens)
+    if not parse_result:
+        sys.stderr.write('Parse error!\n')
+        exit()
+    ast = parse_result.value
+    env = {
+        'v': {},  # variables environment
+        'f': {}  # functions environment
+    }
+    ast.eval(env)
