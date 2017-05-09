@@ -49,7 +49,7 @@ def return_stmt():
     def process(parsed):
         (_, expr) = parsed
         return ReturnStatement(expr)
-    return keyword('return') + Opt(aexp() | bexp()) ^ process
+    return keyword('return') + Opt(aexp() | bexp() | str_exp() | char_exp() | arr_exp()) ^ process
 
 """
 Parsing function call statement.

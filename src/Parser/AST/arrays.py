@@ -1,4 +1,5 @@
-from equality import *
+from src.Parser.AST.common import *
+from src.Parser.AST.arithmetic_exprs import *
 
 class UnboxedArrayWrap(list):
     def __repr__(self):
@@ -13,31 +14,6 @@ def fill_array(arr, count, default_value):
     while index < count:
         arr.append(default_value)
         index += 1
-    return arr
-
-def arr_make_eval(self, env, ast_class):
-    arr = []
-    args = self.args.eval()
-    count = args[0].eval(env)
-    if len(args) == 2:
-        default_value_is_array = isinstance(args[1], ast_class)
-        default_value = args[1].eval(env)
-    else:
-        default_value_is_array = False
-        default_value = 0
-    if default_value_is_array:
-        if len(default_value) == 0:
-            arr = fill_array(arr, count, 0)
-        elif len(default_value) != count:
-            raise RuntimeError('Length default array is not the same length as the specified.')
-        else:
-            arr = default_value
-    else:
-        arr = fill_array(arr, count, default_value)
-    if ast_class == BoxedArray:
-        arr = BoxedArrayWrap(arr)
-    else:
-        arr = UnboxedArrayWrap(arr)
     return arr
 
 """
@@ -81,15 +57,17 @@ class ArrayElement(ArrayBase):
         if index >= len(arr):
             raise RuntimeError('Array index out of range')
         element = arr[index]
+        if isinstance(arr, BoxedArrayWrap):
+            element = element.eval(env)
         # TODO: interpret [] operators independently (Arr[]...[]..., not Arr[][])
         if self.other_indexes:
-            if type(element) is not list:
+            if not isinstance(element, list):
                 raise RuntimeError('Array element is not array')
             for other_index in self.other_indexes:
                 if other_index >= len(element):
                     raise RuntimeError('Array index out of range')
                 element = element[other_index.eval(env)]
-        if isinstance(arr, BoxedArrayWrap):
+        if isinstance(element, BoxedArrayWrap):
             return element.eval(env)
         else:
             return element
@@ -116,7 +94,26 @@ class UnboxedArrMake(ArrayBase):
         return 'UnboxedArrMake(%s)' % self.args
 
     def eval(self, env):
-        return arr_make_eval(self, env, UnboxedArray)
+        arr = []
+        args = self.args.eval()
+        count = args[0].eval(env)
+        if len(args) == 2:
+            default_value_is_array = isinstance(args[1], UnboxedArray)
+            default_value = args[1].eval(env)
+        else:
+            default_value_is_array = False
+            default_value = 0
+        if default_value_is_array:
+            if len(default_value) == 0:
+                arr = fill_array(arr, count, [])
+            elif len(default_value) != count:
+                raise RuntimeError('Length default array is not the same length as the specified.')
+            else:
+                arr = default_value
+        else:
+            arr = fill_array(arr, count, default_value)
+        arr = UnboxedArrayWrap(arr)
+        return arr
 
 class BoxedArrMake(ArrayBase):
     def __init__(self, args):
@@ -126,4 +123,26 @@ class BoxedArrMake(ArrayBase):
         return 'BoxedArrMake(%s)' % self.args
 
     def eval(self, env):
-        return arr_make_eval(self, env, BoxedArray)
+        arr = []
+        args = self.args.eval()
+        count = args[0].eval(env)
+        if len(args) == 2:
+            default_value_is_array = isinstance(args[1], BoxedArray)
+            if default_value_is_array:
+                default_value = args[1].eval(env)
+            else:
+                default_value = args[1]
+        else:
+            default_value_is_array = False
+            default_value = IntAexp(0)
+        if default_value_is_array:
+            if len(default_value) == 0:
+                arr = fill_array(arr, count, BoxedArray(Enumeration([])))
+            elif len(default_value) != count:
+                raise RuntimeError('Length default array is not the same length as the specified.')
+            else:
+                arr = default_value
+        else:
+            arr = fill_array(arr, count, default_value)
+        arr = BoxedArrayWrap(arr)
+        return arr
