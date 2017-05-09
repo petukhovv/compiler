@@ -1,5 +1,45 @@
 from equality import *
 
+class UnboxedArrayWrap(list):
+    def __repr__(self):
+        return 'UnboxedArrayWrap'
+
+class BoxedArrayWrap(list):
+    def __repr__(self):
+        return 'BoxedArrayWrap'
+
+def fill_array(arr, count, default_value):
+    index = 0
+    while index < count:
+        arr.append(default_value)
+        index += 1
+    return arr
+
+def arr_make_eval(self, env, ast_class):
+    arr = []
+    args = self.args.eval()
+    count = args[0].eval(env)
+    if len(args) == 2:
+        default_value_is_array = isinstance(args[1], ast_class)
+        default_value = args[1].eval(env)
+    else:
+        default_value_is_array = False
+        default_value = 0
+    if default_value_is_array:
+        if len(default_value) == 0:
+            arr = fill_array(arr, count, 0)
+        elif len(default_value) != count:
+            raise RuntimeError('Length default array is not the same length as the specified.')
+        else:
+            arr = default_value
+    else:
+        arr = fill_array(arr, count, default_value)
+    if ast_class == BoxedArray:
+        arr = BoxedArrayWrap(arr)
+    else:
+        arr = UnboxedArrayWrap(arr)
+    return arr
+
 """
 Base class for array classes.
 """
@@ -41,6 +81,7 @@ class ArrayElement(ArrayBase):
         if index >= len(arr):
             raise RuntimeError('Array index out of range')
         element = arr[index]
+        # TODO: interpret [] operators independently (Arr[]...[]..., not Arr[][])
         if self.other_indexes:
             if type(element) is not list:
                 raise RuntimeError('Array element is not array')
@@ -48,7 +89,10 @@ class ArrayElement(ArrayBase):
                 if other_index >= len(element):
                     raise RuntimeError('Array index out of range')
                 element = element[other_index.eval(env)]
-        return element
+        if isinstance(arr, BoxedArrayWrap):
+            return element.eval(env)
+        else:
+            return element
 
 class ArrLen(ArrayBase):
     def __init__(self, args):
@@ -72,25 +116,7 @@ class UnboxedArrMake(ArrayBase):
         return 'UnboxedArrMake(%s)' % self.args
 
     def eval(self, env):
-        arr = []
-        index = 0
-        args = self.args.eval()
-        count = args[0].eval(env)
-        if len(args) == 2:
-            default_value_is_array = isinstance(args[1], UnboxedArray)
-            default_value = args[1].eval(env)
-        else:
-            default_value_is_array = False
-            default_value = 0
-        if default_value_is_array:
-            if len(default_value) != count:
-                raise RuntimeError('Length default array is not the same length as the specified.')
-            arr = default_value
-        else:
-            while index < count:
-                arr.append(default_value)
-                index += 1
-        return arr
+        return arr_make_eval(self, env, UnboxedArray)
 
 class BoxedArrMake(ArrayBase):
     def __init__(self, args):
@@ -100,22 +126,4 @@ class BoxedArrMake(ArrayBase):
         return 'BoxedArrMake(%s)' % self.args
 
     def eval(self, env):
-        arr = []
-        index = 0
-        args = self.args.eval()
-        count = args[0].eval(env)
-        if len(args) == 2:
-            default_value_is_array = isinstance(args[1], BoxedArray)
-            default_value = args[1].eval(env)
-        else:
-            default_value_is_array = False
-            default_value = 0
-        if default_value_is_array:
-            if len(default_value) != count:
-                raise RuntimeError('Length default array is not the same length as the specified.')
-            arr = default_value
-        else:
-            while index < count:
-                arr.append(default_value)
-                index += 1
-        return arr
+        return arr_make_eval(self, env, BoxedArray)

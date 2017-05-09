@@ -22,9 +22,15 @@ class AssignStatement(Statement):
     def eval(self, env):
         value = self.aexp.eval(env)
         if isinstance(self.variable, ArrayElement):
-            arr = self.variable
-            index = arr.index.eval(env)
-            env['v'][arr.array][index] = value
+            arr_descr = self.variable
+            index = arr_descr.index.eval(env)
+            arr = env['v'][arr_descr.array]
+            is_boxed_array = isinstance(arr, BoxedArrayWrap)
+            if is_boxed_array:
+                # TODO: arithmetic exp. (etc.) interpret on the fly, variables write as a pointer
+                arr[index] = self.aexp
+            else:
+                arr[index] = value
         else:
             name = self.variable.name
             env['v'][name] = value
