@@ -28,7 +28,7 @@ def get_predefined(name):
 Parsing function arguments statement (call point).
 """
 def args_call():
-    return enumeration(alternative_args_parser=(aexp() | bexp() | str_exp() | char_exp()))
+    return enumeration(alternative_args_parser=(aexp() | bexp() | str_exp() | char_exp() | arr_exp()))
 
 """
 Parsing function statement.

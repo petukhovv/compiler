@@ -46,6 +46,8 @@ token_expressions = [
     token(',', RESERVED),
     token('\[', RESERVED),
     token('\]', RESERVED),
+    token('\{', RESERVED),
+    token('\}', RESERVED),
 
     keyword('if'),
     keyword('then'),
