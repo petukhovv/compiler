@@ -1,9 +1,7 @@
-from equality import *
-
 """
 Base class for common AST-classes.
 """
-class CommonBase(Equality):
+class CommonBase:
     pass
 
 """

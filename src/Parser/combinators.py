@@ -94,7 +94,6 @@ class Alternate(Combinator):
         else:
             right_result = self.right(tokens, position)
             return right_result
-
 """
 'Opt' applies the parser, if it succeeds, returns the result;
 if not, returns the result with None-value.

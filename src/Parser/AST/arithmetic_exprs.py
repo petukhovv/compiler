@@ -1,9 +1,7 @@
-from equality import *
-
 """
 Base class for arithmetic expression classes.
 """
-class Aexp(Equality):
+class Aexp:
     pass
 
 """
@@ -27,6 +25,8 @@ eval - runtime function for Evaluator (return variable from environment by name)
 Example: x
 """
 class VarAexp(Aexp):
+    pointers = 0
+
     def __init__(self, name):
         self.name = name
 

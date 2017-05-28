@@ -1,11 +1,9 @@
 import sys
 
-from equality import *
-
 """
 Base class for statement classes.
 """
-class IO(Equality):
+class IO:
     pass
 
 """

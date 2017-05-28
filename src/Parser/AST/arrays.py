@@ -19,10 +19,12 @@ def fill_array(arr, count, default_value):
 """
 Base class for array classes.
 """
-class ArrayBase(Equality):
+class ArrayBase:
     pass
 
 class UnboxedArray(ArrayBase):
+    pointers = 0
+
     def __init__(self, elements):
         self.elements = elements
 
@@ -33,6 +35,8 @@ class UnboxedArray(ArrayBase):
         return self.elements.eval()
 
 class BoxedArray(ArrayBase):
+    pointers = 0
+
     def __init__(self, elements):
         self.elements = elements
 
@@ -43,6 +47,8 @@ class BoxedArray(ArrayBase):
         return self.elements.eval()
 
 class ArrayElement(ArrayBase):
+    pointers = 0
+
     def __init__(self, array, index, other_indexes=None):
         self.array = array
         self.index = index
@@ -146,3 +152,5 @@ class BoxedArrMake(ArrayBase):
             arr = fill_array(arr, count, default_value)
         arr = BoxedArrayWrap(arr)
         return arr
+
+pointer_supported_types = [UnboxedArray, BoxedArray, ArrayElement, VarAexp]

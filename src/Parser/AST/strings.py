@@ -1,9 +1,7 @@
-from equality import *
-
 """
 Base class for string classes.
 """
-class StringBase(Equality):
+class StringBase:
     pass
 
 class Char(StringBase):

@@ -1,9 +1,9 @@
-from equality import *
+
 
 """
 Base class for boolean expression classes.
 """
-class Bexp(Equality):
+class Bexp:
     pass
 
 """

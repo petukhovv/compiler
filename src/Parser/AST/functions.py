@@ -1,9 +1,9 @@
-from equality import *
+
 
 """
 Base class for statement classes.
 """
-class FunctionBase(Equality):
+class FunctionBase:
     pass
 
 """

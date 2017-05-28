@@ -1,9 +1,18 @@
 from src.Parser.AST.arrays import *
 
+from pprint import pprint
+
+def use_pointer(aexp):
+    pointer_use = False
+    for type in pointer_supported_types:
+        if isinstance(aexp, type):
+            pointer_use = True
+    return pointer_use
+
 """
 Base class for statement classes.
 """
-class Statement(Equality):
+class Statement:
     pass
 
 """
@@ -26,8 +35,8 @@ class AssignStatement(Statement):
             index = arr_descr.index.eval(env)
             arr = env['v'][arr_descr.array]
             is_boxed_array = isinstance(arr, BoxedArrayWrap)
-            if is_boxed_array:
-                # TODO: arithmetic exp. (etc.) interpret on the fly, variables write as a pointer
+            if is_boxed_array and use_pointer(self.aexp):
+                self.aexp.pointers += 1
                 arr[index] = self.aexp
             else:
                 arr[index] = value
