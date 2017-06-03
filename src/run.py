@@ -5,6 +5,7 @@ from os.path import isfile
 
 from Lexer.tokenizer import tokenize
 from Parser.run import parse
+from pprint import pprint
 
 help_commands = '-i - interpret, -s - compile in virtual machine code, -o - compile in executable file'
 
@@ -41,7 +42,8 @@ program = open(target_file).read()
 if mode == '-i':
     ast = parse_program(program)
     env = {
-        'v': {},  # variables environment
-        'f': {}  # functions environment
+        'v': {},    # variables environment
+        'f': {},    # functions environment
+        'p': None   # parent environment
     }
     ast.eval(env)

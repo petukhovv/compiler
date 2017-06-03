@@ -33,16 +33,17 @@ class AssignStatement(Statement):
         if isinstance(self.variable, ArrayElement):
             arr_descr = self.variable
             index = arr_descr.index.eval(env)
-            arr = env['v'][arr_descr.array]
-            is_boxed_array = isinstance(arr, BoxedArrayWrap)
-            if is_boxed_array and use_pointer(self.aexp):
-                self.aexp.pointers += 1
-                arr[index] = self.aexp
-            else:
+            arr = Environment(env).get(arr_descr.array)
+            value_is_array = isinstance(self.aexp, UnboxedArrayWrap) or isinstance(self.aexp, BoxedArrayWrap)
+            array_is_unboxed = isinstance(arr, UnboxedArrayWrap)
+            if value_is_array or array_is_unboxed:
                 arr[index] = value
+            else:
+                arr[index] = Pointer(env, self.aexp)
+            Environment(env).set(arr_descr.array, arr)
         else:
             name = self.variable.name
-            env['v'][name] = value
+            Environment(env).set(name, value)
 
 """
 Compound statement class for AST.
@@ -121,7 +122,8 @@ class ForStatement(Statement):
     def eval(self, env):
         self.stmt1.eval(env)
         while self.stmt2.eval(env):
-            self.body.eval(env)
+            iteration_env = Environment(env).create()
+            self.body.eval(iteration_env)
             self.stmt3.eval(env)
         return
 

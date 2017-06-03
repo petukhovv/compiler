@@ -1,3 +1,5 @@
+from src.Parser.helpers import *
+
 """
 Base class for string classes.
 """
@@ -108,7 +110,7 @@ class StrSet(StringBase):
         new_char = args_node[2].eval(env)
         new_str = list(str)
         new_str[char_index] = chr(new_char)
-        env['v'][var_name] = "".join(new_str)
+        Environment(env).set(var_name, "".join(new_str))
 
 class StrCat(StringBase):
     def __init__(self, args):

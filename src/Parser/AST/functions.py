@@ -1,4 +1,4 @@
-
+from src.Parser.helpers import *
 
 """
 Base class for statement classes.
@@ -54,11 +54,7 @@ class FunctionCallStatement(FunctionBase):
 
     def eval(self, env):
         fun = env['f'][self.name]
-        func_env = {
-            'v': {},
-            'f': env['f'],
-            'r': None
-        }
+        func_env = Environment(env).create(env['f'])
         args = fun['args'].eval()
         call_args = self.args.eval()
         args_counter = 0

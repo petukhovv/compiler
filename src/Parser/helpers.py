@@ -1,0 +1,50 @@
+from copy import deepcopy
+from pprint import pprint
+
+"""
+Integer arithmetic expression class for AST.
+eval - runtime function for Evaluator (just return i).
+Example: 54
+"""
+class Environment:
+    def __init__(self, env):
+        self.env = env
+
+    def set(self, variable, value):
+        env = self.env
+        target_env = None
+        while not target_env:
+            if variable in env['v']:
+                target_env = env
+            elif env['p']:
+                env = env['p']
+            else:
+                break
+        if not target_env:
+            target_env = self.env
+        target_env['v'][variable] = value
+
+        return None
+
+    def get(self, variable):
+        env = self.env
+        while env:
+            if variable in env['v']:
+                return deepcopy(env['v'][variable])
+            elif env['p']:
+                env = env['p']
+            else:
+                env = None
+
+        return None
+
+    def create(self, func_env=None):
+        env = {
+            'v': {},
+            'r': None,
+            'p': self.env
+        }
+        if func_env:
+            env['f'] = func_env
+
+        return env

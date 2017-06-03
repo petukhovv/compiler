@@ -1,3 +1,5 @@
+from src.Parser.helpers import *
+
 """
 Base class for arithmetic expression classes.
 """
@@ -34,10 +36,7 @@ class VarAexp(Aexp):
         return 'VarAexp(%s)' % self.name
 
     def eval(self, env):
-        if self.name in env['v']:
-            return env['v'][self.name]
-        else:
-            return 0
+        return Environment(env).get(self.name)
 
 """
 Binary operation arithmetic expression class for AST.

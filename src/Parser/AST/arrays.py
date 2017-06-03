@@ -1,6 +1,8 @@
 from src.Parser.AST.common import *
 from src.Parser.AST.arithmetic_exprs import *
 
+from pprint import pprint
+
 class UnboxedArrayWrap(list):
     def __repr__(self):
         return 'UnboxedArrayWrap'
@@ -58,23 +60,27 @@ class ArrayElement(ArrayBase):
         return 'ArrayElement(%s, %s)' % (self.array, self.index)
 
     def eval(self, env):
-        arr = env['v'][self.array]
+        arr = Environment(env).get(self.array)
         index = self.index.eval(env)
         if index >= len(arr):
             raise RuntimeError('Array index out of range')
         element = arr[index]
-        if isinstance(arr, BoxedArrayWrap):
-            element = element.eval(env)
         # TODO: interpret [] operators independently (Arr[]...[]..., not Arr[][])
         if self.other_indexes:
+            if isinstance(element, Pointer):
+                element = element.eval()
             if not isinstance(element, list):
                 raise RuntimeError('Array element is not array')
             for other_index in self.other_indexes:
                 if other_index >= len(element):
                     raise RuntimeError('Array index out of range')
+                if isinstance(element, Pointer):
+                    element = element.eval()
+                if not isinstance(element, list):
+                    raise RuntimeError('Array element is not array')
                 element = element[other_index.eval(env)]
-        if isinstance(element, BoxedArrayWrap):
-            return element.eval(env)
+        if isinstance(element, Pointer):
+            return element.eval()
         else:
             return element
 
