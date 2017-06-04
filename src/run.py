@@ -1,11 +1,10 @@
 import sys
-sys.path.append('src/..')
+sys.path.append(len(sys.argv) == 4 and sys.argv[3] or 'src/..')
 
 from os.path import isfile
 
 from Lexer.tokenizer import tokenize
 from Parser.run import parse
-from pprint import pprint
 
 help_commands = '-i - interpret, -s - compile in virtual machine code, -o - compile in executable file'
 

@@ -9,7 +9,7 @@ Precedence levels for binary operations.
 """
 bexp_precedence_levels = [
     ['&&'],
-    ['||'],
+    ['||', '!!'],
 ]
 
 """
@@ -24,13 +24,13 @@ Parsing boolean expression (arithmetic expression + compare operator + arithmeti
 """
 def bexp_relop():
     relops = ['<', '<=', '>', '>=', '==', '!=']
-    return (aexp() | str_exp() | char_exp()) + \
+    return (bexp_group() | aexp() | str_exp() | char_exp()) + \
         any_operator_in_list(relops) + \
-        (aexp() | str_exp() | char_exp()) ^ process_relop
+        (bexp_group() | aexp() | str_exp() | char_exp()) ^ process_relop
 
 """
 Parsing single value expression (arithmetic expression).
-Convert single value to object of AST-class 'RelopBexp' with '==' operator and '0' right value.
+Convert single value to object of AST-class 'RelopBexp' with '!=' operator and '0' right value.
 """
 def bexp_boolop():
     return aexp() ^ (lambda parsed: RelopBexp('!=', parsed, IntAexp(0)))
@@ -66,7 +66,7 @@ Convert operator to fabric of AST-classes 'AndBexp' / 'OrBexp'.
 def process_logic(op):
     if op == '&&':
         return lambda l, r: AndBexp(l, r)
-    elif op == '||':
+    elif op == '||' or op == '!!':
         return lambda l, r: OrBexp(l, r)
     else:
         raise RuntimeError('unknown logic operator: ' + op)

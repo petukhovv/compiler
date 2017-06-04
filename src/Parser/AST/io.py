@@ -16,6 +16,7 @@ class ReadStatement(IO):
 
     def eval(self, env):
         value = sys.stdin.readline()
+        sys.stdout.write('> ')
         try:
             return int(value)
         except ValueError:

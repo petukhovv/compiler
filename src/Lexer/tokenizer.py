@@ -42,6 +42,7 @@ token_expressions = [
     token('==', RESERVED),
     token('\&\&', RESERVED),
     token('\|\|', RESERVED),
+    token('!!', RESERVED),
     token('!', RESERVED),
     token(',', RESERVED),
     token('\[', RESERVED),
