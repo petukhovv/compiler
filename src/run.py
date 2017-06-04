@@ -3,6 +3,7 @@ sys.path.append(len(sys.argv) == 4 and sys.argv[3] or 'src/..')
 
 from os.path import isfile
 
+from Parser.helpers import *
 from Lexer.tokenizer import tokenize
 from Parser.run import parse
 
@@ -40,9 +41,4 @@ program = open(target_file).read()
 
 if mode == '-i':
     ast = parse_program(program)
-    env = {
-        'v': {},    # variables environment
-        'f': {},    # functions environment
-        'p': None   # parent environment
-    }
-    ast.eval(env)
+    ast.eval(Environment().create())

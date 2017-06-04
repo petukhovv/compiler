@@ -1,5 +1,4 @@
 from copy import deepcopy
-from pprint import pprint
 
 """
 Integer arithmetic expression class for AST.
@@ -7,7 +6,7 @@ eval - runtime function for Evaluator (just return i).
 Example: 54
 """
 class Environment:
-    def __init__(self, env):
+    def __init__(self, env=None):
         self.env = env
 
     def set(self, variable, value):
@@ -41,6 +40,7 @@ class Environment:
     def create(self, func_env=None):
         env = {
             'v': {},
+            'f': {},
             'r': None,
             'p': self.env
         }

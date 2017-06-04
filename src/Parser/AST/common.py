@@ -1,5 +1,3 @@
-from pprint import pprint
-
 """
 Base class for common AST-classes.
 """
