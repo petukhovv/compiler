@@ -1,8 +1,6 @@
 from src.Parser.AST.common import *
 from src.Parser.AST.arithmetic_exprs import *
 
-from pprint import pprint
-
 class UnboxedArrayWrap(list):
     def __repr__(self):
         return 'UnboxedArrayWrap'
@@ -117,7 +115,7 @@ class UnboxedArrMake(ArrayBase):
             default_value = 0
         if default_value_is_array:
             if len(default_value) == 0:
-                arr = fill_array(arr, count, [])
+                arr = fill_array(arr, count, 0)
             elif len(default_value) != count:
                 raise RuntimeError('Length default array is not the same length as the specified.')
             else:

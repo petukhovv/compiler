@@ -1,14 +1,5 @@
 from src.Parser.AST.arrays import *
 
-from pprint import pprint
-
-def use_pointer(aexp):
-    pointer_use = False
-    for type in pointer_supported_types:
-        if isinstance(aexp, type):
-            pointer_use = True
-    return pointer_use
-
 """
 Base class for statement classes.
 """
