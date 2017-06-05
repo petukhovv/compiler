@@ -1,7 +1,6 @@
 from pprint import pprint
 
-from src.VM.Commands.push import *
-from src.VM.Commands.pop import *
+from src.VM.commands import *
 
 COMMAND_SEPARATOR = '\n'
 ARGS_SEPARATOR = ' '
