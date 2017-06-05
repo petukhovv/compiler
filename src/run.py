@@ -3,6 +3,7 @@ sys.path.append(len(sys.argv) == 4 and sys.argv[3] or 'src/..')
 
 from os.path import isfile
 
+from VM.parser import parse as vm_code_parse
 from Parser.helpers import *
 from Lexer.tokenizer import tokenize
 from Parser.run import parse
@@ -42,3 +43,6 @@ program = open(target_file).read()
 if mode == '-i':
     ast = parse_program(program)
     ast.eval(Environment().create())
+
+if mode == '-s':
+    commands = vm_code_parse(program)
