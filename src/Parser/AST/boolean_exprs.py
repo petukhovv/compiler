@@ -1,24 +1,13 @@
-
-
-"""
-Base class for boolean expression classes.
-"""
-class Bexp:
-    pass
-
 """
 Relation operation boolean expression class for AST.
 eval - runtime function for Evaluator (return result of applying the boolean operation to left and right values).
 Example: x > 56
 """
-class RelopBexp(Bexp):
+class RelopBexp:
     def __init__(self, op, left, right):
         self.op = op
         self.left = left
         self.right = right
-
-    def __repr__(self):
-        return 'RelopBexp(%s, %s, %s)' % (self.op, self.left, self.right)
 
     def eval(self, env):
         left_value = self.left.eval(env)
@@ -44,13 +33,10 @@ class RelopBexp(Bexp):
 eval - runtime function for Evaluator (return result of applying the 'and' operation to left and right values).
 Example: x > 56 and x < 61
 """
-class AndBexp(Bexp):
+class AndBexp:
     def __init__(self, left, right):
         self.left = left
         self.right = right
-
-    def __repr__(self):
-        return 'AndBexp(%s, %s)' % (self.left, self.right)
 
     def eval(self, env):
         left_value = self.left.eval(env)
@@ -62,13 +48,10 @@ class AndBexp(Bexp):
 eval - runtime function for Evaluator (return result of applying the 'or' operation to left and right values).
 Example: x < 11 or x > 100
 """
-class OrBexp(Bexp):
+class OrBexp:
     def __init__(self, left, right):
         self.left = left
         self.right = right
-
-    def __repr__(self):
-        return 'OrBexp(%s, %s)' % (self.left, self.right)
 
     def eval(self, env):
         left_value = self.left.eval(env)
@@ -80,12 +63,9 @@ class OrBexp(Bexp):
 eval - runtime function for Evaluator (return result of applying the 'not' operation to value).
 Example: x not 11
 """
-class NotBexp(Bexp):
+class NotBexp:
     def __init__(self, exp):
         self.exp = exp
-
-    def __repr__(self):
-        return 'NotBexp(%s)' % self.exp
 
     def eval(self, env):
         value = self.exp.eval(env)

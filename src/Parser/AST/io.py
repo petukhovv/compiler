@@ -1,16 +1,10 @@
 import sys
 
 """
-Base class for statement classes.
-"""
-class IO:
-    pass
-
-"""
 'Read' statement class for AST.
 eval - runtime function for Evaluator (get value from stdin).
 """
-class ReadStatement(IO):
+class ReadStatement:
     def __repr__(self):
         return 'ReadStatement'
 
@@ -26,12 +20,9 @@ class ReadStatement(IO):
 'Write' statement class for AST.
 eval - runtime function for Evaluator (write value to stdout).
 """
-class WriteStatement(IO):
+class WriteStatement:
     def __init__(self, aexp):
         self.aexp = aexp
-
-    def __repr__(self):
-        return 'WriteStatement(%s)' % self.aexp
 
     def eval(self, env):
         value = self.aexp.eval(env)

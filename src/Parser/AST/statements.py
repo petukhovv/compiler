@@ -1,23 +1,14 @@
 from src.Parser.AST.arrays import *
 
 """
-Base class for statement classes.
-"""
-class Statement:
-    pass
-
-"""
 Assign statement class for AST.
 eval - runtime function for Evaluator (return variable by name from environment).
 Example: x := 56
 """
-class AssignStatement(Statement):
+class AssignStatement:
     def __init__(self, variable, aexp):
         self.variable = variable
         self.aexp = aexp
-
-    def __repr__(self):
-        return 'AssignStatement(%s, %s)' % (self.variable, self.aexp)
 
     def eval(self, env):
         value = self.aexp.eval(env)
@@ -40,13 +31,10 @@ class AssignStatement(Statement):
 Compound statement class for AST.
 eval - runtime function for Evaluator (eval first and second statement operators).
 """
-class CompoundStatement(Statement):
+class CompoundStatement:
     def __init__(self, first, second):
         self.first = first
         self.second = second
-
-    def __repr__(self):
-        return 'CompoundStatement(%s, %s)' % (self.first, self.second)
 
     def eval(self, env):
         self.first.eval(env)
@@ -56,15 +44,12 @@ class CompoundStatement(Statement):
 'If' statement class for AST.
 eval - runtime function for Evaluator (true of false statement depending on condition).
 """
-class IfStatement(Statement):
+class IfStatement:
     def __init__(self, condition, true_stmt, alternatives_stmt=None, false_stmt=None):
         self.condition = condition
         self.true_stmt = true_stmt
         self.alternatives_stmt = alternatives_stmt
         self.false_stmt = false_stmt
-
-    def __repr__(self):
-        return 'IfStatement(%s, %s, %s)' % (self.condition, self.true_stmt, self.false_stmt)
 
     def eval(self, env):
         condition_value = self.condition.eval(env)
@@ -84,13 +69,10 @@ class IfStatement(Statement):
 'While' statement class for AST.
 eval - runtime function for Evaluator (body eval while condition).
 """
-class WhileStatement(Statement):
+class WhileStatement:
     def __init__(self, condition, body):
         self.condition = condition
         self.body = body
-
-    def __repr__(self):
-        return 'WhileStatement(%s, %s)' % (self.condition, self.body)
 
     def eval(self, env):
         while self.condition.eval(env):
@@ -100,15 +82,12 @@ class WhileStatement(Statement):
 'For' statement class for AST.
 eval - runtime function for Evaluator ('for' loop).
 """
-class ForStatement(Statement):
+class ForStatement:
     def __init__(self, stmt1, stmt2, stmt3, body):
         self.stmt1 = stmt1
         self.stmt2 = stmt2
         self.stmt3 = stmt3
         self.body = body
-
-    def __repr__(self):
-        return 'ForStatement(%s, %s, %s, %s)' % (self.stmt1, self.stmt2, self.stmt3, self.body)
 
     def eval(self, env):
         self.stmt1.eval(env)
@@ -122,13 +101,10 @@ class ForStatement(Statement):
 'Repeat' statement class for AST.
 eval - runtime function for Evaluator (body eval while condition).
 """
-class RepeatStatement(Statement):
+class RepeatStatement:
     def __init__(self, condition, body):
         self.condition = condition
         self.body = body
-
-    def __repr__(self):
-        return 'RepeatStatement(%s, %s)' % (self.condition, self.body)
 
     def eval(self, env):
         while True:
@@ -141,9 +117,7 @@ class RepeatStatement(Statement):
 'Skip' statement class for AST.
 eval - runtime function for Evaluator (empty function).
 """
-class SkipStatement(Statement):
-    def __repr__(self):
-        return 'SkipStatement(%s)'
+class SkipStatement:
 
     def eval(self, env):
         return

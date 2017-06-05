@@ -1,13 +1,9 @@
 from src.Parser.AST.common import *
 from src.Parser.AST.arithmetic_exprs import *
 
-class UnboxedArrayWrap(list):
-    def __repr__(self):
-        return 'UnboxedArrayWrap'
+class UnboxedArrayWrap(list): pass
 
-class BoxedArrayWrap(list):
-    def __repr__(self):
-        return 'BoxedArrayWrap'
+class BoxedArrayWrap(list): pass
 
 def fill_array(arr, count, default_value):
     index = 0
@@ -16,46 +12,31 @@ def fill_array(arr, count, default_value):
         index += 1
     return arr
 
-"""
-Base class for array classes.
-"""
-class ArrayBase:
-    pass
-
-class UnboxedArray(ArrayBase):
+class UnboxedArray:
     pointers = 0
 
     def __init__(self, elements):
         self.elements = elements
 
-    def __repr__(self):
-        return 'UnboxedArray(%s)' % self.elements
-
     def eval(self, env):
         return self.elements.eval()
 
-class BoxedArray(ArrayBase):
+class BoxedArray:
     pointers = 0
 
     def __init__(self, elements):
         self.elements = elements
 
-    def __repr__(self):
-        return 'BoxedArray(%s)' % self.elements
-
     def eval(self, env):
         return self.elements.eval()
 
-class ArrayElement(ArrayBase):
+class ArrayElement:
     pointers = 0
 
     def __init__(self, array, index, other_indexes=None):
         self.array = array
         self.index = index
         self.other_indexes = other_indexes
-
-    def __repr__(self):
-        return 'ArrayElement(%s, %s)' % (self.array, self.index)
 
     def eval(self, env):
         arr = Environment(env).get(self.array)
@@ -82,12 +63,9 @@ class ArrayElement(ArrayBase):
         else:
             return element
 
-class ArrLen(ArrayBase):
+class ArrLen:
     def __init__(self, args):
         self.args = args
-
-    def __repr__(self):
-        return 'ArrLen(%s)' % self.args
 
     def eval(self, env):
         args_node = self.args.eval()
@@ -96,12 +74,9 @@ class ArrLen(ArrayBase):
         arr = args_node[0].eval(env)
         return len(arr)
 
-class UnboxedArrMake(ArrayBase):
+class UnboxedArrMake:
     def __init__(self, args):
         self.args = args
-
-    def __repr__(self):
-        return 'UnboxedArrMake(%s)' % self.args
 
     def eval(self, env):
         arr = []
@@ -125,12 +100,9 @@ class UnboxedArrMake(ArrayBase):
         arr = UnboxedArrayWrap(arr)
         return arr
 
-class BoxedArrMake(ArrayBase):
+class BoxedArrMake:
     def __init__(self, args):
         self.args = args
-
-    def __repr__(self):
-        return 'BoxedArrMake(%s)' % self.args
 
     def eval(self, env):
         arr = []

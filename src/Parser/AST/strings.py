@@ -1,37 +1,22 @@
 from src.Parser.helpers import *
 
-"""
-Base class for string classes.
-"""
-class StringBase:
-    pass
-
-class Char(StringBase):
+class Char:
     def __init__(self, character):
         self.character = character
-
-    def __repr__(self):
-        return 'Char(%s)' % self.character
 
     def eval(self, env):
         return ord(self.character)
 
-class String(StringBase):
+class String:
     def __init__(self, characters):
         self.characters = characters
-
-    def __repr__(self):
-        return 'String(%s)' % self.characters
 
     def eval(self, env):
         return self.characters
 
-class StrLen(StringBase):
+class StrLen:
     def __init__(self, args):
         self.args = args
-
-    def __repr__(self):
-        return 'StrLen(%s)' % self.args
 
     def eval(self, env):
         args_node = self.args.eval()
@@ -40,12 +25,9 @@ class StrLen(StringBase):
         str = args_node[0].eval(env)
         return len(str)
 
-class StrGet(StringBase):
+class StrGet:
     def __init__(self, args):
         self.args = args
-
-    def __repr__(self):
-        return 'StrGet(%s)' % self.args
 
     def eval(self, env):
         args_node = self.args.eval()
@@ -57,12 +39,9 @@ class StrGet(StringBase):
             raise RuntimeError('StrGet: incorrect char index')
         return ord(str[char_index])
 
-class StrSub(StringBase):
+class StrSub:
     def __init__(self, args):
         self.args = args
-
-    def __repr__(self):
-        return 'StrSub(%s)' % self.args
 
     def eval(self, env):
         args_node = self.args.eval()
@@ -77,12 +56,9 @@ class StrSub(StringBase):
             raise RuntimeError('strsub: incorrect length substring')
         return str[char_index_start:char_index_start + substring_length]
 
-class StrDup(StringBase):
+class StrDup:
     def __init__(self, args):
         self.args = args
-
-    def __repr__(self):
-        return 'StrDup(%s)' % self.args
 
     def eval(self, env):
         args_node = self.args.eval()
@@ -91,12 +67,9 @@ class StrDup(StringBase):
         str = args_node[0].eval(env)
         return str
 
-class StrSet(StringBase):
+class StrSet:
     def __init__(self, args):
         self.args = args
-
-    def __repr__(self):
-        return 'StrSet(%s)' % self.args
 
     def eval(self, env):
         args_node = self.args.eval()
@@ -112,12 +85,9 @@ class StrSet(StringBase):
         new_str[char_index] = chr(new_char)
         Environment(env).set(var_name, "".join(new_str))
 
-class StrCat(StringBase):
+class StrCat:
     def __init__(self, args):
         self.args = args
-
-    def __repr__(self):
-        return 'StrCat(%s)' % self.args
 
     def eval(self, env):
         args_node = self.args.eval()
@@ -127,12 +97,9 @@ class StrCat(StringBase):
         str2 = args_node[1].eval(env)
         return str1 + str2
 
-class StrCmp(StringBase):
+class StrCmp:
     def __init__(self, args):
         self.args = args
-
-    def __repr__(self):
-        return 'StrCmp(%s)' % self.args
 
     def eval(self, env):
         args_node = self.args.eval()
@@ -154,12 +121,9 @@ class StrCmp(StringBase):
         else:
             return 1  # str1 is a substring of str2 (str2 is greater than str1)
 
-class StrMake(StringBase):
+class StrMake:
     def __init__(self, args):
         self.args = args
-
-    def __repr__(self):
-        return 'StrMake(%s)' % self.args
 
     def eval(self, env):
         args_node = self.args.eval()

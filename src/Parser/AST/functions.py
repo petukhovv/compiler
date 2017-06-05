@@ -1,23 +1,14 @@
 from src.Parser.helpers import *
 
 """
-Base class for statement classes.
-"""
-class FunctionBase:
-    pass
-
-"""
 'Function' statement class for AST.
 eval - runtime function for Evaluator (empty function).
 """
-class Function(FunctionBase):
+class Function:
     def __init__(self, name, args, body):
         self.name = name
         self.args = args
         self.body = body
-
-    def __repr__(self):
-        return 'Function(%s, %s, %s)' % (self.name, self.args, self.body)
 
     def eval(self, env):
         env['f'][self.name] = {
@@ -29,12 +20,9 @@ class Function(FunctionBase):
 'Return' statement class for AST.
 eval - runtime function for Evaluator (empty function).
 """
-class ReturnStatement(FunctionBase):
+class ReturnStatement:
     def __init__(self, expr):
         self.expr = expr
-
-    def __repr__(self):
-        return 'ReturnStatement(%s)' % self.expr
 
     def eval(self, env):
         env['r'] = self.expr.eval(env)
@@ -44,13 +32,10 @@ class ReturnStatement(FunctionBase):
 'Function call' statement class for AST.
 eval - runtime function for Evaluator (empty function).
 """
-class FunctionCallStatement(FunctionBase):
+class FunctionCallStatement:
     def __init__(self, name, args):
         self.name = name
         self.args = args
-
-    def __repr__(self):
-        return 'FunctionCallStatement(%s, %s)' % (self.name, self.args)
 
     def eval(self, env):
         fun = env['f'][self.name]
