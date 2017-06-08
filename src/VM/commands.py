@@ -219,15 +219,10 @@ class Call:
             var_name = stack.pop()
             vars.append(Environment.search_variable(data, var_name))
             args_count -= 1
-
         label = data['labels'][self.name]
-
         data['call_stack'].append(commands['current'])
-
         commands['current'] = label['number']
-
         Environment.create(data)
-
         var_counter = 0
         for var_value in vars:
             Environment.store_variable(data, label['data'][var_counter], var_value)

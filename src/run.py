@@ -1,12 +1,15 @@
 import sys
 sys.path.append(len(sys.argv) == 4 and sys.argv[3] or 'src/..')
 
+from pprint import pprint
+
 from os.path import isfile
 
 from Lexer.tokenizer import tokenize
 from Parser.run import parse
 from Interpreter.Helpers.run import interpret
-from VM.parser import parse as vm_code_parse
+from VM.parser import parse as vm_parse
+from VM.run import interpret as vm_interpret
 
 help_commands = '-i - interpret, -s - compile in virtual machine code, -o - compile in executable file'
 
@@ -45,4 +48,6 @@ if mode == '-i':
     interpret(ast)
 
 if mode == '-s':
-    commands = vm_code_parse(program)
+    commands = vm_parse(program)
+    vm_interpret(commands)
+    pprint(commands)

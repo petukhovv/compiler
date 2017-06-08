@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from pprint import pprint
+
 """ Память данных виртуальной машины """
 data = {
     'variables': {},
@@ -16,5 +18,10 @@ def interpret(commands_list):
         'list': commands_list,
         'current': 0
     }
-    commands.eval(commands, data, stack)
-    pass
+    while commands['current'] < len(commands['list']):
+        commands['list'][commands['current']].eval(commands, data, stack)
+        pprint(commands['current'])
+        commands['current'] += 1
+
+    pprint(stack)
+    pprint(data)
