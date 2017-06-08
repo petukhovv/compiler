@@ -7,7 +7,26 @@ ARGS_SEPARATOR = ' '
 
 command_class_relation_map = {
     'PUSH': Push,
-    'POP': Pop
+    'POP': Pop,
+    'NOP': Nop,
+    'STOP': Stop,
+    'LOAD': Load,
+    'STORE': Store,
+    'ADD': Add,
+    'MUL': Mul,
+    'SUB': Sub,
+    'DIV': Div,
+    'INVERT': Invert,
+    'COMPARE': Compare,
+    'LABEL': Label,
+    'JUMP': Jump,
+    'JZ': Jz,
+    'JNZ': Jnz,
+    'READ': Read,
+    'WRITE': Write,
+    'ENTER': Enter,
+    'CALL': Call,
+    'RETURN': Return
 }
 
 def parse(program):
