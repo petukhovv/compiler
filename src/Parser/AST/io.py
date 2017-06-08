@@ -1,4 +1,4 @@
-import sys
+from src.Interpreter import io as interpreter
 
 """
 'Read' statement class for AST.
@@ -9,12 +9,7 @@ class ReadStatement:
         return 'ReadStatement'
 
     def eval(self, env):
-        value = sys.stdin.readline()
-        sys.stdout.write('> ')
-        try:
-            return int(value)
-        except ValueError:
-            raise RuntimeError(value + ' is not integer')
+        return interpreter.read_statement(env)
 
 """
 'Write' statement class for AST.
@@ -25,7 +20,4 @@ class WriteStatement:
         self.aexp = aexp
 
     def eval(self, env):
-        value = self.aexp.eval(env)
-        if type(value) is bool:
-            value = int(value)
-        sys.stdout.write(str(value) + '\n')
+        return interpreter.write_statement(env, self.aexp)

@@ -1,4 +1,6 @@
-from src.Parser.helpers import *
+from src.Interpreter.Helpers.environment import *
+
+from src.Interpreter import functions as interpreter
 
 """
 'Function' statement class for AST.
@@ -11,10 +13,7 @@ class Function:
         self.body = body
 
     def eval(self, env):
-        env['f'][self.name] = {
-            'args': self.args,
-            'body': self.body
-        }
+        return interpreter.function(env, self.name, self.args, self.body)
 
 """
 'Return' statement class for AST.
@@ -25,8 +24,7 @@ class ReturnStatement:
         self.expr = expr
 
     def eval(self, env):
-        env['r'] = self.expr.eval(env)
-        return
+        return interpreter.return_statement(env, self.expr)
 
 """
 'Function call' statement class for AST.
@@ -41,10 +39,10 @@ class FunctionCallStatement:
         fun = env['f'][self.name]
         func_env = Environment(env).create(env['f'])
         args = fun['args'].eval()
-        call_args = self.args.eval()
+        call_args_evaluated = self.args.eval()
         args_counter = 0
         for arg in args:
-            func_env['v'][arg] = call_args[args_counter].eval(env)
+            func_env['v'][arg] = call_args_evaluated[args_counter].eval(env)
             args_counter += 1
         fun['body'].eval(func_env)
         return func_env['r']

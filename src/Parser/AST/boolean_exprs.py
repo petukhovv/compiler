@@ -1,3 +1,5 @@
+from src.Interpreter import boolean_exprs as interpreter
+
 """
 Relation operation boolean expression class for AST.
 eval - runtime function for Evaluator (return result of applying the boolean operation to left and right values).
@@ -10,23 +12,7 @@ class RelopBexp:
         self.right = right
 
     def eval(self, env):
-        left_value = self.left.eval(env)
-        right_value = self.right.eval(env)
-        if self.op == '<':
-            value = left_value < right_value
-        elif self.op == '<=':
-            value = left_value <= right_value
-        elif self.op == '>':
-            value = left_value > right_value
-        elif self.op == '>=':
-            value = left_value >= right_value
-        elif self.op == '==':
-            value = left_value == right_value
-        elif self.op == '!=':
-            value = left_value != right_value
-        else:
-            raise RuntimeError('unknown operator: ' + self.op)
-        return value
+        return interpreter.relop_bexp(env, self.op, self.left, self.right)
 
 """
 'And' operation boolean expression class for AST.
@@ -39,9 +25,7 @@ class AndBexp:
         self.right = right
 
     def eval(self, env):
-        left_value = self.left.eval(env)
-        right_value = self.right.eval(env)
-        return left_value and right_value
+        return interpreter.and_bexp(env, self.left, self.right)
 
 """
 'Or' operation boolean expression class for AST.
@@ -54,9 +38,7 @@ class OrBexp:
         self.right = right
 
     def eval(self, env):
-        left_value = self.left.eval(env)
-        right_value = self.right.eval(env)
-        return left_value or right_value
+        return interpreter.or_bexp(env, self.left, self.right)
 
 """
 'Not' operation boolean expression class for AST.
@@ -68,5 +50,4 @@ class NotBexp:
         self.exp = exp
 
     def eval(self, env):
-        value = self.exp.eval(env)
-        return not value
+        return interpreter.or_bexp(env, self.exp)

@@ -3,10 +3,10 @@ sys.path.append(len(sys.argv) == 4 and sys.argv[3] or 'src/..')
 
 from os.path import isfile
 
-from VM.parser import parse as vm_code_parse
-from Parser.helpers import *
 from Lexer.tokenizer import tokenize
 from Parser.run import parse
+from Interpreter.Helpers.run import interpret
+from VM.parser import parse as vm_code_parse
 
 help_commands = '-i - interpret, -s - compile in virtual machine code, -o - compile in executable file'
 
@@ -42,7 +42,7 @@ program = open(target_file).read()
 
 if mode == '-i':
     ast = parse_program(program)
-    ast.eval(Environment().create())
+    interpret(ast)
 
 if mode == '-s':
     commands = vm_code_parse(program)

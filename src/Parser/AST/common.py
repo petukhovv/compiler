@@ -1,10 +1,12 @@
+from src.Interpreter import common as interpreter
+
 class Pointer:
     def __init__(self, env, element):
         self.env = env
         self.element = element
 
     def eval(self):
-        return self.element.eval(self.env)
+        return interpreter.pointer(self.env, self.element)
 
 """
 'Enumeration' statement class for AST.
@@ -15,4 +17,4 @@ class Enumeration:
         self.elements = elements
 
     def eval(self):
-        return self.elements
+        return interpreter.enumeration(self.elements)

@@ -1,4 +1,4 @@
-from src.Parser.helpers import *
+from src.Interpreter import arithmetic_exprs as interpreter
 
 """
 Integer arithmetic expression class for AST.
@@ -10,7 +10,7 @@ class IntAexp:
         self.i = i
 
     def eval(self, env):
-        return self.i
+        return interpreter.int_aexp(env, self.i)
 
 """
 Variable arithmetic expression class for AST.
@@ -24,7 +24,7 @@ class VarAexp:
         self.name = name
 
     def eval(self, env):
-        return Environment(env).get(self.name)
+        return interpreter.var_aexp(env, self.name)
 
 """
 Binary operation arithmetic expression class for AST.
@@ -38,18 +38,4 @@ class BinopAexp:
         self.right = right
 
     def eval(self, env):
-        left_value = self.left.eval(env)
-        right_value = self.right.eval(env)
-        if self.op == '+':
-            value = left_value + right_value
-        elif self.op == '-':
-            value = left_value - right_value
-        elif self.op == '*':
-            value = left_value * right_value
-        elif self.op == '/':
-            value = left_value / right_value
-        elif self.op == '%':
-            value = left_value % right_value
-        else:
-            raise RuntimeError('unknown operator: ' + self.op)
-        return value
+        return interpreter.binop_aexp(env, self.op, self.left, self.right)
