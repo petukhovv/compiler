@@ -9,7 +9,6 @@ command_class_relation_map = {
     'PUSH': Push,
     'POP': Pop,
     'NOP': Nop,
-    'STOP': Stop,
     'LOAD': Load,
     'STORE': Store,
     'ADD': Add,
@@ -34,6 +33,9 @@ def parse(program):
     command_classes = []
     for command in commands:
         command = command.split(ARGS_SEPARATOR)
-        command_classes.append(command_class_relation_map[command[0]](*command[1:]))
+        args = []
+        for arg in command[1:]:
+            args.append(int(arg))
+        command_classes.append(command_class_relation_map[command[0]](*args))
 
     return command_classes

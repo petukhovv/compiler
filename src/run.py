@@ -50,4 +50,3 @@ if mode == '-i':
 if mode == '-s':
     commands = vm_parse(program)
     vm_interpret(commands)
-    pprint(commands)

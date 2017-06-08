@@ -3,6 +3,7 @@
 import sys
 
 from helpers import Environment
+from pprint import pprint
 
 """
 Перечисление команд стековой машины.
@@ -15,24 +16,19 @@ class Push:
         self.value = value
 
     def eval(self, commands, data, stack):
-        stack.append(self.value)
+        stack.append(int(self.value))
 
 """ Помещение значения в стек. """
 class Pop:
     def __init__(self): pass
 
     def eval(self, commands, data, stack):
+        if len(stack) == 0:
+            raise RuntimeError('Stack is empty')
         return stack.pop()
 
 """ Отсутствие операции, команда пропускается. """
 class Nop:
-    def __init__(self): pass
-
-    def eval(self, commands, data, stack):
-        pass
-
-""" Прекращение выполнения программы. """
-class Stop:
     def __init__(self): pass
 
     def eval(self, commands, data, stack):
@@ -45,7 +41,7 @@ class Load:
 
     def eval(self, commands, data, stack):
         value = Environment.search_variable(data, self.name)
-        if not value:
+        if value is None:
             raise RuntimeError('Unknown variable \'' + self.name + '\'')
         stack.append(value)
 
@@ -55,6 +51,8 @@ class Store:
         self.name = name
 
     def eval(self, commands, data, stack):
+        if len(stack) == 0:
+            raise RuntimeError('Stack is empty')
         value = stack.pop()
         Environment.store_variable(data, self.name, value)
 
@@ -63,6 +61,8 @@ class Add:
     def __init__(self): pass
 
     def eval(self, commands, data, stack):
+        if len(stack) < 2:
+            raise RuntimeError('Stack not contains two values')
         num1 = stack.pop()
         num2 = stack.pop()
         stack.append(num1 + num2)
@@ -72,6 +72,8 @@ class Mul:
     def __init__(self): pass
 
     def eval(self, commands, data, stack):
+        if len(stack) < 2:
+            raise RuntimeError('Stack not contains two values')
         num1 = stack.pop()
         num2 = stack.pop()
         stack.append(num1 * num2)
@@ -83,22 +85,26 @@ class Sub:
     def eval(self, commands, data, stack):
         num1 = stack.pop()
         num2 = stack.pop()
-        stack.append(num1 - num2)
+        stack.append(num2 - num1)
 
 """ Взятие со стека двух чисел, их деление и помещение результата обратно в стек. """
 class Div:
     def __init__(self): pass
 
     def eval(self, commands, data, stack):
+        if len(stack) < 2:
+            raise RuntimeError('Stack not contains two values')
         num1 = stack.pop()
         num2 = stack.pop()
-        stack.append(num1 / num2)
+        stack.append(num2 / num1)
 
 """ Смена знака числа на вершине стека на противоположный. """
 class Invert:
     def __init__(self): pass
 
     def eval(self, commands, data, stack):
+        if len(stack) == 0:
+            raise RuntimeError('Stack is empty')
         num = stack.pop()
         stack.append(-num)
 
@@ -108,6 +114,8 @@ class Compare:
         self.compare_code = compare_code
 
     def eval(self, commands, data, stack):
+        if len(stack) < 2:
+            raise RuntimeError('Stack not contains two values')
         if self.compare_code not in [0, 1, 2, 3, 4, 5]:
             raise RuntimeError('Unknown compare code')
         num1 = stack.pop()
@@ -133,7 +141,11 @@ class Label:
         self.name = name
 
     def eval(self, commands, data, stack):
+        if len(stack) == 0:
+            raise RuntimeError('Stack is empty')
         data_count = stack.pop()
+        if data_count < 0:
+            raise RuntimeError('Data counter for LABEL is incorrect. It must be nonnegative integer.')
         label_data = []
         while data_count != 0:
             label_data.append(stack.pop())
@@ -158,6 +170,8 @@ class Jz:
         self.label = label
 
     def eval(self, commands, data, stack):
+        if len(stack) == 0:
+            raise RuntimeError('Stack is empty')
         num = stack.pop()
         if num == 0:
             commands['current'] = data['labels'][self.label]['number']
@@ -168,6 +182,8 @@ class Jnz:
         self.label = label
 
     def eval(self, commands, data, stack):
+        if len(stack) == 0:
+            raise RuntimeError('Stack is empty')
         num = stack.pop()
         if num == 1:
             commands['current'] = data['labels'][self.label]['number']
@@ -179,13 +195,15 @@ class Read:
     def eval(self, commands, data, stack):
         value = sys.stdin.readline()
         sys.stdout.write('> ')
-        stack.append(value)
+        stack.append(int(value))
 
 """ Получение значения с вершина стека и его передача в стандартный поток вывода (stdout). """
 class Write:
     def __init__(self): pass
 
     def eval(self, commands, data, stack):
+        if len(stack) == 0:
+            raise RuntimeError('Stack is empty')
         value = stack.pop()
         sys.stdout.write(str(value) + '\n')
 
@@ -213,7 +231,13 @@ class Call:
         self.name = name
 
     def eval(self, commands, data, stack):
+        if len(stack) == 0:
+            raise RuntimeError('Stack is empty')
         args_count = stack.pop()
+
+        if args_count < 0:
+            raise RuntimeError('Arguments counter for CALL is incorrect. It must be nonnegative integer.')
+
         vars = []
         while args_count != 0:
             var_name = stack.pop()
@@ -233,5 +257,7 @@ class Return:
     def __init__(self): pass
 
     def eval(self, commands, data, stack):
+        if len(data['call_stack']) == 0:
+            raise RuntimeError('Call stack is empty')
         Environment.clear(data)
         commands['current'] = data['call_stack'].pop()
