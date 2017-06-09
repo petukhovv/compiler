@@ -1,4 +1,5 @@
 from src.Interpreter import statements as interpreter
+from src.VM.Compiler import statements as compile_vm
 
 """
 Assign statement class for AST.
@@ -12,6 +13,9 @@ class AssignStatement:
 
     def eval(self, env):
         return interpreter.assign_statement(env, self.variable, self.aexp)
+
+    def compile_vm(self, commands, env):
+        return compile_vm.assign_statement(commands, env, self.variable, self.aexp)
 
 """
 Compound statement class for AST.

@@ -7,8 +7,8 @@ from os.path import isfile
 
 from Lexer.tokenizer import tokenize
 from Parser.run import parse
-from Interpreter.Helpers.run import interpret
-from VM.parser import parse as vm_parse
+from Interpreter.Helpers.run import interpret, compile_vm
+from src.VM.Helpers.parser import parse as vm_parse
 from VM.run import interpret as vm_interpret
 
 help_commands = '-i - interpret, -s - compile in virtual machine code, -o - compile in executable file'
@@ -48,5 +48,10 @@ if mode == '-i':
     interpret(ast)
 
 if mode == '-s':
-    commands = vm_parse(program)
+    ast = parse_program(program)
+    pprint(ast)
+    vm_program = compile_vm(ast)
+    pprint(vm_program)
+    commands = vm_parse(vm_program)
+    pprint(commands)
     vm_interpret(commands)

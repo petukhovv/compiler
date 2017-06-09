@@ -2,8 +2,7 @@
 
 import sys
 
-from helpers import Environment
-from pprint import pprint
+from src.VM.Helpers.environment import Environment
 
 """
 Перечисление команд стековой машины.
@@ -97,6 +96,20 @@ class Div:
         num1 = stack.pop()
         num2 = stack.pop()
         stack.append(num2 / num1)
+
+"""
+Взятие со стека двух чисел, вычисление остатка от деления первого на второго
+и помещение результата обратно в стек.
+"""
+class Mod:
+    def __init__(self): pass
+
+    def eval(self, commands, data, stack):
+        if len(stack) < 2:
+            raise RuntimeError('Stack not contains two values')
+        num1 = stack.pop()
+        num2 = stack.pop()
+        stack.append(num2 % num1)
 
 """ Смена знака числа на вершине стека на противоположный. """
 class Invert:

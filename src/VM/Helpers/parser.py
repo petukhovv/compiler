@@ -1,6 +1,5 @@
-from pprint import pprint
-
 from src.VM.commands import *
+from pprint import pprint
 
 COMMAND_SEPARATOR = '\n'
 ARGS_SEPARATOR = ' '
@@ -15,6 +14,7 @@ command_class_relation_map = {
     'MUL': Mul,
     'SUB': Sub,
     'DIV': Div,
+    'MOD': Mod,
     'INVERT': Invert,
     'COMPARE': Compare,
     'LABEL': Label,
