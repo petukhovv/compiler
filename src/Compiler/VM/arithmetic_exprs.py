@@ -1,5 +1,5 @@
-from ..commands import *
-from ..Helpers.assembler import *
+from src.VM.commands import *
+from src.VM.Helpers.assembler import *
 
 def binop_aexp(commands, env, op, left, right):
     left.compile_vm(commands, env)

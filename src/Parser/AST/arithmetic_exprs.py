@@ -1,5 +1,5 @@
+from src.Compiler.VM import arithmetic_exprs as compile_vm
 from src.Interpreter import arithmetic_exprs as interpreter
-from src.VM.Compiler import arithmetic_exprs as compile_vm
 
 """
 Integer arithmetic expression class for AST.

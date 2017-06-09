@@ -1,5 +1,5 @@
+from src.Compiler.VM import statements as compile_vm
 from src.Interpreter import statements as interpreter
-from src.VM.Compiler import statements as compile_vm
 
 """
 Assign statement class for AST.

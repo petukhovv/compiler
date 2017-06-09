@@ -1,5 +1,5 @@
-from ..commands import *
-from ..Helpers.assembler import *
+from src.VM.commands import *
+from src.VM.Helpers.assembler import *
 
 def assign_statement(commands, env, variable, aexp):
     aexp.compile_vm(commands, env)
