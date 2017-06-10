@@ -9,7 +9,9 @@ def compile_vm(ast):
     commands = []
     environment = {
         'var_counter': 1,
-        'vars_map': {}
+        'vars_map': {},
+        'label_counter': 1,
+        'labels_map': {}
     }
     ast.compile_vm(commands, environment)
     return VM_COMMANDS_SEPARATOR.join(commands)

@@ -29,6 +29,9 @@ class CompoundStatement:
     def eval(self, env):
         return interpreter.compound_statement(env, self.first, self.second)
 
+    def compile_vm(self, commands, env):
+        return compile_vm.compound_statement(commands, env, self.first, self.second)
+
 """
 'If' statement class for AST.
 eval - runtime function for Evaluator (true of false statement depending on condition).
@@ -43,6 +46,9 @@ class IfStatement:
     def eval(self, env):
         return interpreter.if_statement(env, self.condition, self.true_stmt, self.alternatives_stmt, self.false_stmt)
 
+    def compile_vm(self, commands, env):
+        return compile_vm.if_statement(commands, env, self.condition, self.true_stmt, self.alternatives_stmt, self.false_stmt)
+
 """
 'While' statement class for AST.
 eval - runtime function for Evaluator (body eval while condition).
@@ -54,6 +60,9 @@ class WhileStatement:
 
     def eval(self, env):
         return interpreter.while_statement(env, self.condition, self.body)
+
+    def compile_vm(self, commands, env):
+        return compile_vm.while_statement(commands, env, self.condition, self.body)
 
 """
 'For' statement class for AST.
@@ -80,6 +89,9 @@ class RepeatStatement:
 
     def eval(self, env):
         return interpreter.repeat_statement(env, self.condition, self.body)
+
+    def compile_vm(self, commands, env):
+        return compile_vm.repeat_statement(commands, env, self.condition, self.body)
 
 """
 'Skip' statement class for AST.

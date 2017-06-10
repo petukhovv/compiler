@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pprint import pprint
+from src.VM.commands import *
 
 """ Память данных виртуальной машины """
 data = {
@@ -18,10 +19,21 @@ def interpret(commands_list):
         'list': commands_list,
         'current': 0
     }
-    while commands['current'] < len(commands['list']):
-        commands['list'][commands['current']].eval(commands, data, stack)
-        pprint(commands['current'])
-        commands['current'] += 1
 
+    # Первый проход: находим метки и заносим их в runtime-environment
+    while commands['current'] < len(commands['list']):
+        command_class = commands['list'][commands['current']]
+        if isinstance(command_class, Label):
+            command_class.eval(commands, data, stack)
+        commands['current'] += 1
+    commands['current'] = 0
+
+    # Второй проход: выполняем программу
+    while commands['current'] < len(commands['list']):
+        command_class = commands['list'][commands['current']]
+        if not isinstance(command_class, Label):
+            command_class.eval(commands, data, stack)
+        commands['current'] += 1
+    commands['current'] = 0
     pprint(stack)
     pprint(data)

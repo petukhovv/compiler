@@ -134,17 +134,17 @@ class Compare:
         num1 = stack.pop()
         num2 = stack.pop()
         result = 0
-        if self.compare_code == 0 and num1 == num2:
+        if self.compare_code == 0 and num2 == num1:
             result = 1
-        elif self.compare_code == 1 and num1 != num2:
+        elif self.compare_code == 1 and num2 != num1:
             result = 1
-        elif self.compare_code == 2 and num1 < num2:
+        elif self.compare_code == 2 and num2 < num1:
             result = 1
-        elif self.compare_code == 3 and num1 > num2:
+        elif self.compare_code == 3 and num2 > num1:
             result = 1
-        elif self.compare_code == 4 and num1 <= num2:
+        elif self.compare_code == 4 and num2 <= num1:
             result = 1
-        elif self.compare_code == 5 and num1 >= num2:
+        elif self.compare_code == 5 and num2 >= num1:
             result = 1
         stack.append(result)
 
@@ -154,20 +154,7 @@ class Label:
         self.name = name
 
     def eval(self, commands, data, stack):
-        if len(stack) == 0:
-            raise RuntimeError('Stack is empty')
-        data_count = stack.pop()
-        if data_count < 0:
-            raise RuntimeError('Data counter for LABEL is incorrect. It must be nonnegative integer.')
-        label_data = []
-        while data_count != 0:
-            label_data.append(stack.pop())
-            data_count -= 1
-
-        data['labels'][self.name] = {
-            'number': commands['current'],
-            'data': label_data
-        }
+        data['labels'][self.name] = commands['current']
 
 """ Выполнение перехода к заданной метке. """
 class Jump:
@@ -175,7 +162,7 @@ class Jump:
         self.label = label
 
     def eval(self, commands, data, stack):
-        commands['current'] = data['labels'][self.label]['number']
+        commands['current'] = data['labels'][self.label]
 
 """ Выполнение перехода к заданной метке, если значение на вершине стека - 0. """
 class Jz:
@@ -187,7 +174,7 @@ class Jz:
             raise RuntimeError('Stack is empty')
         num = stack.pop()
         if num == 0:
-            commands['current'] = data['labels'][self.label]['number']
+            commands['current'] = data['labels'][self.label]
 
 """ Выполнение перехода к заданной метке, если значение на вершине стека - 1. """
 class Jnz:
@@ -199,7 +186,7 @@ class Jnz:
             raise RuntimeError('Stack is empty')
         num = stack.pop()
         if num == 1:
-            commands['current'] = data['labels'][self.label]['number']
+            commands['current'] = data['labels'][self.label]
 
 """ Считывание значения из стандартного потока ввода (stdin) и помещение результата на вершину стека. """
 class Read:
@@ -257,13 +244,13 @@ class Call:
             vars.append(Environment.search_variable(data, var_name))
             args_count -= 1
         label = data['labels'][self.name]
-        data['call_stack'].append(commands['current'])
-        commands['current'] = label['number']
+        #data['call_stack'].append(commands['current'])
+        commands['current'] = label
         Environment.create(data)
-        var_counter = 0
-        for var_value in vars:
-            Environment.store_variable(data, label['data'][var_counter], var_value)
-            var_counter += 1
+        # var_counter = 0
+        # for var_value in vars:
+        #     Environment.store_variable(data, label['data'][var_counter], var_value)
+        #     var_counter += 1
 
 """ Осуществление возврата к месту вызова. """
 class Return:
@@ -273,4 +260,4 @@ class Return:
         if len(data['call_stack']) == 0:
             raise RuntimeError('Call stack is empty')
         Environment.clear(data)
-        commands['current'] = data['call_stack'].pop()
+        #commands['current'] = data['call_stack'].pop()
