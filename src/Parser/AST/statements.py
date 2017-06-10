@@ -78,6 +78,9 @@ class ForStatement:
     def eval(self, env):
         return interpreter.for_statement(env, self.stmt1, self.stmt2, self.stmt3, self.body)
 
+    def compile_vm(self, commands, env):
+        return compile_vm.for_statement(commands, env, self.stmt1, self.stmt2, self.stmt3, self.body)
+
 """
 'Repeat' statement class for AST.
 eval - runtime function for Evaluator (body eval while condition).
@@ -101,3 +104,6 @@ class SkipStatement:
 
     def eval(self, env):
         return interpreter.skip_statement(env)
+
+    def compile_vm(self, commands, env):
+        return compile_vm.skip_statement(commands, env)
