@@ -31,6 +31,9 @@ class AndBexp:
     def eval(self, env):
         return interpreter.and_bexp(env, self.left, self.right)
 
+    def compile_vm(self, commands, env):
+        return compile_vm.and_bexp(commands, env, self.left, self.right)
+
 """
 'Or' operation boolean expression class for AST.
 eval - runtime function for Evaluator (return result of applying the 'or' operation to left and right values).
@@ -44,6 +47,9 @@ class OrBexp:
     def eval(self, env):
         return interpreter.or_bexp(env, self.left, self.right)
 
+    def compile_vm(self, commands, env):
+        return compile_vm.or_bexp(commands, env, self.left, self.right)
+
 """
 'Not' operation boolean expression class for AST.
 eval - runtime function for Evaluator (return result of applying the 'not' operation to value).
@@ -54,4 +60,7 @@ class NotBexp:
         self.exp = exp
 
     def eval(self, env):
-        return interpreter.or_bexp(env, self.exp)
+        return interpreter.not_bexp(env, self.exp)
+
+    def compile_vm(self, commands, env):
+        return compile_vm.not_bexp(commands, env, self.exp)
