@@ -46,8 +46,8 @@ class IfStatement:
     def eval(self, env):
         return interpreter.if_statement(env, self.condition, self.true_stmt, self.alternatives_stmt, self.false_stmt)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.if_statement(commands, env, self.condition, self.true_stmt, self.alternatives_stmt, self.false_stmt)
+    def compile_vm(self, commands, env, label_endif=None):
+        return compile_vm.if_statement(commands, env, self.condition, self.true_stmt, self.alternatives_stmt, self.false_stmt, label_endif)
 
 """
 'While' statement class for AST.
