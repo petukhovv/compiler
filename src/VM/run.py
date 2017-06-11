@@ -35,5 +35,3 @@ def interpret(commands_list):
             command_class.eval(commands, data, stack)
         commands['current'] += 1
     commands['current'] = 0
-    pprint(stack)
-    pprint(data)

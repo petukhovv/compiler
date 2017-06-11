@@ -3,6 +3,8 @@
 from src.VM.commands import *
 from src.VM.Helpers.assembler import *
 
+from Helpers.environment import *
+
 def relop_bexp(commands, env, op, left, right):
     left.compile_vm(commands, env)
     right.compile_vm(commands, env)
@@ -23,10 +25,8 @@ def relop_bexp(commands, env, op, left, right):
     commands.append(value)
 
 def and_bexp(commands, env, left, right):
-    end_bexp_label = env['label_counter']
-    env['label_counter'] += 1
-    end_bexp_false_label = env['label_counter']
-    env['label_counter'] += 1
+    end_bexp_label = Environment.create_label(env)
+    end_bexp_false_label = Environment.create_label(env)
     left.compile_vm(commands, env)
     commands.append(assemble(Push, 0))
     commands.append(assemble(Compare, 0))
@@ -56,10 +56,8 @@ def and_bexp(commands, env, left, right):
     commands.append(assemble(Label, end_bexp_label))
 
 def or_bexp(commands, env, left, right):
-    end_bexp_label = env['label_counter']
-    env['label_counter'] += 1
-    end_bexp_true_label = env['label_counter']
-    env['label_counter'] += 1
+    end_bexp_label = Environment.create_label(env)
+    end_bexp_true_label = Environment.create_label(env)
     left.compile_vm(commands, env)
     commands.append(assemble(Push, 0))
     commands.append(assemble(Compare, 1))
@@ -89,10 +87,8 @@ def or_bexp(commands, env, left, right):
     commands.append(assemble(Label, end_bexp_label))
 
 def not_bexp(commands, env, exp):
-    end_bexp_label = env['label_counter']
-    env['label_counter'] += 1
-    end_bexp_false_label = env['label_counter']
-    env['label_counter'] += 1
+    end_bexp_label = Environment.create_label(env)
+    end_bexp_false_label = Environment.create_label(env)
     exp.compile_vm(commands, env)
     commands.append(assemble(Push, 0))
     commands.append(assemble(Compare, 0))

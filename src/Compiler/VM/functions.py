@@ -3,15 +3,13 @@
 from src.VM.commands import *
 from src.VM.Helpers.assembler import *
 
+from Helpers.environment import *
+
 from pprint import pprint
 
-
 def function(commands, env, name, args, body):
-    start_function = env['label_counter']
-    env['labels_map'][name] = start_function
-    env['label_counter'] += 1
-    end_function = env['label_counter']
-    env['label_counter'] += 1
+    start_function = Environment.create_label(env, name)
+    end_function = Environment.create_label(env)
 
     # При последовательном выполнение пропускаем выполнения тела функции,
     # т. к. в этом случае это лишь объвление функции, вызов будет позже.
@@ -23,9 +21,7 @@ def function(commands, env, name, args, body):
     # Компилим конструкции изъятия из стека аргументов функции и записи их в environment.
     var_counters = []
     for arg in args.elements:
-        var_counters.append(env['var_counter'])
-        env['vars_map'][arg] = env['var_counter']
-        env['var_counter'] += 1
+        var_counters.append(Environment.create_var(env, arg))
 
     for arg in args.elements:
         var_counter = var_counters.pop()
@@ -45,5 +41,5 @@ def return_statement(commands, env, expr):
 def function_call_statement(commands, env, name, args):
     for arg in args.elements:
         arg.compile_vm(commands, env)
-    label = env['labels_map'][name]
+    label = Environment.get_label(env, name)
     commands.append(assemble(Call, label))

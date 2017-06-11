@@ -3,35 +3,32 @@
 from src.VM.commands import *
 from src.VM.Helpers.assembler import *
 
+from Helpers.environment import *
+
 from pprint import pprint
 
 def assign_statement(commands, env, variable, aexp):
     aexp.compile_vm(commands, env)
-    if variable.name in env['vars_map']:
-        commands.append(assemble(Store, env['vars_map'][variable.name]))
+    if Environment.is_exist_var(env, variable.name):
+        commands.append(assemble(Store, Environment.get_var(env, variable.name)))
     else:
-        env['vars_map'][variable.name] = env['var_counter']
-        commands.append(assemble(Store, env['var_counter']))
-        env['var_counter'] += 1
+        commands.append(assemble(Store, Environment.create_var(env, variable.name)))
 
 def compound_statement(commands, env, first, second):
     first.compile_vm(commands, env)
     second.compile_vm(commands, env)
 
 def repeat_statement(commands, env, condition, body):
-    commands.append(assemble(Label, env['label_counter']))
-    current_label = env['label_counter']
-    env['label_counter'] += 1
+    current_label = Environment.create_label(env)
+    commands.append(assemble(Label, current_label))
     body.compile_vm(commands, env)
     condition.compile_vm(commands, env)
     commands.append(assemble(Jz, current_label))
 
 def while_statement(commands, env, condition, body):
-    start_while_label = env['label_counter']
+    start_while_label = Environment.create_label(env)
     commands.append(assemble(Label, start_while_label))
-    env['label_counter'] += 1
-    end_while_label = env['label_counter']
-    env['label_counter'] += 1
+    end_while_label = Environment.create_label(env)
     condition.compile_vm(commands, env)
     commands.append(assemble(Jz, end_while_label))
     body.compile_vm(commands, env)
@@ -39,8 +36,7 @@ def while_statement(commands, env, condition, body):
     commands.append(assemble(Label, end_while_label))
 
 def if_statement(commands, env, condition, true_stmt, alternatives_stmt, false_stmt, label_endif):
-    label_after_true_stmt = env['label_counter']
-    env['label_counter'] += 1
+    label_after_true_stmt = Environment.create_label(env)
     condition.compile_vm(commands, env)
 
     # Если условие не выполнилось, пропускаем ветку.
@@ -49,8 +45,7 @@ def if_statement(commands, env, condition, true_stmt, alternatives_stmt, false_s
 
     # Первая ветвь условия, метки конца условия ещё нет - создаём её.
     if label_endif is None:
-        label_endif = env['label_counter']
-        env['label_counter'] += 1
+        label_endif = Environment.create_label(env)
 
     # Если условие выполнилось, пропускаем все альтернативные ветки и переходим сразу к концу условия.
     commands.append(assemble(Jump, label_endif))
@@ -71,10 +66,8 @@ def if_statement(commands, env, condition, true_stmt, alternatives_stmt, false_s
     commands.append(assemble(Label, label_endif))
 
 def for_statement(commands, env, stmt1, stmt2, stmt3, body):
-    start_for_label = env['label_counter']
-    env['label_counter'] += 1
-    end_for_label = env['label_counter']
-    env['label_counter'] += 1
+    start_for_label = Environment.create_label(env)
+    end_for_label = Environment.create_label(env)
     stmt1.compile_vm(commands, env)
     commands.append(assemble(Label, start_for_label))
     stmt2.compile_vm(commands, env)
