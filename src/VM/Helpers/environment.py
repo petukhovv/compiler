@@ -1,3 +1,5 @@
+from pprint import pprint
+
 class Environment:
     @staticmethod
     def get_current_env(data):
@@ -9,11 +11,11 @@ class Environment:
     @staticmethod
     def get_env(data, env_number):
         env_count = len(data['environments'])
-        if env_count < -env_number:
+        if env_count < env_number:
             return None
-        if env_count == -env_number:
+        if env_count == env_number:
             return data
-        return data['environments'][env_number]
+        return data['environments'][env_count - env_number - 1]
 
     @staticmethod
     def store_variable(data, name, value):
@@ -27,7 +29,7 @@ class Environment:
         while env:
             if variable in env['variables']:
                 return env['variables'][variable]
-            env_counter -= 1
+            env_counter += 1
             env = Environment.get_env(data, env_counter)
         return None
 

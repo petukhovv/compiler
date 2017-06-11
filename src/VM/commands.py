@@ -2,6 +2,8 @@
 
 import sys
 
+from pprint import pprint
+
 from src.VM.Helpers.environment import Environment
 
 """
@@ -233,24 +235,11 @@ class Call:
     def eval(self, commands, data, stack):
         if len(stack) == 0:
             raise RuntimeError('Stack is empty')
-        args_count = stack.pop()
 
-        if args_count < 0:
-            raise RuntimeError('Arguments counter for CALL is incorrect. It must be nonnegative integer.')
-
-        vars = []
-        while args_count != 0:
-            var_name = stack.pop()
-            vars.append(Environment.search_variable(data, var_name))
-            args_count -= 1
         label = data['labels'][self.name]
-        #data['call_stack'].append(commands['current'])
+        data['call_stack'].append(commands['current'])
         commands['current'] = label
         Environment.create(data)
-        # var_counter = 0
-        # for var_value in vars:
-        #     Environment.store_variable(data, label['data'][var_counter], var_value)
-        #     var_counter += 1
 
 """ Осуществление возврата к месту вызова. """
 class Return:
@@ -260,4 +249,4 @@ class Return:
         if len(data['call_stack']) == 0:
             raise RuntimeError('Call stack is empty')
         Environment.clear(data)
-        #commands['current'] = data['call_stack'].pop()
+        commands['current'] = data['call_stack'].pop()

@@ -1,5 +1,6 @@
 from src.Interpreter.Helpers.environment import *
 
+from src.Compiler.VM import functions as compile_vm
 from src.Interpreter import functions as interpreter
 
 """
@@ -15,6 +16,9 @@ class Function:
     def eval(self, env):
         return interpreter.function(env, self.name, self.args, self.body)
 
+    def compile_vm(self, commands, env):
+        return compile_vm.function(commands, env, self.name, self.args, self.body)
+
 """
 'Return' statement class for AST.
 eval - runtime function for Evaluator (empty function).
@@ -25,6 +29,9 @@ class ReturnStatement:
 
     def eval(self, env):
         return interpreter.return_statement(env, self.expr)
+
+    def compile_vm(self, commands, env):
+        return compile_vm.return_statement(commands, env, self.expr)
 
 """
 'Function call' statement class for AST.
@@ -46,3 +53,6 @@ class FunctionCallStatement:
             args_counter += 1
         fun['body'].eval(func_env)
         return func_env['r']
+
+    def compile_vm(self, commands, env):
+        return compile_vm.function_call_statement(commands, env, self.name, self.args)
