@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from src.VM.commands import *
+from src.Parser.AST.arithmetic_exprs import *
 from src.VM.Helpers.assembler import *
 
 from Helpers.environment import *

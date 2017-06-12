@@ -1,7 +1,4 @@
-from src.VM.commands import *
-from src.VM.Helpers.assembler import *
-from pprint import pprint
-from Helpers.environment import *
+from Helpers.string import *
 
 def binop_aexp(commands, env, op, left, right):
     left.compile_vm(commands, env)
@@ -24,4 +21,11 @@ def int_aexp(commands, env, i):
     commands.append(assemble(Push, i))
 
 def var_aexp(commands, env, name):
-    commands.append(assemble(Load, Environment.get_var(env, name)))
+    var_type = Environment.get_var_type(env, name)
+    var_value = Environment.get_var(env, name)
+    if var_type == 'IntAexp':
+        commands.append(assemble(Load, var_value))
+    elif var_type == 'Char':
+        commands.append(assemble(Load, var_value))
+    elif var_type == 'String':
+        String.compile_get(commands, env, var_value)

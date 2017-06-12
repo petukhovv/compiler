@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from Helpers.string import *
+
 from src.VM.commands import *
 from src.VM.Helpers.assembler import *
 
@@ -9,10 +11,16 @@ from pprint import pprint
 
 def assign_statement(commands, env, variable, aexp):
     aexp.compile_vm(commands, env)
+    aexp_type = aexp.__class__.__name__
+    # Тут надо писать в стор, если это строка, указатель на начало строки (а именно - номер соотв. переменной)
+    # С этого номера символы идут подряд - читаем, пока не встреим 0.
     if Environment.is_exist_var(env, variable.name):
-        commands.append(assemble(Store, Environment.get_var(env, variable.name)))
+        var_name = Environment.get_var(env, variable.name, aexp_type)
     else:
-        commands.append(assemble(Store, Environment.create_var(env, variable.name)))
+        var_name = Environment.create_var(env, variable.name, aexp_type)
+    if aexp_type == 'String':
+        String.compile_set(commands, env, aexp.characters)
+    commands.append(assemble(Store, var_name))
 
 def compound_statement(commands, env, first, second):
     first.compile_vm(commands, env)

@@ -1,6 +1,8 @@
 from src.Compiler.VM import statements as compile_vm
 from src.Interpreter import statements as interpreter
 
+from pprint import pprint
+
 """
 Assign statement class for AST.
 eval - runtime function for Evaluator (return variable by name from environment).

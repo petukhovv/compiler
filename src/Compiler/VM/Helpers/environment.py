@@ -10,9 +10,14 @@ class Environment:
         return label_number
 
     @staticmethod
-    def create_var(env, name):
-        env['vars_map'][name] = env['var_counter']
+    def create_var(env, name=None, type=None):
         var_number = env['var_counter']
+        if name is not None:
+            env['vars_map'][name] = {
+                'number': var_number
+            }
+            if type is not None:
+                env['vars_map'][name]['type'] = type
         env['var_counter'] += 1
         return var_number
 
@@ -21,8 +26,14 @@ class Environment:
         return env['labels_map'][name]
 
     @staticmethod
-    def get_var(env, name):
-        return env['vars_map'][name]
+    def get_var(env, name, type=None):
+        if type:
+            env['vars_map'][name]['type'] = type
+        return env['vars_map'][name]['number']
+
+    @staticmethod
+    def get_var_type(env, name):
+        return env['vars_map'][name]['type']
 
     @staticmethod
     def is_exist_var(env, name):

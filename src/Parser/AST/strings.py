@@ -1,3 +1,4 @@
+from src.Compiler.VM import strings as compile_vm
 from src.Interpreter import strings as interpreter
 
 class Char:
@@ -7,6 +8,9 @@ class Char:
     def eval(self, env):
         return interpreter.char(env, self.character)
 
+    def compile_vm(self, commands, env):
+        return compile_vm.char(commands, env, self.character)
+
 class String:
     def __init__(self, characters):
         self.characters = characters
@@ -14,12 +18,18 @@ class String:
     def eval(self, env):
         return interpreter.string(env, self.characters)
 
+    def compile_vm(self, commands, env):
+        return compile_vm.string(commands, env, self.characters)
+
 class StrLen:
     def __init__(self, args):
         self.args = args
 
     def eval(self, env):
         return interpreter.str_len(env, self.args)
+
+    def compile_vm(self, commands, env):
+        return compile_vm.strlen(commands, env, self.args)
 
 class StrGet:
     def __init__(self, args):

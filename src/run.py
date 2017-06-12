@@ -49,7 +49,6 @@ if mode == '-i':
 
 if mode == '-s':
     ast = parse_program(program)
-    pprint(ast)
     vm_program = compile_vm(ast)
     f = open('src/test_vm2_out', 'w')
     f.write(vm_program)

@@ -28,6 +28,15 @@ class Pop:
             raise RuntimeError('Stack is empty')
         return stack.pop()
 
+""" Помещение значения в стек. """
+class Dup:
+    def __init__(self): pass
+
+    def eval(self, commands, data, stack):
+        if len(stack) == 0:
+            raise RuntimeError('Stack is empty')
+        stack.append(stack[len(stack) - 1])
+
 """ Отсутствие операции, команда пропускается. """
 class Nop:
     def __init__(self): pass
@@ -35,13 +44,27 @@ class Nop:
     def eval(self, commands, data, stack):
         pass
 
-""" Помещение в стек значения переменной с именем name, взимаемой из памяти данных. """
+""" Помещение в стек значение переменной с именем name, взимаемой из памяти данных. """
 class Load:
     def __init__(self, name):
         self.name = name
 
     def eval(self, commands, data, stack):
         value = Environment.search_variable(data, self.name)
+        if value is None:
+            raise RuntimeError('Unknown variable \'' + self.name + '\'')
+        stack.append(value)
+
+"""
+Помещение в стек значение переменной с именем name, взимаемой из памяти данных,
+адрес которой расчитывается по следующему правилу: <адрес в памяти> = <адрес> + <значение с вершины стека>.
+"""
+class BLoad:
+    def __init__(self, name):
+        self.name = name
+
+    def eval(self, commands, data, stack):
+        value = Environment.search_variable(data, self.name + stack.pop())
         if value is None:
             raise RuntimeError('Unknown variable \'' + self.name + '\'')
         stack.append(value)
