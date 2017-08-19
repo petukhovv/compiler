@@ -23,9 +23,7 @@ def int_aexp(commands, env, i):
 def var_aexp(commands, env, name):
     var_type = Environment.get_var_type(env, name)
     var_value = Environment.get_var(env, name)
-    if var_type == 'IntAexp':
-        commands.append(assemble(Load, var_value))
-    elif var_type == 'Char':
-        commands.append(assemble(Load, var_value))
-    elif var_type == 'String':
+    if var_type == 'String':
         String.compile_get(commands, env, var_value)
+    else:
+        commands.append(assemble(Load, var_value))
