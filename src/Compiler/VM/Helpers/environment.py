@@ -33,7 +33,10 @@ class Environment:
 
     @staticmethod
     def get_var_type(env, name):
-        return env['vars_map'][name]['type']
+        if 'type' in env['vars_map'][name]:
+            return env['vars_map'][name]['type']
+        else:
+            return None
 
     @staticmethod
     def is_exist_var(env, name):
