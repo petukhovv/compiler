@@ -1,24 +1,25 @@
 from Helpers.string import *
+from Helpers.assembler import Commands
 
 def binop_aexp(commands, env, op, left, right):
     left.compile_vm(commands, env)
     right.compile_vm(commands, env)
     if op == '+':
-        value = assemble(Add)
+        value = Commands.gen(Add)
     elif op == '-':
-        value = assemble(Sub)
+        value = Commands.gen(Sub)
     elif op == '*':
-        value = assemble(Mul)
+        value = Commands.gen(Mul)
     elif op == '/':
-        value = assemble(Div)
+        value = Commands.gen(Div)
     elif op == '%':
-        value = assemble(Mod)
+        value = Commands.gen(Mod)
     else:
         raise RuntimeError('unknown operator: ' + op)
     commands.append(value)
 
 def int_aexp(commands, env, i):
-    commands.append(assemble(Push, i))
+    commands.add(Push, i)
 
 def var_aexp(commands, env, name):
     var_type = Environment.get_var_type(env, name)
@@ -26,4 +27,4 @@ def var_aexp(commands, env, name):
     if var_type == 'String':
         String.compile_get(commands, env, var_value)
     else:
-        commands.append(assemble(Load, var_value))
+        commands.add(Load, var_value)
