@@ -29,7 +29,7 @@ class StrLen:
         return interpreter.str_len(env, self.args)
 
     def compile_vm(self, commands, env):
-        return compile_vm.str_len(commands, env, self.args)
+        return compile_vm.strlen(commands, env, self.args)
 
 class StrGet:
     def __init__(self, args):
@@ -39,7 +39,7 @@ class StrGet:
         return interpreter.str_get(env, self.args)
 
     def compile_vm(self, commands, env):
-        return compile_vm.str_get(commands, env, self.args)
+        return compile_vm.strget(commands, env, self.args)
 
 class StrSub:
     def __init__(self, args):

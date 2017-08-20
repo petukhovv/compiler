@@ -10,11 +10,11 @@ def string(commands, env, characters):
     for character in characters:
         char(commands, env, character)
 
-def str_len(commands, env, args):
+def strlen(commands, env, args):
     args.elements[0].compile_vm(commands, env)
     String.compile_strlen(commands, env)
 
-def str_get(commands, env, args):
+def strget(commands, env, args):
     args.elements[0].compile_vm(commands, env)
     args.elements[1].compile_vm(commands, env)
     String.compile_strget(commands, env)
