@@ -57,14 +57,16 @@ class Load:
 
 """
 Помещение в стек значение переменной с именем name, взимаемой из памяти данных,
-адрес которой расчитывается по следующему правилу: <адрес в памяти> = <адрес> + <значение с вершины стека>.
+адрес которой расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
 """
 class BLoad:
     def __init__(self, name):
         self.name = name
 
     def eval(self, commands, data, stack):
-        value = Environment.search_variable(data, self.name + stack.pop())
+        n = self.name + stack.pop()
+
+        value = Environment.search_variable(data, n)
         if value is None:
             raise RuntimeError('Unknown variable \'' + self.name + '\'')
         stack.append(value)
@@ -273,3 +275,12 @@ class Return:
             raise RuntimeError('Call stack is empty')
         Environment.clear(data)
         commands['current'] = data['call_stack'].pop()
+
+""" Служебная комманда для логирования (выводит содержимое стека на консоль). """
+class Log:
+    def __init__(self, type):
+        self.type = type
+
+    def eval(self, commands, data, stack):
+        if self.type == 0:
+            pprint(stack)

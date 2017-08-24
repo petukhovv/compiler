@@ -62,6 +62,9 @@ class StrSet:
     def eval(self, env):
         return interpreter.str_set(env, self.args)
 
+    def compile_vm(self, commands, env):
+        return compile_vm.strset(commands, env, self.args)
+
 class StrCat:
     def __init__(self, args):
         self.args = args

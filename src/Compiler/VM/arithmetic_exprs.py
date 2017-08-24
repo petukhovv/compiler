@@ -25,6 +25,6 @@ def var_aexp(commands, env, name):
     var_type = Environment.get_var_type(env, name)
     var_value = Environment.get_var(env, name)
     if var_type == 'String':
-        String.compile_get(commands, env, var_value)
+        String.compile_load(commands, env, var_value)
     else:
         commands.add(Load, var_value)

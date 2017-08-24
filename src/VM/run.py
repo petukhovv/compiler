@@ -5,7 +5,8 @@ from src.VM.commands import *
 
 """ Память данных виртуальной машины """
 data = {
-    'variables': {},
+    'static_variables': {},
+    'dynamic_variables': {},
     'labels': {},
     'call_stack': [],
     'environments': []
@@ -36,4 +37,4 @@ def interpret(commands_list):
         commands['current'] += 1
     commands['current'] = 0
 
-    pprint(stack)
+    #pprint(stack)

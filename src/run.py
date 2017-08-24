@@ -7,7 +7,8 @@ from os.path import isfile
 
 from Lexer.tokenizer import tokenize
 from Parser.run import parse
-from Interpreter.Helpers.run import interpret, compile_vm
+from Interpreter.Helpers.run import interpret
+from Compiler.VM.Helpers.run import compile_vm
 from src.VM.Helpers.parser import parse as vm_parse
 from VM.run import interpret as vm_interpret
 

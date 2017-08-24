@@ -5,6 +5,7 @@ commands_relation_map = dict((command_class_relation_map[k], k) for k in command
 class Commands(list):
     def add(self, command, argument=None):
         self.append(self.gen(command, argument))
+        return self
 
     @staticmethod
     def gen(command, argument=None):

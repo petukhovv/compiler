@@ -6,13 +6,13 @@ def assign_statement(commands, env, variable, aexp):
     aexp.compile_vm(commands, env)
     aexp_type = aexp.__class__.__name__
     # Тут надо писать в стор, если это строка, указатель на начало строки (а именно - номер соотв. переменной)
-    # С этого номера символы идут подряд - читаем, пока не встреим 0.
+    # С этого номера символы идут подряд - читаем, пока не встретим 0.
     if Environment.is_exist_var(env, variable.name):
         var_name = Environment.get_var(env, variable.name, aexp_type)
     else:
         var_name = Environment.create_var(env, variable.name, aexp_type)
     if aexp_type == 'String':
-        String.compile_set(commands, env, aexp.characters)
+        String.compile_write(commands, env, aexp.characters)
     commands.add(Store, var_name)
 
 def compound_statement(commands, env, first, second):
@@ -33,8 +33,8 @@ def while_statement(commands, env, condition, body):
     condition.compile_vm(commands, env)
     commands.add(Jz, end_while_label)
     body.compile_vm(commands, env)
-    commands.add(Jump, start_while_label)
-    commands.add(Label, end_while_label)
+    commands.add(Jump, start_while_label)\
+        .add(Label, end_while_label)
 
 def if_statement(commands, env, condition, true_stmt, alternatives_stmt, false_stmt, label_endif):
     label_after_true_stmt = Environment.create_label(env)
@@ -49,8 +49,8 @@ def if_statement(commands, env, condition, true_stmt, alternatives_stmt, false_s
         label_endif = Environment.create_label(env)
 
     # Если условие выполнилось, пропускаем все альтернативные ветки и переходим сразу к концу условия.
-    commands.add(Jump, label_endif)
-    commands.add(Label, label_after_true_stmt)
+    commands.add(Jump, label_endif)\
+        .add(Label, label_after_true_stmt)
     if alternatives_stmt:
         for alternative_stmt in alternatives_stmt:
 
@@ -75,8 +75,8 @@ def for_statement(commands, env, stmt1, stmt2, stmt3, body):
     commands.add(Jz, end_for_label)
     body.compile_vm(commands, env)
     stmt3.compile_vm(commands, env)
-    commands.add(Jump, start_for_label)
-    commands.add(Label, end_for_label)
+    commands.add(Jump, start_for_label)\
+        .add(Label, end_for_label)
 
 def skip_statement(commands, env):
     commands.add(Nop)

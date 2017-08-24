@@ -28,9 +28,8 @@ def function(commands, env, name, args, body):
     body.compile_vm(commands, env)
 
     # Компилим конструкцию возврата к месту вызова.
-    commands.add(Return)
-
-    commands.add(Label, end_function)
+    commands.add(Return)\
+        .add(Label, end_function)
 
 def return_statement(commands, env, expr):
     expr.compile_vm(commands, env)

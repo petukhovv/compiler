@@ -27,7 +27,8 @@ command_class_relation_map = {
     'WRITE': Write,
     'ENTER': Enter,
     'CALL': Call,
-    'RETURN': Return
+    'RETURN': Return,
+    'LOG': Log
 }
 
 def parse(program):
