@@ -22,6 +22,10 @@ class Environment:
         return var_number
 
     @staticmethod
+    def get_var_counter_value(env):
+        return env['var_counter']
+
+    @staticmethod
     def get_label(env, name):
         return env['labels_map'][name]
 
