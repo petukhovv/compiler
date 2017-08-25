@@ -56,7 +56,7 @@ class Load:
         stack.append(value)
 
 """
-Помещение в стек значение переменной с именем name, взимаемой из памяти данных,
+Помещение в стек значение переменной с именем name, взимаемой из ячейки памяти данных,
 адрес которой расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
 """
 class BLoad:
@@ -81,6 +81,22 @@ class Store:
             raise RuntimeError('Stack is empty')
         value = stack.pop()
         Environment.store_variable(data, self.name, value)
+
+"""
+Сохранение значения переменной с именем name в ячейку памяти данных,
+адрес которой расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
+"""
+class BStore:
+    def __init__(self, name):
+        self.name = name
+
+    def eval(self, commands, data, stack):
+        if len(stack) == 0:
+            raise RuntimeError('Stack is empty')
+        
+        n = self.name + stack.pop()
+        value = stack.pop()
+        Environment.store_variable(data, n, value)
 
 """ Взятие со стека двух чисел, их сложение и помещение результата обратно в стек. """
 class Add:

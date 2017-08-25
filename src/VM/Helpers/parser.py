@@ -12,6 +12,7 @@ command_class_relation_map = {
     'LOAD': Load,
     'BLOAD': BLoad,
     'STORE': Store,
+    'BSTORE': BStore,
     'ADD': Add,
     'MUL': Mul,
     'SUB': Sub,
