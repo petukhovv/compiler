@@ -2,7 +2,6 @@
 
 from src.VM.commands import *
 from environment import Environment
-from generator import cycle
 
 class String:
     """
@@ -19,7 +18,7 @@ class String:
         commands.add(Load, var_number)\
             .add(Jz, end_label)
 
-        def cycle_body(counter_var):
+        def cycle_body(counter_var, a, b):
             commands.add(Load, var_number)\
                 .add(Load, counter_var)\
                 .add(Add)
@@ -27,9 +26,8 @@ class String:
             # Номер вычисляется как номер переменной + текущее значение счетчика.
             commands.add(BLoad, 0)
 
-        cycle(commands, env, cycle_body, load_counter=False)
-
-        commands.add(Label, end_label)
+        commands.cycle(env, cycle_body, load_counter=False)\
+            .add(Label, end_label)
 
     """
     Генерация инструкций для записи статической (const) строки из стека в перменную.
@@ -58,9 +56,8 @@ class String:
         commands.add(Dup)\
             .add(Jz, end_label)
 
-        cycle(commands, env, lambda c: commands.add(Pop))
-
-        commands.add(Label, end_label)
+        commands.cycle(env, lambda a, b, c: commands.add(Pop))\
+            .add(Label, end_label)
 
     """
     Генерация инструкций для получения определенного символа строки, находящейся на стеке
@@ -74,19 +71,25 @@ class String:
         # Записываем значение из стека в переменную (это номер позиции нужного символа)
         commands.add(Store, pos_symbol_var)
 
-        def cycle_body(counter_var):
+        def cycle_body(counter_var, break_label, c):
             # Сверяем значение счетчика с нужным номером символа
             commands.add(Load, counter_var)\
                 .add(Load, pos_symbol_var)\
                 .add(Compare, 0)
-            # Если не совпадают, то пропускаем секцию записи результата в переменную
+            # Если не совпадают, то пропускаем секцию записи результата в переменную,
+            # если совпадают - записывает текущий символ в переменную и выходим из цикла.
             commands.add(Jz, continue_search_symbol_label)\
                 .add(Store, target_symbol_var)\
                 .add(Load, target_symbol_var)\
+                .add(Jump, break_label)\
                 .add(Label, continue_search_symbol_label)\
                 .add(Pop)
 
-        cycle(commands, env, cycle_body)
+        # Ищем нужный символ
+        commands.cycle(env, cycle_body)
+
+        # Удаляем из стека оставшуюся часть строки
+        commands.cycle(env, lambda a, b, c: commands.add(Pop))
 
         # Помещаем найденный символ на стек (помещается 0, если символа не найдено).
         commands.add(Load, target_symbol_var)
@@ -96,60 +99,35 @@ class String:
     """
     @staticmethod
     def compile_strset(commands, env):
-        start_while_label = Environment.create_label(env)
-        end_while_label = Environment.create_label(env)
         continue_search_symbol_label = Environment.create_label(env)
 
-        counter_var = Environment.create_var(env)
         pos_symbol_var = Environment.create_var(env)
-        replacement_symbol_var = Environment.create_var(env)
+
+        new_symbol_var = Environment.create_var(env)
         target_symbol_var = Environment.create_var(env)
 
-        # Записываем заменяющий символ (значение из стека) в переменную
-        commands.add(Push, 0)
-        commands.add(Store, Environment.create_var(env))
+        # Буфер (указатель на начало строки) для записи прочитанной части строки
+        buffer = Environment.create_var(env)
 
-        # Записываем заменяющий символ (значение из стека) в переменную
-        commands.add(Store, replacement_symbol_var)
+        # Записываем значение из стека в переменную (это заменяющий символ)
+        commands.add(Store, new_symbol_var)
 
-        # Записываем номер заменяемого символа (значение из стека) в переменную
+        # Записываем значение из стека в переменную (это номер позиции заменяемого символа)
         commands.add(Store, pos_symbol_var)
 
-        # Инициализиуем счетчик цикла
-        commands.add(Push, 0)
-        commands.add(Store, counter_var)
+        def cycle_body(counter_var, a, b):
+            # Сверяем значение счетчика с нужным номером символа
+            commands.add(Load, counter_var) \
+                .add(Load, pos_symbol_var) \
+                .add(Compare, 0)
+            # Если не совпадают, то пропускаем секцию записи результата в переменную
+            commands.add(Jz, continue_search_symbol_label) \
+                .add(Store, target_symbol_var) \
+                .add(Load, target_symbol_var) \
+                .add(Label, continue_search_symbol_label) \
+                .add(Pop)
 
-        # Запускаем цикл (перебор символов строки)
-        commands.add(Label, start_while_label)
-        commands.add(Dup)
-        commands.add(Jz, end_while_label)
-        # Сверяем значение счетчика с нужным номером символа
-        commands.add(Load, counter_var)
-        commands.add(Load, pos_symbol_var)
-        commands.add(Compare, 0)
-        # Если не совпадают, то пропускаем секцию записи результата в переменную
-        commands.add(Jz, continue_search_symbol_label)
-        commands.add(Pop)
-        commands.add(Load, replacement_symbol_var)
+        commands.cycle(env, cycle_body)
 
-        commands.add(Load, counter_var)
-        commands.add(BLoad, counter_restore_str_var)
-
-        commands.add(Store, target_symbol_var)
-        commands.add(Load, target_symbol_var)
-        commands.add(Label, continue_search_symbol_label)
-
-
-        # Продолжаем перебирать символы строки
-        commands.add(Store, Environment.create_var(env))
-        commands.add(Load, counter_var)
-        commands.add(Push, 1)
-        commands.add(Add)
-        commands.add(Store, counter_var)
-        commands.add(Jump, start_while_label)
-
-        # Завершаем выполнение цикла, изымаем последнее значение со стека - 0 - маркер начала строки,
-        # и помещаем найденный символ на стек (помещается 0, если символа не найдено).
-        commands.add(Label, end_while_label)
-        commands.add(Pop)
+        # Помещаем найденный символ на стек (помещается 0, если символа не найдено).
         commands.add(Load, target_symbol_var)
