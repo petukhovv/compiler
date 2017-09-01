@@ -10,7 +10,7 @@ def string(commands, env, characters):
 
 def strlen(commands, env, args):
     args.elements[0].compile_vm(commands, env)
-    String.compile_strlen(commands, env)
+    String.compile_strlen(commands, env, Environment.get_allocate_var(env, args.elements[0].name))
 
 def strget(commands, env, args):
     args.elements[0].compile_vm(commands, env)
@@ -22,3 +22,9 @@ def strset(commands, env, args):
     args.elements[1].compile_vm(commands, env)
     args.elements[2].compile_vm(commands, env)
     String.compile_strset(commands, env)
+
+def strsub(commands, env, args):
+    args.elements[0].compile_vm(commands, env)
+    args.elements[1].compile_vm(commands, env)
+    args.elements[2].compile_vm(commands, env)
+    String.compile_strsub(commands, env)

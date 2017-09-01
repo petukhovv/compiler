@@ -11,8 +11,12 @@ command_class_relation_map = {
     'DUP': Dup,
     'LOAD': Load,
     'BLOAD': BLoad,
+    'DLOAD': DLoad,
+    'DBLOAD': DBLoad,
     'STORE': Store,
     'BSTORE': BStore,
+    'DSTORE': DStore,
+    'DBSTORE': DBStore,
     'ADD': Add,
     'MUL': Mul,
     'SUB': Sub,
@@ -29,6 +33,8 @@ command_class_relation_map = {
     'ENTER': Enter,
     'CALL': Call,
     'RETURN': Return,
+    'ALLOCATE': Allocate,
+    'DALLOCATE': DAllocate,
     'LOG': Log
 }
 

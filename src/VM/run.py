@@ -5,8 +5,8 @@ from src.VM.commands import *
 
 """ Память данных виртуальной машины """
 data = {
-    'static_variables': {},
-    'dynamic_variables': {},
+    'stack': {},  # Стековая память (static allocation data)
+    'heap': [],  # Куча (dynamic allocation data)
     'labels': {},
     'call_stack': [],
     'environments': []

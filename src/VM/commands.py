@@ -71,6 +71,33 @@ class BLoad:
             raise RuntimeError('Unknown variable \'' + self.name + '\'')
         stack.append(value)
 
+""" Помещение в стек значение переменной с именем name, взимаемой из памяти данных. """
+class DLoad:
+    def __init__(self, name):
+        self.name = name
+
+    def eval(self, commands, data, stack):
+        value = Environment.search_heap_variable(data, self.name)
+        if value is None:
+            raise RuntimeError('Unknown variable \'' + self.name + '\'')
+        stack.append(value)
+
+"""
+Помещение в стек значение переменной с именем name, взимаемой из ячейки памяти данных,
+адрес которой расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
+"""
+class DBLoad:
+    def __init__(self, name):
+        self.name = name
+
+    def eval(self, commands, data, stack):
+        n = self.name + stack.pop()
+
+        value = data['heap'][n]
+        if value is None:
+            raise RuntimeError('Unknown variable \'' + self.name + '\'')
+        stack.append(value)
+
 """ Сохранение значения переменной с именем name в память данных. """
 class Store:
     def __init__(self, name):
@@ -97,6 +124,33 @@ class BStore:
         n = self.name + stack.pop()
         value = stack.pop()
         Environment.store_variable(data, n, value)
+
+""" Сохранение значения переменной с именем name в память данных. """
+class DStore:
+    def __init__(self, name):
+        self.name = name
+
+    def eval(self, commands, data, stack):
+        if len(stack) == 0:
+            raise RuntimeError('Stack is empty')
+        value = stack.pop()
+        Environment.store_dynamic_variable(data, self.name, value)
+
+"""
+Сохранение значения переменной с именем name в ячейку памяти данных,
+адрес которой расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
+"""
+class DBStore:
+    def __init__(self, name):
+        self.name = name
+
+    def eval(self, commands, data, stack):
+        if len(stack) == 0:
+            raise RuntimeError('Stack is empty')
+
+        n = self.name + stack.pop()
+        value = stack.pop()
+        Environment.store_dynamic_variable(data, n, value)
 
 """ Взятие со стека двух чисел, их сложение и помещение результата обратно в стек. """
 class Add:
@@ -292,6 +346,36 @@ class Return:
         Environment.clear(data)
         commands['current'] = data['call_stack'].pop()
 
+""" Выделение памяти заданного размера (dynamic allocation data). """
+class Allocate:
+    def __init__(self, size):
+        self.size = size
+
+    def eval(self, commands, data, stack):
+        start_data_pointer = len(data['heap'])
+        i = 0
+        while i < self.size:
+            data['heap'].append(None)
+            i += 1
+        stack.append(start_data_pointer)
+
+"""
+Выделение памяти заданного размера (dynamic allocation data),
+который расчитывается по следующему правилу: <размер> = <переданный размер> + <значение с вершины стека>.
+"""
+class DAllocate:
+    def __init__(self, size):
+        self.size = size
+
+    def eval(self, commands, data, stack):
+        start_data_pointer = len(data['heap'])
+        memory_size = self.size + stack.pop()
+        i = 0
+        while i < memory_size:
+            data['heap'].append(None)
+            i += 1
+        stack.append(start_data_pointer)
+
 """ Служебная комманда для логирования (выводит содержимое стека на консоль). """
 class Log:
     def __init__(self, type):
@@ -300,3 +384,15 @@ class Log:
     def eval(self, commands, data, stack):
         if self.type == 0:
             pprint(stack)
+        elif self.type == 1:
+            print '========== Log start (stack memory) ==========='
+            for item in data['stack']:
+                print str(item) + ': ' + str(data['stack'][item])
+            print '==========  Log end (stack memory)  ==========='
+        elif self.type == 2:
+            print '========== Log start (heap memory) ==========='
+            i = 0
+            for item in data['heap']:
+                i += 1
+                print str(i) + ': ' + str(item)
+            print '==========  Log end (heap memory)  ==========='

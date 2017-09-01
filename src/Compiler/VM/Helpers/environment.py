@@ -10,11 +10,20 @@ class Environment:
         return label_number
 
     @staticmethod
+    def set_allocate_var(env, var_name, allocate):
+        env['vars_map'][var_name]['allocate'] = allocate
+
+    @staticmethod
+    def get_allocate_var(env, var_name):
+        return env['vars_map'][var_name]['allocate']
+
+    @staticmethod
     def create_var(env, name=None, type=None):
         var_number = env['var_counter']
         if name is not None:
             env['vars_map'][name] = {
-                'number': var_number
+                'number': var_number,
+                'allocate': 'stack'
             }
             if type is not None:
                 env['vars_map'][name]['type'] = type

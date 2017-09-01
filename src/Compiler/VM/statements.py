@@ -13,6 +13,10 @@ def assign_statement(commands, env, variable, aexp):
         var_name = Environment.create_var(env, variable.name, aexp_type)
     if aexp_type == 'String':
         String.compile_write(commands, env, aexp.characters)
+    elif aexp_type == 'StrSub':
+        Environment.set_allocate_var(env, variable.name, 'heap')
+        String.compile_store(commands, env)
+
     commands.add(Store, var_name)
 
 def compound_statement(commands, env, first, second):

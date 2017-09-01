@@ -48,6 +48,9 @@ class StrSub:
     def eval(self, env):
         return interpreter.str_sub(env, self.args)
 
+    def compile_vm(self, commands, env):
+        return compile_vm.strsub(commands, env, self.args)
+
 class StrDup:
     def __init__(self, args):
         self.args = args

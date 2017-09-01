@@ -20,15 +20,31 @@ class Environment:
     @staticmethod
     def store_variable(data, name, value):
         data = Environment.get_current_env(data)
-        data['static_variables'][name] = value
+        data['stack'][name] = value
+
+    @staticmethod
+    def store_dynamic_variable(data, name, value):
+        data = Environment.get_current_env(data)
+        data['heap'][name] = value
 
     @staticmethod
     def search_variable(data, variable):
         env_counter = 0
         env = Environment.get_env(data, env_counter)
         while env:
-            if variable in env['static_variables']:
-                return env['static_variables'][variable]
+            if variable in env['stack']:
+                return env['stack'][variable]
+            env_counter += 1
+            env = Environment.get_env(data, env_counter)
+        return None
+
+    @staticmethod
+    def search_heap_variable(data, variable):
+        env_counter = 0
+        env = Environment.get_env(data, env_counter)
+        while env:
+            if variable in env['heap']:
+                return env['heap'][variable]
             env_counter += 1
             env = Environment.get_env(data, env_counter)
         return None
@@ -36,7 +52,7 @@ class Environment:
     @staticmethod
     def create(data):
         data['environments'].append({
-            'static_variables': {}
+            'stack': {}
         })
 
     @staticmethod
