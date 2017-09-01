@@ -23,7 +23,7 @@ class String:
             # Номер вычисляется как номер переменной + текущее значение счетчика.
             commands.add(BLoad, 0)
 
-        commands.stack_cycle(env, cycle_body, load_counter=False)\
+        commands.loop_stack(env, cycle_body, load_counter=False)\
             .add(Label, end_label)
 
         # Кладем в стек 0 - маркер конца строки
@@ -51,18 +51,15 @@ class String:
         commands.add(DAllocate, 0)
         commands.add(Store, start_data_pointer)
 
+        commands.add(Push, 0)
+
         def cycle_body(counter_var, b, c):
             commands.add(Load, counter_var)
             commands.add(Load, start_data_pointer)
             commands.add(Add)
             commands.add(DBStore, 0)
 
-        counter_var = commands.stack_cycle(env, cycle_body, load_counter=False, return_counter_var=True)
-        commands.add(Push, 0)
-        commands.add(Load, counter_var)
-        commands.add(Load, start_data_pointer)
-        commands.add(Add)
-        commands.add(DBStore, 0)
+        counter_var = commands.loop_stack(env, cycle_body, load_counter=False, return_counter_var=True)
 
         commands.add(Push, start_data_pointer)
 
@@ -80,19 +77,29 @@ class String:
 
         # Считываем строку из памяти до конца, подсчитывая кол-во символов
         if allocate == 'heap':
-            commands.memory_heap_cycle(env, var_number)
+            commands.loop_data_heap(env, var_number)
         else:
-            commands.memory_cycle(env, var_number)
+            commands.loop_data_stack(env, var_number)
 
     """
     Генерация инструкций для получения определенного символа строки, находящейся на стеке
     """
     @staticmethod
-    def compile_strget(commands, env):
-        # Вычитаем из указателя на начало строки номер нужного символа (т. к. в памяти строка инвертирована)
-        commands.add(Sub)
-        # Загружаем символ по вычисленному адресу
-        commands.add(BLoad, 0)
+    def compile_strget(commands, env, allocate):
+
+        if allocate == 'heap':
+            position_symbol_var = Environment.create_var(env)
+            commands.add(Store, position_symbol_var)
+            commands.add(BLoad, 0)
+            commands.add(Load, position_symbol_var)
+            # Вычитаем из указателя на начало строки номер нужного символа (т. к. в памяти строка инвертирована)
+            commands.add(Sub)
+            commands.add(DBLoad, -1)
+        else:
+            # Вычитаем из указателя на начало строки номер нужного символа (т. к. в памяти строка инвертирована)
+            commands.add(Sub)
+            # Загружаем символ по вычисленному адресу
+            commands.add(BLoad, 0)
 
     """
     Генерация инструкций для замены определенного символа строки, находящейся на стеке
@@ -128,7 +135,7 @@ class String:
 
         # Сохраняем заменяющий символ
         commands.add(Store, length_var)
-        commands.add(Add)
+        commands.add(Sub)
         # Вычисляем и сохраняем адрес ячейки памяти, где находится заменяемый символ
         commands.add(Store, string_var)
 
@@ -144,9 +151,10 @@ class String:
             commands.add(Sub)
             commands.add(BLoad, 0)
 
-        counter_var = commands.memory_cycle(env, string_var, cycle_body, return_counter_var=True)
+        counter_var = commands.loop_data_stack(env, string_var, cycle_body, return_counter_var=True)
 
         commands.add(Label, end_label)
         commands.add(Load, counter_var)
         commands.add(Push, 1)
         commands.add(Add)
+        commands.add(Log, 0)
