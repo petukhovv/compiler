@@ -12,7 +12,7 @@ def assign_statement(commands, env, variable, aexp):
 
     # Если значение требует хранения в heap memory, выделяем память и записываем его туда
     if isinstance(aexp, Heapable):
-        String._store(commands, env)
+        StringCompiler._store(commands, env)
 
     commands.add(Store, var_name)
 

@@ -16,7 +16,6 @@ class Char(Stackable):
 class String(Heapable):
     def __init__(self, characters):
         self.characters = characters
-        self.heap_data_produce = True
 
     def eval(self, env):
         return interpreter.string(env, self.characters)
@@ -74,12 +73,15 @@ class StrSet:
     def compile_vm(self, commands, env):
         return compile_vm.strset(commands, env, self.args)
 
-class StrCat:
+class StrCat(Heapable):
     def __init__(self, args):
         self.args = args
 
     def eval(self, env):
         return interpreter.str_cat(env, self.args)
+
+    def compile_vm(self, commands, env):
+        return compile_vm.strcat(commands, env, self.args)
 
 class StrCmp:
     def __init__(self, args):

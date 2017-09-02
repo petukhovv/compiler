@@ -3,7 +3,7 @@
 from src.VM.commands import *
 from env import Env
 
-class String:
+class StringCompiler:
     """
     Генерация инструкций для записи строки из стека в heap memory.
     """
@@ -61,12 +61,8 @@ class String:
     """
     @staticmethod
     def strget(commands, env):
-        target_symbol = Env.var(env)
-
-        commands.add(Store, target_symbol)
         # Получаем номер ячейки в heap memory с началом строки
         commands.add(BLoad, 0)
-        commands.add(Load, target_symbol)
         # Прибавляем к номеру ячейки с началом строки номер требуемого символа (offset)
         commands.add(Add)
         # Загружаем на стек символ по номеру его ячейки в heap memory
@@ -77,24 +73,10 @@ class String:
     """
     @staticmethod
     def strset(commands, env):
-        replacement_symbol = Env.var(env)
-        target_symbol = Env.var(env)
-        target_symbol_pointer = Env.var(env)
-
-        # Сохраняем заменяющий символ
-        commands.add(Store, replacement_symbol)
-
-        # Сохраняем номер заменяемого символа
-        commands.add(Store, target_symbol)
+        # Получаем номер ячейки в heap memory с началом строки
         commands.add(BLoad, 0)
-        commands.add(Load, target_symbol)
-        # Вычисляем и сохраняем адрес ячейки heap memory, где находится заменяемый символ
+        # Вычисляем ячейки heap memory, где находится заменяемый символ
         commands.add(Add)
-        commands.add(Store, target_symbol_pointer)
-        # Загружаем в нужном порядке: заменяющий символ и указатель на заменяемый символ
-        commands.add(Load, replacement_symbol)
-        commands.add(Load, target_symbol_pointer)
-
         # Производим замену символа
         commands.add(DBStore, 0)
 
@@ -103,7 +85,6 @@ class String:
     """
     @staticmethod
     def strsub(commands, env):
-        substr_offset = Env.var(env)
         substr_length = Env.var(env)
         substr_start_pointer = Env.var(env)
 
@@ -112,11 +93,8 @@ class String:
         # Сохраняем длину подстроки
         commands.add(Store, substr_length)
 
-        # Сохраняем смещение относительно строки
-        commands.add(Store, substr_offset)
         # Вычисляем и сохраняем указатель на начало подстроки
         commands.add(BLoad, 0)
-        commands.add(Load, substr_offset)
         commands.add(Add)
         commands.add(Store, substr_start_pointer)
 
@@ -164,3 +142,45 @@ class String:
 
         # Читаем строку и кладем её на стек
         commands.loop_data_heap(env, str_start_pointer, cycle_body)
+
+    """
+    Генерация инструкций для дублирования строки
+    """
+    @staticmethod
+    def strcat(commands, env):
+        str_start_pointer = Env.var(env)
+
+        commands.add(BLoad, 0)
+        commands.add(Store, str_start_pointer)
+
+        commands.add(Push, 0)
+
+        def cycle_body(_counter, a, b):
+            commands.add(Load, str_start_pointer)
+            commands.add(Load, _counter)
+            commands.add(Add)
+            commands.add(DBLoad, 0)
+
+        # Читаем строку и кладем её на стек
+        commands.loop_data_heap(env, str_start_pointer, cycle_body)
+
+    @staticmethod
+    def strcat_join(commands, env):
+        str_start_pointer = Env.var(env)
+        str_length = Env.var(env)
+
+        commands.add(BLoad, 0)
+        commands.add(Store, str_start_pointer)
+        commands.add(Store, str_length)
+
+        def cycle_body(_counter, a, b):
+            commands.add(Load, str_start_pointer)
+            commands.add(Load, _counter)
+            commands.add(Add)
+            commands.add(DBLoad, 0)
+
+        # Читаем строку и кладем её на стек
+        commands.loop_data_heap(env, str_start_pointer, cycle_body)
+
+        commands.add(Load, str_length)
+        commands.add(Add)
