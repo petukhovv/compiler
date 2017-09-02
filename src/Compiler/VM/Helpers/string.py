@@ -224,3 +224,60 @@ class StringCompiler:
 
         # Отдаем на стек указатель на начало строки для дальнейшего использования
         commands.add(Push, str_start_pointer)
+
+    @staticmethod
+    def strcmp(commands, env):
+        str1_start_pointer = Env.var(env)
+        str2_start_pointer = Env.var(env)
+
+        finish_label = Env.label(env)
+        not_eq_label = Env.label(env)
+        larger_label = Env.label(env)
+        smaller_label = Env.label(env)
+
+        commands.add(BLoad, 0)
+        commands.add(Store, str1_start_pointer)
+
+        commands.add(BLoad, 0)
+        commands.add(Store, str2_start_pointer)
+
+        def cycle_body(_counter, a, b):
+            commands.add(Load, str1_start_pointer)
+            commands.add(DBLoad, 0)
+            commands.add(Load, _counter)
+            commands.add(Add)
+
+            commands.add(Load, str2_start_pointer)
+            commands.add(Load, _counter)
+            commands.add(Add)
+            commands.add(DBLoad, 0)
+
+            commands.add(Compare, 1)
+            commands.add(Jnz, not_eq_label)
+
+        # Читаем строку и кладем её на стек
+        counter = commands.loop(env, cycle_body, return_counter=True)
+
+        commands.add(Label, not_eq_label)
+
+        commands.add(Load, str1_start_pointer)
+        commands.add(Load, counter)
+        commands.add(Add)
+        commands.add(DBLoad, 0)
+
+        commands.add(Load, str2_start_pointer)
+        commands.add(Load, counter)
+        commands.add(Add)
+        commands.add(DBLoad, 0)
+
+        commands.add(Compare, 2)
+        commands.add(Jnz, larger_label)
+
+        commands.add(Push, -1)
+        commands.add(Jump, finish_label)
+
+        commands.add(Label, larger_label)
+        commands.add(Push, 1)
+        commands.add(Jump, finish_label)
+
+        commands.add(Label, finish_label)

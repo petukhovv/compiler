@@ -62,3 +62,13 @@ def strmake(commands, env, args):
     args.elements[1].compile_vm(commands, env)
     args.elements[0].compile_vm(commands, env)
     StringCompiler.strmake(commands, env)
+
+def strcmp(commands, env, args):
+    args.elements[0].compile_vm(commands, env)
+    if isinstance(args.elements[0], AST.String):
+        StringCompiler._store(commands, env)
+    args.elements[1].compile_vm(commands, env)
+    if isinstance(args.elements[1], AST.String):
+        StringCompiler._store(commands, env)
+
+    StringCompiler.strcmp(commands, env)

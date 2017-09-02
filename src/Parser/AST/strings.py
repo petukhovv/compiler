@@ -90,6 +90,9 @@ class StrCmp:
     def eval(self, env):
         return interpreter.str_cmp(env, self.args)
 
+    def compile_vm(self, commands, env):
+        return compile_vm.strcmp(commands, env, self.args)
+
 class StrMake:
     def __init__(self, args):
         self.args = args
