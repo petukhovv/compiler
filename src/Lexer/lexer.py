@@ -1,6 +1,8 @@
 import sys
 import re
 
+from pprint import pprint
+
 """
 Lexer. It breaks the code into tokens by token expressions (regexps).
 Order of tokens in token expressions is important!
@@ -17,7 +19,7 @@ def lex(code, token_expressions):
             regex = re.compile(pattern)
             match = regex.match(code, pos)
             if match:
-                text = match.group(1)
+                text = match.group(len(match.groups()))
                 if tag:
                     token = (text, tag)
                     tokens.append(token)

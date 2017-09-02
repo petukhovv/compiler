@@ -20,10 +20,9 @@ token_expressions = [
     token('#[^\n]*', None),
 
     token('true|false', BOOLEAN, right_context='\W'),
-    token('.*?', STRING, left_context='"', right_context='"'),
-    token('.', CHAR, left_context='\'', right_context='\''),
+    token('\"(.*?)\"', STRING),
+    token('\'(.)\'', CHAR),
 
-    token('"', None),
     token('\'', None),
     token('\:=', RESERVED),
     token('\(', RESERVED),
