@@ -51,7 +51,8 @@ class Commands(list):
             .add(Store, counter)
 
         # Выполняем переданное условие останова
-        check_break_condition(start_label, finish_label, counter)
+        if check_break_condition is not None:
+            check_break_condition(start_label, finish_label, counter)
 
         self.add(Jump, start_label) \
             .add(Label, finish_label)
@@ -65,6 +66,13 @@ class Commands(list):
             return counter
 
         return self
+
+    """
+    Генерация команд для организация произвольного цикла.
+    Критерий отстанова и сам останов должен реализовываться внутри callback.
+    """
+    def loop(self, env, callback, return_counter=False):
+        return self.loop_base(env, None, callback, False, return_counter)
 
     """
     Генерация команд для организация цикла на стеке.

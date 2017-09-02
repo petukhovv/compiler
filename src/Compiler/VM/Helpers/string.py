@@ -184,3 +184,43 @@ class StringCompiler:
 
         commands.add(Load, str_length)
         commands.add(Add)
+
+    @staticmethod
+    def strmake(commands, env):
+        str_start_pointer = Env.var(env)
+        str_length = Env.var(env)
+        basis_symbol = Env.var(env)
+
+        finish_label = Env.label(env)
+
+        commands.add(Dup)
+        commands.add(Store, str_length)
+        commands.add(DAllocate, 1)
+        commands.add(Store, str_start_pointer)
+
+        commands.add(Store, basis_symbol)
+
+        def cycle_body(_counter, b, c):
+            commands.add(Load, _counter)
+            commands.add(Load, str_length)
+            commands.add(Compare, 5)
+            commands.add(Jnz, finish_label)
+            commands.add(Load, basis_symbol)
+            commands.add(Load, str_start_pointer)
+            commands.add(Load, _counter)
+            commands.add(Add)
+            commands.add(DBStore, 0)
+
+        counter = commands.loop(env, cycle_body, return_counter=True)
+
+        commands.add(Label, finish_label)
+
+        # Дописываем 0 в последнюю ячейку памяти - это маркер конца строки
+        commands.add(Push, 0)
+        commands.add(Load, counter)
+        commands.add(Load, str_start_pointer)
+        commands.add(Add)
+        commands.add(DBStore, 0)
+
+        # Отдаем на стек указатель на начало строки для дальнейшего использования
+        commands.add(Push, str_start_pointer)

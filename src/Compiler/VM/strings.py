@@ -57,3 +57,8 @@ def strcat(commands, env, args):
         StringCompiler._store(commands, env)
 
     StringCompiler.strcat_join(commands, env)
+
+def strmake(commands, env, args):
+    args.elements[1].compile_vm(commands, env)
+    args.elements[0].compile_vm(commands, env)
+    StringCompiler.strmake(commands, env)

@@ -96,3 +96,6 @@ class StrMake:
 
     def eval(self, env):
         return interpreter.str_make(env, self.args)
+
+    def compile_vm(self, commands, env):
+        return compile_vm.strmake(commands, env, self.args)
