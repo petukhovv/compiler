@@ -59,12 +59,12 @@ class Commands(list):
     Цикл завершается, если на стеке оказалось 0.
     После завершения на стек помещается число совершенных итераций.
     """
-    def loop_stack(self, env, callback, load_counter=True, return_counter_var=False):
+    def loop_stack(self, env, callback, load_counter=True, return_counter=False):
         def check_break_condition(a, end_while_label, b):
             # Если после выполнения callback на стеке 0 - завершаем цикл.
             self.add(Dup).add(Jz, end_while_label)
 
-        result = self.loop_base(env, check_break_condition, callback, load_counter, return_counter_var)
+        result = self.loop_base(env, check_break_condition, callback, load_counter, return_counter)
 
         # Очищаем оставшийся на стеке 0 (поскольку перед Jz использовали Dup).
         self.add(Pop)
@@ -81,7 +81,7 @@ class Commands(list):
             # Если после выполнения callback в ячейке памяти 0 - завершаем цикл.
             self.add(Load, var_number) \
                 .add(Load, counter_var) \
-                .add(Sub) \
+                .add(Add) \
                 .add(BLoad, 0) \
                 .add(Jz, end_while_label)
 
@@ -97,8 +97,8 @@ class Commands(list):
             # Если после выполнения callback в ячейке памяти 0 - завершаем цикл.
             self.add(Load, var_number) \
                 .add(Load, counter_var) \
-                .add(Sub) \
-                .add(DBLoad, -1) \
+                .add(Add) \
+                .add(DBLoad, 0) \
                 .add(Jz, end_while_label)
 
         return self.loop_base(env, check_break_condition, callback, load_counter, return_counter_var)

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from src.Parser.AST.base import *
+
 from Helpers.string import *
 
 def assign_statement(commands, env, variable, aexp):
@@ -11,11 +13,10 @@ def assign_statement(commands, env, variable, aexp):
         var_name = Environment.get_var(env, variable.name, aexp_type)
     else:
         var_name = Environment.create_var(env, variable.name, aexp_type)
-    if aexp_type == 'String':
-        String.compile_write(commands, env, aexp.characters)
-    elif aexp_type == 'StrSub':
-        Environment.set_allocate_var(env, variable.name, 'heap')
-        String.compile_store(commands, env)
+
+    # Если значение требует хранения в heap memory, выделяем память и записываем его туда
+    if isinstance(aexp, Heapable):
+        String._store(commands, env)
 
     commands.add(Store, var_name)
 

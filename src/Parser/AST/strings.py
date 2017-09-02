@@ -1,7 +1,9 @@
 from src.Compiler.VM import strings as compile_vm
 from src.Interpreter import strings as interpreter
 
-class Char:
+from base import *
+
+class Char(Stackable):
     def __init__(self, character):
         self.character = character
 
@@ -11,9 +13,10 @@ class Char:
     def compile_vm(self, commands, env):
         return compile_vm.char(commands, env, self.character)
 
-class String:
+class String(Heapable):
     def __init__(self, characters):
         self.characters = characters
+        self.heap_data_produce = True
 
     def eval(self, env):
         return interpreter.string(env, self.characters)
@@ -21,7 +24,7 @@ class String:
     def compile_vm(self, commands, env):
         return compile_vm.string(commands, env, self.characters)
 
-class StrLen:
+class StrLen(Stackable):
     def __init__(self, args):
         self.args = args
 
@@ -31,7 +34,7 @@ class StrLen:
     def compile_vm(self, commands, env):
         return compile_vm.strlen(commands, env, self.args)
 
-class StrGet:
+class StrGet(Stackable):
     def __init__(self, args):
         self.args = args
 
@@ -41,7 +44,7 @@ class StrGet:
     def compile_vm(self, commands, env):
         return compile_vm.strget(commands, env, self.args)
 
-class StrSub:
+class StrSub(Heapable):
     def __init__(self, args):
         self.args = args
 
@@ -51,7 +54,7 @@ class StrSub:
     def compile_vm(self, commands, env):
         return compile_vm.strsub(commands, env, self.args)
 
-class StrDup:
+class StrDup(Heapable):
     def __init__(self, args):
         self.args = args
 
