@@ -6,13 +6,9 @@ from Helpers.string import *
 
 def assign_statement(commands, env, variable, aexp):
     aexp.compile_vm(commands, env)
-    aexp_type = aexp.__class__.__name__
     # Тут надо писать в стор, если это строка, указатель на начало строки (а именно - номер соотв. переменной)
     # С этого номера символы идут подряд - читаем, пока не встретим 0.
-    if Environment.is_exist_var(env, variable.name):
-        var_name = Environment.get_var(env, variable.name, aexp_type)
-    else:
-        var_name = Environment.create_var(env, variable.name, aexp_type)
+    var_name = Env.var(env, variable.name)
 
     # Если значение требует хранения в heap memory, выделяем память и записываем его туда
     if isinstance(aexp, Heapable):
@@ -25,16 +21,16 @@ def compound_statement(commands, env, first, second):
     second.compile_vm(commands, env)
 
 def repeat_statement(commands, env, condition, body):
-    current_label = Environment.create_label(env)
+    current_label = Env.label(env)
     commands.add(Label, current_label)
     body.compile_vm(commands, env)
     condition.compile_vm(commands, env)
     commands.add(Jz, current_label)
 
 def while_statement(commands, env, condition, body):
-    start_while_label = Environment.create_label(env)
+    start_while_label = Env.label(env)
     commands.add(Label, start_while_label)
-    end_while_label = Environment.create_label(env)
+    end_while_label = Env.label(env)
     condition.compile_vm(commands, env)
     commands.add(Jz, end_while_label)
     body.compile_vm(commands, env)
@@ -42,7 +38,7 @@ def while_statement(commands, env, condition, body):
         .add(Label, end_while_label)
 
 def if_statement(commands, env, condition, true_stmt, alternatives_stmt, false_stmt, label_endif):
-    label_after_true_stmt = Environment.create_label(env)
+    label_after_true_stmt = Env.label(env)
     condition.compile_vm(commands, env)
 
     # Если условие не выполнилось, пропускаем ветку.
@@ -51,7 +47,7 @@ def if_statement(commands, env, condition, true_stmt, alternatives_stmt, false_s
 
     # Первая ветвь условия, метки конца условия ещё нет - создаём её.
     if label_endif is None:
-        label_endif = Environment.create_label(env)
+        label_endif = Env.label(env)
 
     # Если условие выполнилось, пропускаем все альтернативные ветки и переходим сразу к концу условия.
     commands.add(Jump, label_endif)\
@@ -72,8 +68,8 @@ def if_statement(commands, env, condition, true_stmt, alternatives_stmt, false_s
     commands.add(Label, label_endif)
 
 def for_statement(commands, env, stmt1, stmt2, stmt3, body):
-    start_for_label = Environment.create_label(env)
-    end_for_label = Environment.create_label(env)
+    start_for_label = Env.label(env)
+    end_for_label = Env.label(env)
     stmt1.compile_vm(commands, env)
     commands.add(Label, start_for_label)
     stmt2.compile_vm(commands, env)

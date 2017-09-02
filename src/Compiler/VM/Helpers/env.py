@@ -1,8 +1,8 @@
 from pprint import pprint
 
-class Environment:
+class Env:
     @staticmethod
-    def create_label(env, name=None):
+    def label(env, name=None):
         label_number = env['label_counter']
         if name:
             env['labels_map'][name] = label_number
@@ -10,8 +10,10 @@ class Environment:
         return label_number
 
     @staticmethod
-    def create_var(env, name=None, type=None):
+    def var(env, name=None):
         var_number = env['var_counter']
+        if Env.is_exist_var(env, var_number):
+            return Env.get_var(env, var_number)
         if name is not None:
             env['vars_map'][name] = {
                 'number': var_number,
@@ -22,25 +24,14 @@ class Environment:
         return var_number
 
     @staticmethod
-    def get_var_counter_value(env):
-        return env['var_counter']
-
-    @staticmethod
     def get_label(env, name):
         return env['labels_map'][name]
 
     @staticmethod
-    def get_var(env, name, type=None):
+    def get_var(env, name):
         if type:
             env['vars_map'][name]['type'] = type
         return env['vars_map'][name]['number']
-
-    @staticmethod
-    def get_var_type(env, name):
-        if 'type' in env['vars_map'][name]:
-            return env['vars_map'][name]['type']
-        else:
-            return None
 
     @staticmethod
     def is_exist_var(env, name):

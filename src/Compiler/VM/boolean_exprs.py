@@ -2,7 +2,7 @@
 
 from src.VM.commands import *
 
-from Helpers.environment import *
+from Helpers.env import *
 from Helpers.assembler import Commands
 
 def relop_bexp(commands, env, op, left, right):
@@ -25,8 +25,8 @@ def relop_bexp(commands, env, op, left, right):
     commands.append(value)
 
 def and_bexp(commands, env, left, right):
-    end_bexp_label = Environment.create_label(env)
-    end_bexp_false_label = Environment.create_label(env)
+    end_bexp_label = Env.label(env)
+    end_bexp_false_label = Env.label(env)
     left.compile_vm(commands, env)
     commands.add(Push, 0)\
         .add(Compare, 0)
@@ -56,8 +56,8 @@ def and_bexp(commands, env, left, right):
     commands.add(Label, end_bexp_label)
 
 def or_bexp(commands, env, left, right):
-    end_bexp_label = Environment.create_label(env)
-    end_bexp_true_label = Environment.create_label(env)
+    end_bexp_label = Env.label(env)
+    end_bexp_true_label = Env.label(env)
     left.compile_vm(commands, env)
     commands.add(Push, 0)\
         .add(Compare, 1)
@@ -87,8 +87,8 @@ def or_bexp(commands, env, left, right):
     commands.add(Label, end_bexp_label)
 
 def not_bexp(commands, env, exp):
-    end_bexp_label = Environment.create_label(env)
-    end_bexp_false_label = Environment.create_label(env)
+    end_bexp_label = Env.label(env)
+    end_bexp_false_label = Env.label(env)
     exp.compile_vm(commands, env)
     commands.add(Push, 0)\
         .add(Compare, 0)

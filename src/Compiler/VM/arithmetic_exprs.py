@@ -22,4 +22,4 @@ def int_aexp(commands, env, i):
     commands.add(Push, i)
 
 def var_aexp(commands, env, name):
-    commands.add(Load, Environment.get_var(env, name))
+    commands.add(Load, Env.get_var(env, name))

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from src.VM.commands import *
-from environment import Environment
+from env import Env
 
 class String:
     """
@@ -9,8 +9,8 @@ class String:
     """
     @staticmethod
     def _store(commands, env):
-        start_str_pointer = Environment.create_var(env)
-        end_str_pointer = Environment.create_var(env)
+        start_str_pointer = Env.var(env)
+        end_str_pointer = Env.var(env)
 
         # Добавляем к требуемому размеру памяти 1 - для escape-нуля (маркера конца строки)
         commands.add(Push, 1)
@@ -47,7 +47,7 @@ class String:
     """
     @staticmethod
     def strlen(commands, env):
-        str_start_pointer = Environment.create_var(env)
+        str_start_pointer = Env.var(env)
 
         commands.add(BLoad, 0)
         # Записываем указатель на начало строки в переменную (он лежит на стеке)
@@ -61,7 +61,7 @@ class String:
     """
     @staticmethod
     def strget(commands, env):
-        target_symbol = Environment.create_var(env)
+        target_symbol = Env.var(env)
 
         commands.add(Store, target_symbol)
         # Получаем номер ячейки в heap memory с началом строки
@@ -77,8 +77,8 @@ class String:
     """
     @staticmethod
     def strset(commands, env):
-        replacement_symbol_var = Environment.create_var(env)
-        position_symbol_var = Environment.create_var(env)
+        replacement_symbol_var = Env.var(env)
+        position_symbol_var = Env.var(env)
 
         # Сохраняем заменяющий символ
         commands.add(Store, replacement_symbol_var)
@@ -99,11 +99,11 @@ class String:
     """
     @staticmethod
     def strsub(commands, env):
-        substr_offset = Environment.create_var(env)
-        substr_length = Environment.create_var(env)
-        substr_start_pointer = Environment.create_var(env)
+        substr_offset = Env.var(env)
+        substr_length = Env.var(env)
+        substr_start_pointer = Env.var(env)
 
-        finish_label = Environment.create_label(env)
+        finish_label = Env.label(env)
 
         # Сохраняем длину подстроки
         commands.add(Store, substr_length)
