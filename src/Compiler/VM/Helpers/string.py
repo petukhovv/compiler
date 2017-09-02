@@ -73,26 +73,30 @@ class String:
         commands.add(DBLoad, 0)
 
     """
-    Генерация инструкций для замены определенного символа строки, находящейся на стеке
+    Генерация инструкций для замены определенного символа строки
     """
     @staticmethod
     def strset(commands, env):
-        replacement_symbol_var = Env.var(env)
-        position_symbol_var = Env.var(env)
+        replacement_symbol = Env.var(env)
+        target_symbol = Env.var(env)
+        target_symbol_pointer = Env.var(env)
 
         # Сохраняем заменяющий символ
-        commands.add(Store, replacement_symbol_var)
+        commands.add(Store, replacement_symbol)
 
-        # Вычисляем и сохраняем адрес ячейки памяти, где находится заменяемый символ
-        commands.add(Sub)
-        commands.add(Store, position_symbol_var)
+        # Сохраняем номер заменяемого символа
+        commands.add(Store, target_symbol)
+        commands.add(BLoad, 0)
+        commands.add(Load, target_symbol)
+        # Вычисляем и сохраняем адрес ячейки heap memory, где находится заменяемый символ
+        commands.add(Add)
+        commands.add(Store, target_symbol_pointer)
+        # Загружаем в нужном порядке: заменяющий символ и указатель на заменяемый символ
+        commands.add(Load, replacement_symbol)
+        commands.add(Load, target_symbol_pointer)
 
-        # Загружаем на стек адрес и сам символ в нужном порядке
-        commands.add(Load, replacement_symbol_var)
-        commands.add(Load, position_symbol_var)
-
-        # Выгружаем символ со стека в ячейку памяти по вычисленному адресу
-        commands.add(BStore, 0)
+        # Производим замену символа
+        commands.add(DBStore, 0)
 
     """
     Генерация инструкций для получение подстроки строки

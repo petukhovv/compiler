@@ -7,7 +7,7 @@ def string(commands, env, characters):
     commands.add(Push, 0)
     for character in characters:
         char(commands, env, character)
-    commands.add(Push, len(characters) + 1)
+    commands.add(Push, len(characters))
 
 def strlen(commands, env, args):
     args.elements[0].compile_vm(commands, env)
