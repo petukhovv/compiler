@@ -30,3 +30,7 @@ def strsub(commands, env, args):
     args.elements[1].compile_vm(commands, env)
     args.elements[2].compile_vm(commands, env)
     String.strsub(commands, env)
+
+def strdup(commands, env, args):
+    args.elements[0].compile_vm(commands, env)
+    String.strdup(commands, env)

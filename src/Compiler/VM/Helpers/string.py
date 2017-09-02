@@ -140,3 +140,27 @@ class String:
         commands.add(Label, finish_label)
         # Записываем на стек длину подстроки + 1 (для маркера конца строки - нуля)
         commands.add(Load, substr_length)
+
+    """
+    Генерация инструкций для дублирования строки
+    """
+    @staticmethod
+    def strdup(commands, env):
+        str_start_pointer = Env.var(env)
+
+        # Разыменовываем указатель на начало строки
+        commands.add(BLoad, 0)
+        # Записываем номер первого символа строки в переменную (он лежит на стеке)
+        commands.add(Store, str_start_pointer)
+
+        # Кладем на стек 0 - маркер конца строки
+        commands.add(Push, 0)
+
+        def cycle_body(_counter, a, b):
+            commands.add(Load, str_start_pointer)
+            commands.add(Load, _counter)
+            commands.add(Add)
+            commands.add(DBLoad, 0)
+
+        # Читаем строку и кладем её на стек
+        commands.loop_data_heap(env, str_start_pointer, cycle_body)

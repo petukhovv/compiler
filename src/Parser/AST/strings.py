@@ -61,6 +61,9 @@ class StrDup(Heapable):
     def eval(self, env):
         return interpreter.str_dup(env, self.args)
 
+    def compile_vm(self, commands, env):
+        return compile_vm.strdup(commands, env, self.args)
+
 class StrSet:
     def __init__(self, args):
         self.args = args
