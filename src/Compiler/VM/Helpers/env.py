@@ -12,8 +12,8 @@ class Env:
     @staticmethod
     def var(env, name=None):
         var_number = env['var_counter']
-        if Env.is_exist_var(env, var_number):
-            return Env.get_var(env, var_number)
+        if Env.is_exist_var(env, name):
+            return Env.get_var(env, name)
         if name is not None:
             env['vars_map'][name] = {
                 'number': var_number,
