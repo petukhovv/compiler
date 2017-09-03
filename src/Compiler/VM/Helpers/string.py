@@ -8,7 +8,7 @@ class StringCompiler:
     Генерация инструкций для записи строки из стека в heap memory.
     """
     @staticmethod
-    def _store(commands, env):
+    def store(commands, env):
         start_str_pointer = Env.var(env)
         end_str_pointer = Env.var(env)
 
@@ -119,7 +119,7 @@ class StringCompiler:
         # Записываем на стек длину подстроки + 1 (для маркера конца строки - нуля)
         commands.add(Load, substr_length)
 
-        StringCompiler._store(commands, env)
+        StringCompiler.store(commands, env)
 
     """
     Генерация инструкций для дублирования строки
@@ -145,7 +145,7 @@ class StringCompiler:
         # Читаем строку и кладем её на стек
         commands.loop_data_heap(env, str_start_pointer, cycle_body)
 
-        StringCompiler._store(commands, env)
+        StringCompiler.store(commands, env)
 
     """
     Генерация инструкций для дублирования строки
@@ -189,7 +189,7 @@ class StringCompiler:
         commands.add(Load, str_length)
         commands.add(Add)
 
-        StringCompiler._store(commands, env)
+        StringCompiler.store(commands, env)
 
     @staticmethod
     def strmake(commands, env):
