@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from src.Parser.AST.base import *
+from src.Parser.AST.strings import *
 
 from Helpers.string import *
 
@@ -9,10 +10,6 @@ def assign_statement(commands, env, variable, aexp):
     # Тут надо писать в стор, если это строка, указатель на начало строки (а именно - номер соотв. переменной)
     # С этого номера символы идут подряд - читаем, пока не встретим 0.
     var_name = Env.var(env, variable.name)
-
-    # Если значение требует хранения в heap memory, выделяем память и записываем его туда
-    if isinstance(aexp, Heapable):
-        StringCompiler._store(commands, env)
 
     commands.add(Store, var_name)
 

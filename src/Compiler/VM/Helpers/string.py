@@ -119,6 +119,8 @@ class StringCompiler:
         # Записываем на стек длину подстроки + 1 (для маркера конца строки - нуля)
         commands.add(Load, substr_length)
 
+        StringCompiler._store(commands, env)
+
     """
     Генерация инструкций для дублирования строки
     """
@@ -142,6 +144,8 @@ class StringCompiler:
 
         # Читаем строку и кладем её на стек
         commands.loop_data_heap(env, str_start_pointer, cycle_body)
+
+        StringCompiler._store(commands, env)
 
     """
     Генерация инструкций для дублирования строки
@@ -184,6 +188,8 @@ class StringCompiler:
 
         commands.add(Load, str_length)
         commands.add(Add)
+
+        StringCompiler._store(commands, env)
 
     @staticmethod
     def strmake(commands, env):
@@ -229,11 +235,15 @@ class StringCompiler:
     def strcmp(commands, env):
         str1_start_pointer = Env.var(env)
         str2_start_pointer = Env.var(env)
+        str1_symbol = Env.var(env)
+        str2_symbol = Env.var(env)
 
         finish_label = Env.label(env)
         not_eq_label = Env.label(env)
+        eq_label = Env.label(env)
         larger_label = Env.label(env)
         smaller_label = Env.label(env)
+        continue_label = Env.label(env)
 
         commands.add(BLoad, 0)
         commands.add(Store, str1_start_pointer)
@@ -241,22 +251,47 @@ class StringCompiler:
         commands.add(BLoad, 0)
         commands.add(Store, str2_start_pointer)
 
-        def cycle_body(_counter, a, b):
+        def cycle_body(_counter, a, _):
             commands.add(Load, str1_start_pointer)
-            commands.add(DBLoad, 0)
             commands.add(Load, _counter)
             commands.add(Add)
+            commands.add(DBLoad, 0)
+            commands.add(Store, str1_symbol)
 
             commands.add(Load, str2_start_pointer)
             commands.add(Load, _counter)
             commands.add(Add)
             commands.add(DBLoad, 0)
+            commands.add(Store, str2_symbol)
 
+            commands.add(Load, str1_symbol)
+            commands.add(Load, str2_symbol)
             commands.add(Compare, 1)
             commands.add(Jnz, not_eq_label)
 
+            commands.add(Load, str1_symbol)
+            commands.add(Push, 0)
+            commands.add(Compare, 0)
+            commands.add(Load, str2_symbol)
+            commands.add(Push, 0)
+            commands.add(Compare, 0)
+            commands.add(Push, 1)
+            commands.add(Compare, 0)
+            commands.add(Dup)
+            commands.add(Jz, continue_label)
+            commands.add(Compare, 0)
+            commands.add(Jnz, eq_label)
+
+            commands.add(Label, continue_label)
+            commands.add(Pop)
+            commands.add(Pop)
+
         # Читаем строку и кладем её на стек
         counter = commands.loop(env, cycle_body, return_counter=True)
+
+        commands.add(Label, eq_label)
+        commands.add(Push, 0)
+        commands.add(Jump, finish_label)
 
         commands.add(Label, not_eq_label)
 

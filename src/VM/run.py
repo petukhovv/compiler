@@ -7,8 +7,8 @@ from src.VM.commands import *
 data = {
     'stack': {},  # Стековая память (static allocation data)
     'heap': [],  # Куча (dynamic allocation data)
-    'labels': {},
     'call_stack': [],
+    'labels': {},
     'environments': []
 }
 
