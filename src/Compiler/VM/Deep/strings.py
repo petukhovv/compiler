@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from src.VM.commands import *
-from src.Compiler.VM.Helpers.env import Env
 
 class StringCompiler:
     """
@@ -9,8 +8,8 @@ class StringCompiler:
     """
     @staticmethod
     def store(commands, env):
-        start_str_pointer = Env.var(env)
-        end_str_pointer = Env.var(env)
+        start_str_pointer = env.var()
+        end_str_pointer = env.var()
 
         # Добавляем к требуемому размеру памяти 1 - для escape-нуля (маркера конца строки)
         commands.add(Push, 1)
@@ -47,7 +46,7 @@ class StringCompiler:
     """
     @staticmethod
     def strlen(commands, env):
-        str_start_pointer = Env.var(env)
+        str_start_pointer = env.var()
 
         commands.add(BLoad, 0)
         # Записываем указатель на начало строки в переменную (он лежит на стеке)
@@ -85,10 +84,10 @@ class StringCompiler:
     """
     @staticmethod
     def strsub(commands, env):
-        substr_length = Env.var(env)
-        substr_start_pointer = Env.var(env)
+        substr_length = env.var()
+        substr_start_pointer = env.var()
 
-        finish_label = Env.label(env)
+        finish_label = env.label()
 
         # Сохраняем длину подстроки
         commands.add(Store, substr_length)
@@ -126,7 +125,7 @@ class StringCompiler:
     """
     @staticmethod
     def strdup(commands, env):
-        str_start_pointer = Env.var(env)
+        str_start_pointer = env.var()
 
         # Разыменовываем указатель на начало строки
         commands.add(BLoad, 0)
@@ -152,7 +151,7 @@ class StringCompiler:
     """
     @staticmethod
     def strcat(commands, env):
-        str_start_pointer = Env.var(env)
+        str_start_pointer = env.var()
 
         commands.add(BLoad, 0)
         commands.add(Store, str_start_pointer)
@@ -170,8 +169,8 @@ class StringCompiler:
 
     @staticmethod
     def strcat_join(commands, env):
-        str_start_pointer = Env.var(env)
-        str_length = Env.var(env)
+        str_start_pointer = env.var()
+        str_length = env.var()
 
         commands.add(BLoad, 0)
         commands.add(Store, str_start_pointer)
@@ -193,11 +192,11 @@ class StringCompiler:
 
     @staticmethod
     def strmake(commands, env):
-        str_start_pointer = Env.var(env)
-        str_length = Env.var(env)
-        basis_symbol = Env.var(env)
+        str_start_pointer = env.var()
+        str_length = env.var()
+        basis_symbol = env.var()
 
-        finish_label = Env.label(env)
+        finish_label = env.label()
 
         commands.add(Dup)
         commands.add(Store, str_length)
@@ -233,17 +232,17 @@ class StringCompiler:
 
     @staticmethod
     def strcmp(commands, env):
-        str1_start_pointer = Env.var(env)
-        str2_start_pointer = Env.var(env)
-        str1_symbol = Env.var(env)
-        str2_symbol = Env.var(env)
+        str1_start_pointer = env.var()
+        str2_start_pointer = env.var()
+        str1_symbol = env.var()
+        str2_symbol = env.var()
 
-        finish_label = Env.label(env)
-        not_eq_label = Env.label(env)
-        eq_label = Env.label(env)
-        larger_label = Env.label(env)
-        smaller_label = Env.label(env)
-        continue_label = Env.label(env)
+        finish_label = env.label()
+        not_eq_label = env.label()
+        eq_label = env.label()
+        larger_label = env.label()
+        smaller_label = env.label()
+        continue_label = env.label()
 
         commands.add(BLoad, 0)
         commands.add(Store, str1_start_pointer)

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from src.VM.commands import *
-from Helpers.env import *
+from Helpers.environment import *
 
 """ Компиляция функций (объявление, вызов, исполнение, возврат к месту вызова) """
 def function(commands, env, name, args, body):
-    start_function = Env.label(env, name)
-    finish_function = Env.label(env)
+    start_function = env.label(name)
+    finish_function = env.label()
 
     # При последовательном выполнении пропускаем выполнение тела функции,
     # т. к. в этом случае это лишь объвление функции, вызов будет позже
@@ -18,7 +18,7 @@ def function(commands, env, name, args, body):
     # Для всех аргументов создаем переменные
     arg_names = []
     for arg in args.elements:
-        arg_names.append(Env.var(env, arg))
+        arg_names.append(env.var(arg))
 
     # Компилируем конструкции изъятия из стека (в обратном порядке) аргументов функции и записи их в environment
     for _ in args.elements:
@@ -39,4 +39,4 @@ def return_statement(commands, env, expr):
 def call_statement(commands, env, name, args):
     for arg in args.elements:
         arg.compile_vm(commands, env)
-    commands.add(Call, Env.get_label(env, name))
+    commands.add(Call, env.get_label(name))

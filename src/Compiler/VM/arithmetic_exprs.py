@@ -24,4 +24,4 @@ def int_aexp(commands, env, i):
 
 """ Компиляция переменной """
 def var_aexp(commands, env, name):
-    commands.add(Load, Env.get_var(env, name))
+    commands.add(Load, env.get_var(name))

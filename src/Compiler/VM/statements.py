@@ -5,7 +5,7 @@ from src.Compiler.VM.Deep.strings import *
 """ Компиляция выражения присваивания """
 def assign_statement(commands, env, variable, aexp):
     aexp.compile_vm(commands, env)
-    commands.add(Store, Env.var(env, variable.name))
+    commands.add(Store, env.var(variable.name))
 
 """ Компиляция составного выражения """
 def compound_statement(commands, env, first, second):
@@ -14,7 +14,7 @@ def compound_statement(commands, env, first, second):
 
 """ Компиляция repeat-until цикла """
 def repeat_statement(commands, env, condition, body):
-    continue_label = Env.label(env)
+    continue_label = env.label()
     commands.add(Label, continue_label)
     body.compile_vm(commands, env)
     condition.compile_vm(commands, env)
@@ -23,9 +23,9 @@ def repeat_statement(commands, env, condition, body):
 
 """ Компиляция while цикла """
 def while_statement(commands, env, condition, body):
-    start_label = Env.label(env)
+    start_label = env.label()
     commands.add(Label, start_label)
-    finish_label = Env.label(env)
+    finish_label = env.label()
     condition.compile_vm(commands, env)
     # Если перед очередной итерации условие останова не выполнилось, завершаем цикл
     commands.add(Jz, finish_label)
@@ -36,7 +36,7 @@ def while_statement(commands, env, condition, body):
 
 """ Компиляция конструкции if с альтернативными ветками """
 def if_statement(commands, env, condition, true_stmt, alternatives_stmt, false_stmt, label_endif):
-    skip_true_stmt_label = Env.label(env)
+    skip_true_stmt_label = env.label()
 
     condition.compile_vm(commands, env)
     # Если условие не выполнилось, пропускаем ветку.
@@ -45,7 +45,7 @@ def if_statement(commands, env, condition, true_stmt, alternatives_stmt, false_s
 
     # Первая ветка условия, метки конца условия ещё нет - создаём её.
     if label_endif is None:
-        label_endif = Env.label(env)
+        label_endif = env.label()
 
     # Если условие выполнилось, пропускаем все альтернативные ветки и переходим сразу к концу условия.
     commands.add(Jump, label_endif)\
@@ -68,8 +68,8 @@ def if_statement(commands, env, condition, true_stmt, alternatives_stmt, false_s
 
 """ Компиляция цикла for """
 def for_statement(commands, env, stmt1, stmt2, stmt3, body):
-    start_label = Env.label(env)
-    finish_label = Env.label(env)
+    start_label = env.label()
+    finish_label = env.label()
 
     stmt1.compile_vm(commands, env)
     commands.add(Label, start_label)

@@ -2,7 +2,7 @@
 
 from src.VM.commands import *
 
-from Helpers.env import *
+from Helpers.environment import *
 
 """ Мапа: оператор сравнения в языке программирования - оператор сравнения в коде стековой машины """
 relop_compare_map = {
@@ -23,8 +23,8 @@ def relop_bexp(commands, env, op, left, right):
 
 """ Компиляция оператора логического "И" (and) """
 def and_bexp(commands, env, left, right):
-    finish_label = Env.label(env)
-    finish_false_label = Env.label(env)
+    finish_label = env.label()
+    finish_false_label = env.label()
 
     left.compile_vm(commands, env)
     commands.add(Push, 0)\
@@ -56,8 +56,8 @@ def and_bexp(commands, env, left, right):
 
 """ Компиляция оператора логического "ИЛИ" (or) """
 def or_bexp(commands, env, left, right):
-    finish_label = Env.label(env)
-    finish_true_label = Env.label(env)
+    finish_label = env.label()
+    finish_true_label = env.label()
 
     left.compile_vm(commands, env)
     commands.add(Push, 0)\
@@ -89,8 +89,8 @@ def or_bexp(commands, env, left, right):
 
 """ Компиляция оператора логического "НЕ" (not) """
 def not_bexp(commands, env, exp):
-    finish_label = Env.label(env)
-    finish_false_label = Env.label(env)
+    finish_label = env.label()
+    finish_false_label = env.label()
 
     exp.compile_vm(commands, env)
     commands.add(Push, 0)\

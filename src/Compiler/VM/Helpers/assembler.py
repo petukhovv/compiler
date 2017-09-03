@@ -2,7 +2,6 @@
 
 from src.VM.Helpers.parser import command_class_relation_map, ARGS_SEPARATOR
 from src.VM.commands import *
-from env import Env
 
 commands_relation_map = dict((command_class_relation_map[k], k) for k in command_class_relation_map)
 
@@ -27,11 +26,11 @@ class Commands(list):
     """
     def loop_base(self, env, check_break_condition, callback, load_counter=True, return_counter=False):
         # Создаем метки и переменные, необходимые для прохождения цикла.
-        counter = Env.var(env)
+        counter = env.var()
 
-        start_label = Env.label(env)
-        finish_label = Env.label(env)
-        continue_label = Env.label(env)
+        start_label = env.label()
+        finish_label = env.label()
+        continue_label = env.label()
 
         # Инициализируем счетчик цикла
         self.add(Push, 0) \
