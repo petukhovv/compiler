@@ -4,6 +4,7 @@ from src.VM.commands import *
 
 from Helpers.env import *
 
+""" Мапа: оператор сравнения в языке программирования - оператор сравнения в коде стековой машины """
 relop_compare_map = {
     '==':   0,
     '!=':   1,

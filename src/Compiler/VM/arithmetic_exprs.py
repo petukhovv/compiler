@@ -1,25 +1,27 @@
-from Helpers.string import *
-from Helpers.assembler import Commands
+# -*- coding: utf-8 -*-
 
+from Helpers.string import *
+
+""" Мапа: арифметический оператор в языке программирования - арифметический оператор в коде стековой машины """
+binop_compare_map = {
+    '=': Add,
+    '-': Sub,
+    '*': Mul,
+    '/': Div,
+    '%': Mod
+}
+
+""" Компиляция арифметического выражения """
 def binop_aexp(commands, env, op, left, right):
     left.compile_vm(commands, env)
     right.compile_vm(commands, env)
-    if op == '+':
-        value = Commands.gen(Add)
-    elif op == '-':
-        value = Commands.gen(Sub)
-    elif op == '*':
-        value = Commands.gen(Mul)
-    elif op == '/':
-        value = Commands.gen(Div)
-    elif op == '%':
-        value = Commands.gen(Mod)
-    else:
-        raise RuntimeError('unknown operator: ' + op)
-    commands.append(value)
 
+    commands.append(binop_compare_map[op])
+
+""" Компиляция числа """
 def int_aexp(commands, env, i):
     commands.add(Push, i)
 
+""" Компиляция переменной """
 def var_aexp(commands, env, name):
     commands.add(Load, Env.get_var(env, name))
