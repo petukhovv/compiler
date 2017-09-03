@@ -2,6 +2,7 @@
 
 from src.VM.commands import *
 
+""" Генератор команд для организации циклов """
 class Loop():
     load_commands = {
         'stack': BLoad,
