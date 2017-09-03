@@ -1,41 +1,42 @@
 # -*- coding: utf-8 -*-
 
 from src.VM.commands import *
-
 from Helpers.env import *
 
+""" Компиляция функций (объявление, вызов, исполнение, возврат к месту вызова) """
 def function(commands, env, name, args, body):
     start_function = Env.label(env, name)
-    end_function = Env.label(env)
+    finish_function = Env.label(env)
 
-    # При последовательном выполнение пропускаем выполнения тела функции,
-    # т. к. в этом случае это лишь объвление функции, вызов будет позже.
-    commands.add(Jump, end_function)
+    # При последовательном выполнении пропускаем выполнение тела функции,
+    # т. к. в этом случае это лишь объвление функции, вызов будет позже
+    commands.add(Jump, finish_function)
 
-    # На эту метку переходим при вызове.
+    # На эту метку переходим при вызове
     commands.add(Label, start_function)
 
-    # Компилим конструкции изъятия из стека аргументов функции и записи их в environment.
-    var_counters = []
+    # Для всех аргументов создаем переменные
+    arg_names = []
     for arg in args.elements:
-        var_counters.append(Env.var(env, arg))
+        arg_names.append(Env.var(env, arg))
 
-    for arg in args.elements:
-        var_counter = var_counters.pop()
-        commands.add(Store, var_counter)
+    # Компилируем конструкции изъятия из стека (в обратном порядке) аргументов функции и записи их в environment
+    for _ in args.elements:
+        commands.add(Store, arg_names.pop())
 
-    # Компилим код тела функции.
+    # Компилируем код тела функции
     body.compile_vm(commands, env)
 
-    # Компилим конструкцию возврата к месту вызова.
+    # Компилируем конструкцию возврата к месту вызова
     commands.add(Return)\
-        .add(Label, end_function)
+        .add(Label, finish_function)
 
+""" Компиляция выражения возврата к месту вызова """
 def return_statement(commands, env, expr):
     expr.compile_vm(commands, env)
 
-def function_call_statement(commands, env, name, args):
+""" Компиляция выражения вызова функции """
+def call_statement(commands, env, name, args):
     for arg in args.elements:
         arg.compile_vm(commands, env)
-    label = Env.get_label(env, name)
-    commands.add(Call, label)
+    commands.add(Call, Env.get_label(env, name))

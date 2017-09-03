@@ -55,4 +55,4 @@ class FunctionCallStatement:
         return func_env['r']
 
     def compile_vm(self, commands, env):
-        return compile_vm.function_call_statement(commands, env, self.name, self.args)
+        return compile_vm.call_statement(commands, env, self.name, self.args)
