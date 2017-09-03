@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from src.VM.commands import *
+from ..Helpers.loop import Loop
 
 class StringCompiler:
     """
@@ -29,7 +30,7 @@ class StringCompiler:
             commands.add(Sub)
             commands.add(DBStore, -2)
 
-        counter = commands.loop_stack(env, cycle_body, load_counter=False, return_counter=True)
+        counter = Loop.stack(commands, env, cycle_body, load_counter=False, return_counter=True)
 
         # Дописываем 0 в последнюю ячейку памяти - это маркер конца строки
         commands.add(Push, 0)
@@ -53,7 +54,7 @@ class StringCompiler:
         commands.add(Store, str_start_pointer)
 
         # Считываем строку из памяти до конца (пока не встретим 0), подсчитывая кол-во символов (его кладем на стек)
-        commands.loop_data_heap(env, str_start_pointer)
+        Loop.data_heap(commands, env, str_start_pointer)
 
     """
     Генерация инструкций для получения определенного символа строки
@@ -112,7 +113,7 @@ class StringCompiler:
             commands.add(Add)
             commands.add(DBLoad, 0)
 
-        commands.loop_data_heap(env, substr_start_pointer, cycle_body, load_counter=False)
+        Loop.data_heap(commands, env, substr_start_pointer, cycle_body, load_counter=False)
 
         commands.add(Label, finish_label)
         # Записываем на стек длину подстроки + 1 (для маркера конца строки - нуля)
@@ -142,7 +143,7 @@ class StringCompiler:
             commands.add(DBLoad, 0)
 
         # Читаем строку и кладем её на стек
-        commands.loop_data_heap(env, str_start_pointer, cycle_body)
+        Loop.data_heap(commands, env, str_start_pointer, cycle_body)
 
         StringCompiler.store(commands, env)
 
@@ -165,7 +166,7 @@ class StringCompiler:
             commands.add(DBLoad, 0)
 
         # Читаем строку и кладем её на стек
-        commands.loop_data_heap(env, str_start_pointer, cycle_body)
+        Loop.data_heap(commands, env, str_start_pointer, cycle_body)
 
     @staticmethod
     def strcat_join(commands, env):
@@ -183,7 +184,7 @@ class StringCompiler:
             commands.add(DBLoad, 0)
 
         # Читаем строку и кладем её на стек
-        commands.loop_data_heap(env, str_start_pointer, cycle_body)
+        Loop.data_heap(commands, env, str_start_pointer, cycle_body)
 
         commands.add(Load, str_length)
         commands.add(Add)
@@ -216,7 +217,7 @@ class StringCompiler:
             commands.add(Add)
             commands.add(DBStore, 0)
 
-        counter = commands.loop(env, cycle_body, return_counter=True)
+        counter = Loop.simple(commands, env, cycle_body, return_counter=True)
 
         commands.add(Label, finish_label)
 
@@ -286,7 +287,7 @@ class StringCompiler:
             commands.add(Pop)
 
         # Читаем строку и кладем её на стек
-        counter = commands.loop(env, cycle_body, return_counter=True)
+        counter = Loop.simple(commands, env, cycle_body, return_counter=True)
 
         commands.add(Label, eq_label)
         commands.add(Push, 0)
