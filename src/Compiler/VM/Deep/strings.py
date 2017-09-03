@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from src.VM.commands import *
-from env import Env
+from src.Compiler.VM.Helpers.env import Env
 
 class StringCompiler:
     """

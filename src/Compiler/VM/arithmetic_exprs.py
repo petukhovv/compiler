@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from Helpers.string import *
+from src.Compiler.VM.Deep.strings import *
 
 """ Мапа: арифметический оператор в языке программирования - арифметический оператор в коде стековой машины """
 binop_compare_map = {

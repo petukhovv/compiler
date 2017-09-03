@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from Helpers.string import *
+from src.Compiler.VM.Deep.strings import *
 
 """ Компиляция выражения присваивания """
 def assign_statement(commands, env, variable, aexp):

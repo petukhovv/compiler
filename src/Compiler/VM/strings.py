@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from Helpers.string import *
 from Helpers.base import *
+from src.Compiler.VM.Deep.strings import *
 
 AST = sys.modules['src.Parser.AST.strings']
 
