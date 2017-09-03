@@ -4,7 +4,7 @@ from src.Compiler.VM.Deep.strings import *
 
 """ Мапа: арифметический оператор в языке программирования - арифметический оператор в коде стековой машины """
 binop_compare_map = {
-    '=': Add,
+    '+': Add,
     '-': Sub,
     '*': Mul,
     '/': Div,
@@ -16,7 +16,7 @@ def binop_aexp(commands, env, op, left, right):
     left.compile_vm(commands, env)
     right.compile_vm(commands, env)
 
-    commands.append(binop_compare_map[op])
+    commands.add(binop_compare_map[op])
 
 """ Компиляция числа """
 def int_aexp(commands, env, i):
