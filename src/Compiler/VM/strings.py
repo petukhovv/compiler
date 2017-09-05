@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from Helpers.base import *
 from src.Compiler.VM.Deep.strings import *
 
 AST = sys.modules['src.Parser.AST.strings']
@@ -50,9 +49,9 @@ def strdup(commands, env, args):
 """ Компиляция built-in функции strcat (конкатенация двух строк) """
 def strcat(commands, env, args):
     args_compile(args, 0, commands, env)
-    StringCompiler.strcat(commands, env)
+    StringCompiler.strcat_first(commands, env)
     args_compile(args, 1, commands, env)
-    StringCompiler.strcat_join(commands, env)
+    StringCompiler.strcat_second(commands, env)
 
 """ Компиляция built-in функции strmake (создание строки из n одинаковых символов) """
 def strmake(commands, env, args):
