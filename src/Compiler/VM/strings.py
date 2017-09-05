@@ -2,8 +2,6 @@
 
 from src.Compiler.VM.Deep.strings import *
 
-AST = sys.modules['src.Parser.AST.strings']
-
 """ Компиляция выражения "символ" """
 def char(commands, env, character):
     commands.add(Push, ord(character))

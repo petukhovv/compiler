@@ -1,3 +1,4 @@
+from src.Compiler.VM import common as compile_vm
 from src.Interpreter import common as interpreter
 from pprint import pprint
 
@@ -19,3 +20,6 @@ class Enumeration:
 
     def eval(self):
         return interpreter.enumeration(self.elements)
+
+    def compile_vm(self, commands, env):
+        return compile_vm.enumeration(commands, env, self.elements)

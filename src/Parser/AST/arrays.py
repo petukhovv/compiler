@@ -1,5 +1,6 @@
 from src.Parser.AST.arithmetic_exprs import *
 
+from src.Compiler.VM import arrays as compile_vm
 from src.Interpreter import arrays as interpreter
 
 class UnboxedArray:
@@ -10,6 +11,9 @@ class UnboxedArray:
 
     def eval(self, env):
         return interpreter.unboxed_array(env, self.elements)
+
+    def compile_vm(self, commands, env):
+        return compile_vm.unboxed(commands, env, self.elements)
 
 class BoxedArray:
     pointers = 0
@@ -31,6 +35,9 @@ class ArrayElement:
     def eval(self, env):
         return interpreter.array_element(env, self.array, self.index, self.other_indexes)
 
+    def compile_vm(self, commands, env):
+        return compile_vm.array_element(commands, env, self.array, self.index, self.other_indexes)
+
 class ArrLen:
     def __init__(self, args):
         self.args = args
@@ -44,6 +51,9 @@ class UnboxedArrMake:
 
     def eval(self, env):
         return interpreter.unboxed_arr_make(env, self.args)
+
+    def compile_vm(self, commands, env):
+        return compile_vm.unboxed_arrmake(commands, env, self.args)
 
 class BoxedArrMake:
     def __init__(self, args):
