@@ -20,9 +20,6 @@ def unboxed_arrmake(commands, env, args):
         values_type = 'none'
     args_compile(args, 0, commands, env)
     ArrayCompiler.unboxed_arrmake(commands, env, values_type)
-    # commands.add(Log, 0)
-    # commands.add(Log, 1)
-    # commands.add(Log, 2)
 
 def unboxed(commands, env, elements):
     arr_elements = elements.compile_vm(commands, env)
@@ -34,3 +31,7 @@ def array_element(commands, env, array, index, other_indexes):
     index.compile_vm(commands, env)
     commands.add(Load, env.get_var(array))
     ArrayCompiler.element(commands, env)
+
+def arrlen(commands, env, args):
+    args_compile(args, 0, commands, env)
+    ArrayCompiler.arrlen(commands, env)

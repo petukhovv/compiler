@@ -45,6 +45,9 @@ class ArrLen:
     def eval(self, env):
         return interpreter.arr_len(env, self.args)
 
+    def compile_vm(self, commands, env):
+        return compile_vm.arrlen(commands, env, self.args)
+
 class UnboxedArrMake:
     def __init__(self, args):
         self.args = args

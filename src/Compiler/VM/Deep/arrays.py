@@ -54,3 +54,13 @@ class ArrayCompiler:
         commands.add(Add)
         # Загружаем на стек символ по номеру его ячейки в heap memory
         commands.add(DBLoad, 0)
+
+    @staticmethod
+    def arrlen(commands, env):
+        arr_start_pointer = env.var()
+
+        # Разыменовываем лежащий на стеке указатель и записываем его в переменную
+        commands.add(Store, arr_start_pointer)
+
+        # Считываем строку из памяти до конца (пока не встретим 0), подсчитывая кол-во символов (его кладем на стек)
+        Loop.data_heap(commands, env, arr_start_pointer)
