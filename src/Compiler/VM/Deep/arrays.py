@@ -47,3 +47,10 @@ class ArrayCompiler:
         dbstore(arr_pointer, counter, commands)
 
         commands.add(Load, arr_pointer)
+
+    @staticmethod
+    def element(commands, env):
+        # Прибавляем к номеру ячейки с началом строки номер требуемого символа (offset)
+        commands.add(Add)
+        # Загружаем на стек символ по номеру его ячейки в heap memory
+        commands.add(DBLoad, 0)
