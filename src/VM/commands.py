@@ -354,8 +354,9 @@ class Allocate:
     def eval(self, commands, data, stack):
         start_data_pointer = len(data['heap'])
         i = 0
+        env = Environment.get_current_env(data)
         while i < self.size:
-            data['heap'].append(None)
+            env['heap'].append(None)
             i += 1
         stack.append(start_data_pointer)
 
@@ -371,8 +372,9 @@ class DAllocate:
         start_data_pointer = len(data['heap'])
         memory_size = self.size + stack.pop()
         i = 0
+        env = Environment.get_current_env(data)
         while i < memory_size:
-            data['heap'].append(None)
+            env['heap'].append(None)
             i += 1
         stack.append(start_data_pointer)
 

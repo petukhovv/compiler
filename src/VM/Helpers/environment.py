@@ -52,7 +52,8 @@ class Environment:
     @staticmethod
     def create(data):
         data['environments'].append({
-            'stack': {}
+            'stack': {},
+            'heap': []
         })
 
     @staticmethod

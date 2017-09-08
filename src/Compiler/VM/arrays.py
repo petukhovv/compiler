@@ -37,7 +37,7 @@ def unboxed(commands, env, elements):
 def array_element(commands, env, array, index, other_indexes):
     index.compile_vm(commands, env)
     commands.add(Load, env.get_var(array))
-    ArrayCompiler.element(commands, env)
+    ArrayCompiler.get_element(commands, env)
 
 """ Компиляция built-in функции arrlen для получения длины массива """
 def arrlen(commands, env, args):

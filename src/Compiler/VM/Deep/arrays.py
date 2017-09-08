@@ -61,11 +61,21 @@ class ArrayCompiler:
     Генерация инструкций для оператора получения элемента массива: A[n]
     """
     @staticmethod
-    def element(commands, env):
+    def get_element(commands, env):
         # Прибавляем к номеру ячейки с началом массива индекс требуемого значения (offset)
         commands.add(Add)
         # Загружаем на стек значение по номеру его ячейки в heap memory
         commands.add(DBLoad, 0)
+
+    """
+    Генерация инструкций для присвоения значения элементу массива: A[n] := t
+    """
+    @staticmethod
+    def set_element(commands, env):
+        # Прибавляем к номеру ячейки с началом массива индекс требуемого значения (offset)
+        commands.add(Add)
+        # Записываем в heap memory значение по номеру его ячейки
+        commands.add(DBStore, 0)
 
     """
     Генерация инструкций для получения длина массива

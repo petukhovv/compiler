@@ -1,11 +1,19 @@
 # -*- coding: utf-8 -*-
 
 from src.Compiler.VM.Deep.strings import *
+from src.Compiler.VM.Deep.arrays import *
+
+AST = sys.modules['src.Parser.AST.arrays']
 
 """ Компиляция выражения присваивания """
 def assign_statement(commands, env, variable, aexp):
     aexp.compile_vm(commands, env)
-    commands.add(Store, env.var(variable.name))
+    if isinstance(variable, AST.ArrayElement):
+        variable.index.compile_vm(commands, env)
+        commands.add(Load, env.get_var(variable.array))
+        ArrayCompiler.set_element(commands, env)
+    else:
+        commands.add(Store, env.var(variable.name))
 
 """ Компиляция составного выражения """
 def compound_statement(commands, env, first, second):
