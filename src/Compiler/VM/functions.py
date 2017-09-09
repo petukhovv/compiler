@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from src.VM.commands import *
+from src.Compiler.VM.Deep.functions import *
 from Helpers.environment import *
 
 """ Компиляция функций (объявление, вызов, исполнение, возврат к месту вызова) """
@@ -15,14 +16,7 @@ def function(commands, env, name, args, body):
     # На эту метку переходим при вызове
     commands.add(Label, start_function)
 
-    # Для всех аргументов создаем переменные
-    arg_names = []
-    for arg in args.elements:
-        arg_names.append(env.var(arg))
-
-    # Компилируем конструкции изъятия из стека (в обратном порядке) аргументов функции и записи их в environment
-    for _ in args.elements:
-        commands.add(Store, arg_names.pop())
+    FunctionCompiler.args_wrtite(commands, env, args)
 
     # Компилируем код тела функции
     body.compile_vm(commands, env)
@@ -37,6 +31,7 @@ def return_statement(commands, env, expr):
 
 """ Компиляция выражения вызова функции """
 def call_statement(commands, env, name, args):
+    pprint(args.elements)
     for arg in args.elements:
         arg.compile_vm(commands, env)
     commands.add(Call, env.get_label(name))
