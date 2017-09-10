@@ -30,4 +30,8 @@ def int_aexp(commands, data, i):
 
 """ Компиляция переменной """
 def var_aexp(commands, data, name):
-    commands.load_value(data.get_var(name))
+    var_number = data.get_var(name)
+
+    commands.add(Load, var_number)
+
+    return commands.set_and_return_type(data.get_type(var_number))

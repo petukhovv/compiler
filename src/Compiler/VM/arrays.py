@@ -29,7 +29,7 @@ def unboxed_arrmake(commands, data, args):
     commands.extract_value()
     ArrayCompiler.unboxed_arrmake(commands, data, values_type)
 
-    commands.set_and_return_type(types.UNBOXED_ARR)
+    return commands.set_and_return_type(types.UNBOXED_ARR)
 
 """ Компиляция конструкции константного задания unboxed-массива: [n1, n2, ...]  """
 def unboxed(commands, data, elements):
@@ -38,7 +38,7 @@ def unboxed(commands, data, elements):
     for element in reversed(arr_elements):
         commands.add(Push, element)
 
-    commands.set_and_return_type(types.UNBOXED_ARR)
+    return commands.set_and_return_type(types.UNBOXED_ARR)
 
 """ Компиляция оператора получения элемента массива: A[n] """
 def array_element(commands, data, array, index, other_indexes):
@@ -48,7 +48,7 @@ def array_element(commands, data, array, index, other_indexes):
     commands.extract_value()
     ArrayCompiler.get_element(commands, data)
 
-    commands.set_and_return_type(types.INT)
+    return commands.set_and_return_type(types.INT)
 
 """ Компиляция built-in функции arrlen для получения длины массива """
 def arrlen(commands, data, args):
@@ -56,4 +56,4 @@ def arrlen(commands, data, args):
     commands.extract_value()
     ArrayCompiler.arrlen(commands, data)
 
-    commands.set_and_return_type(types.INT)
+    return commands.set_and_return_type(types.INT)

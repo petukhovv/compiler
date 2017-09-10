@@ -9,11 +9,34 @@ class Environment:
     label_counter = 1   # Счетчик меток
     labels = {}         # Метки
 
+    current_function = None  # Тип данных возвращаемого значения из подпрограммы
+
+    def set_return_type(self, type):
+        if self.current_function is None:
+            return
+
+        self.labels[self.current_function]['return_type'] = type
+
+    def get_return_type(self, name):
+        return self.labels[name]['return_type']
+
+    def start_function(self, name):
+        start_function = self.label(name)
+        self.current_function = name
+
+        return start_function
+
+    def finish_function(self):
+        self.current_function = None
+
     """ Создание новой метки """
     def label(self, name=None):
         label_number = self.label_counter
         if name:
-            self.labels[name] = label_number
+            self.labels[name] = {
+                'number': label_number,
+                'return_type': None
+            }
         self.label_counter += 1
         return label_number
 
@@ -30,9 +53,10 @@ class Environment:
             self.vars[alias] = {
                 'number': var_number
             }
-        self.vars[var_number] = {}
+        self.vars[var_number] = {
+            'type': type
+        }
         if type:
-            self.vars[var_number]['type'] = type
             self.var_counter += 2
         else:
             self.var_counter += 1
@@ -40,11 +64,15 @@ class Environment:
 
     """ Получение метки по имени """
     def get_label(self, name):
-        return self.labels[name]
+        return self.labels[name]['number']
 
     """ Получение переменной по имени """
     def get_var(self, name):
         return self.vars[name]['number']
+
+    """ Получение переменной по имени """
+    def get_type(self, number):
+        return self.vars[number]['type']
 
     """ Проверка переменной на существование """
     def is_exist_var(self, name):

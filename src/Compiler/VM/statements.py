@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from src.Compiler.VM.Deep.strings import *
 from src.Compiler.VM.Deep.arrays import *
 
 AST = sys.modules['src.Parser.AST.arrays']
