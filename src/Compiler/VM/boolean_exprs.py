@@ -22,7 +22,7 @@ def relop_bexp(commands, env, op, left, right):
 
     commands.add(Compare, relop_compare_map[op])
 
-    commands.typify(types.INT)
+    commands.set_return_type(types.INT)
 
 """ Компиляция оператора логического "И" (and) """
 def and_bexp(commands, env, left, right):

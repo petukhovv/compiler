@@ -20,11 +20,13 @@ def binop_aexp(commands, env, op, left, right):
 
     commands.add(binop_compare_map[op])
 
-    commands.typify(types.INT)
+    commands.set_return_type(types.INT)
 
 """ Компиляция числа """
 def int_aexp(commands, env, i):
-    commands.push_value(i, types.INT)
+    commands.add(Push, i)
+
+    commands.set_return_type(types.INT)
 
 """ Компиляция переменной """
 def var_aexp(commands, env, name):

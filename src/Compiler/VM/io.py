@@ -2,7 +2,7 @@ from Helpers.base import *
 
 def read_statement(commands, env):
     commands.add(Read)
-    commands.typify(types.INT)
+    commands.set_return_type(types.INT)
 
 def write_statement(commands, env, aexp):
     aexp.compile_vm(commands, env)

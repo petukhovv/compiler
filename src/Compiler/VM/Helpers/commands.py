@@ -77,7 +77,7 @@ class Commands(list):
     def extract_value(self):
         self.add(Pop)
 
-    def typify(self, value_type):
+    def set_return_type(self, value_type):
         self.add(Push, value_type)
 
     def get_type(self, env):
