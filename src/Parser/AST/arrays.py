@@ -31,12 +31,13 @@ class ArrayElement:
         self.array = array
         self.index = index
         self.other_indexes = other_indexes
+        self.context = 'get'
 
     def eval(self, env):
         return interpreter.array_element(env, self.array, self.index, self.other_indexes)
 
     def compile_vm(self, commands, data):
-        return compile_vm.array_element(commands, data, self.array, self.index, self.other_indexes)
+        return compile_vm.array_element(commands, data, self.array, self.index, self.other_indexes, self.context)
 
 class ArrLen:
     def __init__(self, args):

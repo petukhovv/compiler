@@ -29,9 +29,10 @@ def int_aexp(commands, data, i):
     return commands.set_and_return_type(types.INT)
 
 """ Компиляция переменной """
-def var_aexp(commands, data, name):
-    var_number = data.get_var(name)
-
-    commands.add(Load, var_number)
-
-    return commands.set_and_return_type(data.get_type(var_number))
+def var_aexp(commands, data, name, context, value_type):
+    if context == 'assign':
+        commands.store_value(data.var(alias=name, type=value_type), type=value_type)
+    else:
+        var_number = data.get_var(name)
+        commands.add(Load, var_number)
+        return commands.set_and_return_type(data.get_type(var_number))

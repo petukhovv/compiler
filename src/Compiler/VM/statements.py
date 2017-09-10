@@ -2,18 +2,13 @@
 
 from src.Compiler.VM.Deep.arrays import *
 
-AST = sys.modules['src.Parser.AST.arrays']
-
 """ Компиляция выражения присваивания """
 def assign_statement(commands, data, variable, aexp):
-    aexp.compile_vm(commands, data)
-    value_type = commands.get_type(data)
-    if isinstance(variable, AST.ArrayElement):
-        variable.index.compile_vm(commands, data)
-        commands.load_value(data.get_var(variable.array))
-        ArrayCompiler.set_element(commands, data)
-    else:
-        commands.store_value(data.var(alias=variable.name, type=types.DYNAMIC), type_variable=value_type)
+    value_type = aexp.compile_vm(commands, data)
+    commands.extract_value()
+    variable.context = 'assign'
+    variable.type = value_type
+    variable.compile_vm(commands, data)
 
 """ Компиляция составного выражения """
 def compound_statement(commands, data, first, second):

@@ -24,12 +24,14 @@ Example: x
 class VarAexp:
     def __init__(self, name):
         self.name = name
+        self.context = 'get'
+        self.type = None
 
     def eval(self, env):
         return interpreter.var_aexp(env, self.name)
 
     def compile_vm(self, commands, data):
-        return compile_vm.var_aexp(commands, data, self.name)
+        return compile_vm.var_aexp(commands, data, self.name, self.context, self.type)
 
 """
 Binary operation arithmetic expression class for AST.
