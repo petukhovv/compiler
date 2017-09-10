@@ -14,14 +14,18 @@ binop_compare_map = {
 """ Компиляция арифметического выражения """
 def binop_aexp(commands, env, op, left, right):
     left.compile_vm(commands, env)
+    commands.extract_value()
     right.compile_vm(commands, env)
+    commands.extract_value()
 
     commands.add(binop_compare_map[op])
 
+    commands.typify(types.INT)
+
 """ Компиляция числа """
 def int_aexp(commands, env, i):
-    commands.add(Push, i)
+    commands.push_value(i, types.INT)
 
 """ Компиляция переменной """
 def var_aexp(commands, env, name):
-    commands.add(Load, env.get_var(name))
+    commands.load_value(env.get_var(name))

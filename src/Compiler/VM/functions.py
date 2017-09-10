@@ -31,7 +31,6 @@ def return_statement(commands, env, expr):
 
 """ Компиляция выражения вызова функции """
 def call_statement(commands, env, name, args):
-    pprint(args.elements)
     for arg in args.elements:
         arg.compile_vm(commands, env)
     commands.add(Call, env.get_label(name))

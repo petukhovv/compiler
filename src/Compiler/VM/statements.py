@@ -8,12 +8,13 @@ AST = sys.modules['src.Parser.AST.arrays']
 """ Компиляция выражения присваивания """
 def assign_statement(commands, env, variable, aexp):
     aexp.compile_vm(commands, env)
+    value_type = commands.get_type(env)
     if isinstance(variable, AST.ArrayElement):
         variable.index.compile_vm(commands, env)
-        commands.add(Load, env.get_var(variable.array))
+        commands.load_value(env.get_var(variable.array))
         ArrayCompiler.set_element(commands, env)
     else:
-        commands.add(Store, env.var(variable.name))
+        commands.store_value(env.var(variable.name), type_variable=value_type)
 
 """ Компиляция составного выражения """
 def compound_statement(commands, env, first, second):
@@ -26,6 +27,7 @@ def repeat_statement(commands, env, condition, body):
     commands.add(Label, continue_label)
     body.compile_vm(commands, env)
     condition.compile_vm(commands, env)
+    commands.extract_value()
     # Если после очередной итерации условие останова не выполнилось, делаем следующую итерацию
     commands.add(Jz, continue_label)
 
@@ -36,6 +38,7 @@ def while_statement(commands, env, condition, body):
     finish_label = env.label()
     condition.compile_vm(commands, env)
     # Если перед очередной итерации условие останова не выполнилось, завершаем цикл
+    commands.extract_value()
     commands.add(Jz, finish_label)
     body.compile_vm(commands, env)
     # Делаем следующую итерацию
@@ -47,6 +50,7 @@ def if_statement(commands, env, condition, true_stmt, alternatives_stmt, false_s
     skip_true_stmt_label = env.label()
 
     condition.compile_vm(commands, env)
+    commands.extract_value()
     # Если условие не выполнилось, пропускаем ветку.
     commands.add(Jz, skip_true_stmt_label)
     true_stmt.compile_vm(commands, env)
@@ -83,6 +87,7 @@ def for_statement(commands, env, stmt1, stmt2, stmt3, body):
     commands.add(Label, start_label)
     stmt2.compile_vm(commands, env)
     # Если условия цикла не выполнилось, завешаем цикл
+    commands.extract_value()
     commands.add(Jz, finish_label)
     body.compile_vm(commands, env)
     stmt3.compile_vm(commands, env)

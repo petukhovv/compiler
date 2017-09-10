@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from ..Helpers.base import *
-from ..Helpers.loop import Loop
 
 class FunctionCompiler:
     @staticmethod
@@ -13,4 +12,6 @@ class FunctionCompiler:
 
         # Компилируем конструкции изъятия из стека (в обратном порядке) аргументов функции и записи их в environment
         for _ in args.elements:
-            commands.add(Store, arg_names.pop())
+            type_variable = env.var()
+            commands.add(Store, type_variable)
+            commands.store_value(arg_names.pop(), type_variable=type_variable)
