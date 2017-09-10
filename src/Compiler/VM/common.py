@@ -1,2 +1,2 @@
-def enumeration(commands, env, elements):
+def enumeration(commands, data, elements):
     return elements

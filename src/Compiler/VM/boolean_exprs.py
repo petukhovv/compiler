@@ -14,22 +14,22 @@ relop_compare_map = {
 }
 
 """ Компиляция операторов сравнения """
-def relop_bexp(commands, env, op, left, right):
-    left.compile_vm(commands, env)
+def relop_bexp(commands, data, op, left, right):
+    left.compile_vm(commands, data)
     commands.extract_value()
-    right.compile_vm(commands, env)
+    right.compile_vm(commands, data)
     commands.extract_value()
 
     commands.add(Compare, relop_compare_map[op])
 
-    commands.set_return_type(types.INT)
+    commands.set_and_return_type(types.INT)
 
 """ Компиляция оператора логического "И" (and) """
-def and_bexp(commands, env, left, right):
-    finish_label = env.label()
-    finish_false_label = env.label()
+def and_bexp(commands, data, left, right):
+    finish_label = data.label()
+    finish_false_label = data.label()
 
-    left.compile_vm(commands, env)
+    left.compile_vm(commands, data)
     commands.extract_value()
 
     # Если первый операнд == 0, второй уже не проверяем,
@@ -37,7 +37,7 @@ def and_bexp(commands, env, left, right):
     commands.add(Jz, finish_false_label)
 
     # Иначе будем проверять и второй
-    right.compile_vm(commands, env)
+    right.compile_vm(commands, data)
     commands.extract_value()
 
     # Если второй операнд == 0, то переходим к метке ложного результата
@@ -56,11 +56,11 @@ def and_bexp(commands, env, left, right):
     commands.add(Label, finish_label)
 
 """ Компиляция оператора логического "ИЛИ" (or) """
-def or_bexp(commands, env, left, right):
-    finish_label = env.label()
-    finish_true_label = env.label()
+def or_bexp(commands, data, left, right):
+    finish_label = data.label()
+    finish_true_label = data.label()
 
-    left.compile_vm(commands, env)
+    left.compile_vm(commands, data)
     commands.extract_value()
 
     # Если первый операнд != 0, второй уже не проверяем,
@@ -68,7 +68,7 @@ def or_bexp(commands, env, left, right):
     commands.add(Jnz, finish_true_label)
 
     # Иначе будем проверять и второй
-    right.compile_vm(commands, env)
+    right.compile_vm(commands, data)
     commands.extract_value()
 
     # Если второй операнд != 0, то переходим к метке истинного результата
@@ -87,11 +87,11 @@ def or_bexp(commands, env, left, right):
     commands.add(Label, finish_label)
 
 """ Компиляция оператора логического "НЕ" (not) """
-def not_bexp(commands, env, exp):
-    finish_label = env.label()
-    finish_false_label = env.label()
+def not_bexp(commands, data, exp):
+    finish_label = data.label()
+    finish_false_label = data.label()
 
-    exp.compile_vm(commands, env)
+    exp.compile_vm(commands, data)
     commands.extract_value()
 
     # Если операнд == 0, переходим в секцию ложного результата

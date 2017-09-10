@@ -6,58 +6,58 @@ from src.Compiler.VM.Deep.arrays import *
 AST = sys.modules['src.Parser.AST.arrays']
 
 """ Компиляция выражения присваивания """
-def assign_statement(commands, env, variable, aexp):
-    aexp.compile_vm(commands, env)
-    value_type = commands.get_type(env)
+def assign_statement(commands, data, variable, aexp):
+    aexp.compile_vm(commands, data)
+    value_type = commands.get_type(data)
     if isinstance(variable, AST.ArrayElement):
-        variable.index.compile_vm(commands, env)
-        commands.load_value(env.get_var(variable.array))
-        ArrayCompiler.set_element(commands, env)
+        variable.index.compile_vm(commands, data)
+        commands.load_value(data.get_var(variable.array))
+        ArrayCompiler.set_element(commands, data)
     else:
-        commands.store_value(env.var(alias=variable.name, type=types.DYNAMIC), type_variable=value_type)
+        commands.store_value(data.var(alias=variable.name, type=types.DYNAMIC), type_variable=value_type)
 
 """ Компиляция составного выражения """
-def compound_statement(commands, env, first, second):
-    first.compile_vm(commands, env)
-    second.compile_vm(commands, env)
+def compound_statement(commands, data, first, second):
+    first.compile_vm(commands, data)
+    second.compile_vm(commands, data)
 
 """ Компиляция repeat-until цикла """
-def repeat_statement(commands, env, condition, body):
-    continue_label = env.label()
+def repeat_statement(commands, data, condition, body):
+    continue_label = data.label()
     commands.add(Label, continue_label)
-    body.compile_vm(commands, env)
-    condition.compile_vm(commands, env)
+    body.compile_vm(commands, data)
+    condition.compile_vm(commands, data)
     commands.extract_value()
     # Если после очередной итерации условие останова не выполнилось, делаем следующую итерацию
     commands.add(Jz, continue_label)
 
 """ Компиляция while цикла """
-def while_statement(commands, env, condition, body):
-    start_label = env.label()
+def while_statement(commands, data, condition, body):
+    start_label = data.label()
     commands.add(Label, start_label)
-    finish_label = env.label()
-    condition.compile_vm(commands, env)
+    finish_label = data.label()
+    condition.compile_vm(commands, data)
     # Если перед очередной итерации условие останова не выполнилось, завершаем цикл
     commands.extract_value()
     commands.add(Jz, finish_label)
-    body.compile_vm(commands, env)
+    body.compile_vm(commands, data)
     # Делаем следующую итерацию
     commands.add(Jump, start_label)\
         .add(Label, finish_label)
 
 """ Компиляция конструкции if с альтернативными ветками """
-def if_statement(commands, env, condition, true_stmt, alternatives_stmt, false_stmt, label_endif):
-    skip_true_stmt_label = env.label()
+def if_statement(commands, data, condition, true_stmt, alternatives_stmt, false_stmt, label_endif):
+    skip_true_stmt_label = data.label()
 
-    condition.compile_vm(commands, env)
+    condition.compile_vm(commands, data)
     commands.extract_value()
     # Если условие не выполнилось, пропускаем ветку.
     commands.add(Jz, skip_true_stmt_label)
-    true_stmt.compile_vm(commands, env)
+    true_stmt.compile_vm(commands, data)
 
     # Первая ветка условия, метки конца условия ещё нет - создаём её.
     if label_endif is None:
-        label_endif = env.label()
+        label_endif = data.label()
 
     # Если условие выполнилось, пропускаем все альтернативные ветки и переходим сразу к концу условия.
     commands.add(Jump, label_endif)\
@@ -69,31 +69,31 @@ def if_statement(commands, env, condition, true_stmt, alternatives_stmt, false_s
             # Траслируем метку конца условия в альтернативные ветки,
             # чтобы в случае срабатывания условия в одной из веток
             # можно было перейти сразу к концу всего условия, не просматривая остальные ветки.
-            alternative_stmt.compile_vm(commands, env, label_endif)
+            alternative_stmt.compile_vm(commands, data, label_endif)
 
     # Если ни в одной из предыдущих веток не сработал переход к метке оконачния условия,
     # выполняем последнюю альтернативную (чистый else) ветку.
     if false_stmt:
-        false_stmt.compile_vm(commands, env)
+        false_stmt.compile_vm(commands, data)
 
     commands.add(Label, label_endif)
 
 """ Компиляция цикла for """
-def for_statement(commands, env, stmt1, stmt2, stmt3, body):
-    start_label = env.label()
-    finish_label = env.label()
+def for_statement(commands, data, stmt1, stmt2, stmt3, body):
+    start_label = data.label()
+    finish_label = data.label()
 
-    stmt1.compile_vm(commands, env)
+    stmt1.compile_vm(commands, data)
     commands.add(Label, start_label)
-    stmt2.compile_vm(commands, env)
+    stmt2.compile_vm(commands, data)
     # Если условия цикла не выполнилось, завешаем цикл
     commands.extract_value()
     commands.add(Jz, finish_label)
-    body.compile_vm(commands, env)
-    stmt3.compile_vm(commands, env)
+    body.compile_vm(commands, data)
+    stmt3.compile_vm(commands, data)
     commands.add(Jump, start_label)\
         .add(Label, finish_label)
 
 """ Компиляция оператора пропуска команды """
-def skip_statement(commands, env):
+def skip_statement(commands, data):
     commands.add(Nop)

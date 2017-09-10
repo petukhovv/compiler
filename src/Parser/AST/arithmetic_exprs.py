@@ -13,8 +13,8 @@ class IntAexp:
     def eval(self, env):
         return interpreter.int_aexp(env, self.i)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.int_aexp(commands, env, self.i)
+    def compile_vm(self, commands, data):
+        return compile_vm.int_aexp(commands, data, self.i)
 
 """
 Variable arithmetic expression class for AST.
@@ -28,8 +28,8 @@ class VarAexp:
     def eval(self, env):
         return interpreter.var_aexp(env, self.name)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.var_aexp(commands, env, self.name)
+    def compile_vm(self, commands, data):
+        return compile_vm.var_aexp(commands, data, self.name)
 
 """
 Binary operation arithmetic expression class for AST.
@@ -45,5 +45,5 @@ class BinopAexp:
     def eval(self, env):
         return interpreter.binop_aexp(env, self.op, self.left, self.right)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.binop_aexp(commands, env, self.op, self.left, self.right)
+    def compile_vm(self, commands, data):
+        return compile_vm.binop_aexp(commands, data, self.op, self.left, self.right)

@@ -5,9 +5,9 @@ from src.Compiler.VM.Deep.functions import *
 from Helpers.environment import *
 
 """ Компиляция функций (объявление, вызов, исполнение, возврат к месту вызова) """
-def function(commands, env, name, args, body):
-    start_function = env.label(name)
-    finish_function = env.label()
+def function(commands, data, name, args, body):
+    start_function = data.label(name)
+    finish_function = data.label()
 
     # При последовательном выполнении пропускаем выполнение тела функции,
     # т. к. в этом случае это лишь объвление функции, вызов будет позже
@@ -16,21 +16,21 @@ def function(commands, env, name, args, body):
     # На эту метку переходим при вызове
     commands.add(Label, start_function)
 
-    FunctionCompiler.args_wrtite(commands, env, args)
+    FunctionCompiler.args_wrtite(commands, data, args)
 
     # Компилируем код тела функции
-    body.compile_vm(commands, env)
+    body.compile_vm(commands, data)
 
     # Компилируем конструкцию возврата к месту вызова
     commands.add(Return)\
         .add(Label, finish_function)
 
 """ Компиляция выражения возврата к месту вызова """
-def return_statement(commands, env, expr):
-    expr.compile_vm(commands, env)
+def return_statement(commands, data, expr):
+    expr.compile_vm(commands, data)
 
 """ Компиляция выражения вызова функции """
-def call_statement(commands, env, name, args):
+def call_statement(commands, data, name, args):
     for arg in args.elements:
-        arg.compile_vm(commands, env)
-    commands.add(Call, env.get_label(name))
+        arg.compile_vm(commands, data)
+    commands.add(Call, data.get_label(name))

@@ -8,8 +8,8 @@ class ArrayCompiler:
     Генерация инструкций для выделения памяти под unboxed-массив и записи в него значений по умолчанию
     """
     @staticmethod
-    def unboxed_arrmake(commands, env, values_type):
-        arr_length = env.var(types.INT)
+    def unboxed_arrmake(commands, data, values_type):
+        arr_length = data.var(types.INT)
 
         commands.add(Dup)
         # Сохраняем длину массива в переменную
@@ -21,9 +21,9 @@ class ArrayCompiler:
         if values_type == 'none':
             return
 
-        arr_pointer = env.var(types.INT)
+        arr_pointer = data.var(types.INT)
 
-        finish_label = env.label()
+        finish_label = data.label()
 
         # Сохраняем указатель на начало массива
         commands.add(Store, arr_pointer)
@@ -32,7 +32,7 @@ class ArrayCompiler:
 
         # Если все элементы должны быть одинаковыми, равными одному значению (basis_element), загружаем его
         if is_repeated_values:
-            basis_element = env.var(types.CHAR)
+            basis_element = data.var(types.CHAR)
             # Сохраняем повторяемое значение в переменную
             commands.add(Store, basis_element)
 
@@ -47,7 +47,7 @@ class ArrayCompiler:
                 commands.add(Load, basis_element)
             dbstore(arr_pointer, _counter, commands)
 
-        counter = Loop.simple(commands, env, cycle_body, return_counter=True)
+        counter = Loop.simple(commands, data, cycle_body, return_counter=True)
 
         commands.add(Label, finish_label)
 
@@ -61,7 +61,7 @@ class ArrayCompiler:
     Генерация инструкций для оператора получения элемента массива: A[n]
     """
     @staticmethod
-    def get_element(commands, env):
+    def get_element(commands, data):
         # Прибавляем к номеру ячейки с началом массива индекс требуемого значения (offset)
         commands.add(Add)
         # Загружаем на стек значение по номеру его ячейки в heap memory
@@ -71,7 +71,7 @@ class ArrayCompiler:
     Генерация инструкций для присвоения значения элементу массива: A[n] := t
     """
     @staticmethod
-    def set_element(commands, env):
+    def set_element(commands, data):
         # Прибавляем к номеру ячейки с началом массива индекс требуемого значения (offset)
         commands.add(Add)
         # Записываем в heap memory значение по номеру его ячейки
@@ -81,11 +81,11 @@ class ArrayCompiler:
     Генерация инструкций для получения длина массива
     """
     @staticmethod
-    def arrlen(commands, env):
-        arr_start_pointer = env.var(types.INT)
+    def arrlen(commands, data):
+        arr_start_pointer = data.var(types.INT)
 
         # Записываем указатель на начало массива в переменную
         commands.add(Store, arr_start_pointer)
 
         # Считываем массив из памяти до конца (пока не встретим 0), подсчитывая кол-во элементов (его кладем на стек)
-        Loop.data_heap(commands, env, arr_start_pointer)
+        Loop.data_heap(commands, data, arr_start_pointer)

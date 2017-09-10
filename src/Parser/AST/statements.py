@@ -16,8 +16,8 @@ class AssignStatement:
     def eval(self, env):
         return interpreter.assign_statement(env, self.variable, self.aexp)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.assign_statement(commands, env, self.variable, self.aexp)
+    def compile_vm(self, commands, data):
+        return compile_vm.assign_statement(commands, data, self.variable, self.aexp)
 
 """
 Compound statement class for AST.
@@ -31,8 +31,8 @@ class CompoundStatement:
     def eval(self, env):
         return interpreter.compound_statement(env, self.first, self.second)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.compound_statement(commands, env, self.first, self.second)
+    def compile_vm(self, commands, data):
+        return compile_vm.compound_statement(commands, data, self.first, self.second)
 
 """
 'If' statement class for AST.
@@ -48,8 +48,8 @@ class IfStatement:
     def eval(self, env):
         return interpreter.if_statement(env, self.condition, self.true_stmt, self.alternatives_stmt, self.false_stmt)
 
-    def compile_vm(self, commands, env, label_endif=None):
-        return compile_vm.if_statement(commands, env, self.condition, self.true_stmt, self.alternatives_stmt, self.false_stmt, label_endif)
+    def compile_vm(self, commands, data, label_endif=None):
+        return compile_vm.if_statement(commands, data, self.condition, self.true_stmt, self.alternatives_stmt, self.false_stmt, label_endif)
 
 """
 'While' statement class for AST.
@@ -63,8 +63,8 @@ class WhileStatement:
     def eval(self, env):
         return interpreter.while_statement(env, self.condition, self.body)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.while_statement(commands, env, self.condition, self.body)
+    def compile_vm(self, commands, data):
+        return compile_vm.while_statement(commands, data, self.condition, self.body)
 
 """
 'For' statement class for AST.
@@ -80,8 +80,8 @@ class ForStatement:
     def eval(self, env):
         return interpreter.for_statement(env, self.stmt1, self.stmt2, self.stmt3, self.body)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.for_statement(commands, env, self.stmt1, self.stmt2, self.stmt3, self.body)
+    def compile_vm(self, commands, data):
+        return compile_vm.for_statement(commands, data, self.stmt1, self.stmt2, self.stmt3, self.body)
 
 """
 'Repeat' statement class for AST.
@@ -95,8 +95,8 @@ class RepeatStatement:
     def eval(self, env):
         return interpreter.repeat_statement(env, self.condition, self.body)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.repeat_statement(commands, env, self.condition, self.body)
+    def compile_vm(self, commands, data):
+        return compile_vm.repeat_statement(commands, data, self.condition, self.body)
 
 """
 'Skip' statement class for AST.
@@ -107,5 +107,5 @@ class SkipStatement:
     def eval(self, env):
         return interpreter.skip_statement(env)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.skip_statement(commands, env)
+    def compile_vm(self, commands, data):
+        return compile_vm.skip_statement(commands, data)

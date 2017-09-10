@@ -3,101 +3,101 @@
 from src.Compiler.VM.Deep.strings import *
 
 """ Компиляция выражения "символ" """
-def char(commands, env, character, need_typify=True):
+def char(commands, data, character, need_typify=True):
     commands.add(Push, ord(character))
     if need_typify:
-        commands.set_return_type(types.CHAR)
+        commands.set_and_return_type(types.CHAR)
 
 """ Компиляция выражения "строка" """
-def string(commands, env, characters):
+def string(commands, data, characters):
     # Записываем маркер конца строки
     commands.add(Push, 0)
     # Кладем на стек строку
     for character in characters:
-        char(commands, env, character, need_typify=False)
+        char(commands, data, character, need_typify=False)
     commands.add(Push, len(characters))
 
     # Записываем строку со стека в heap memory
-    StringCompiler.store(commands, env)
+    StringCompiler.store(commands, data)
 
-    commands.set_return_type(types.STRING)
+    commands.set_and_return_type(types.STRING)
 
 """ Компиляция built-in функции strlen (длина строки) """
-def strlen(commands, env, args):
-    args_compile(args, 0, commands, env)
+def strlen(commands, data, args):
+    args_compile(args, 0, commands, data)
     commands.extract_value()
-    StringCompiler.strlen(commands, env)
+    StringCompiler.strlen(commands, data)
 
-    commands.set_return_type(types.INT)
+    commands.set_and_return_type(types.INT)
 
 """ Компиляция built-in функции strget (получение символа строки) """
-def strget(commands, env, args):
+def strget(commands, data, args):
     # Порядок компиляции аргументов здесь и ниже задаём удобным для дальнейшей работы образом
-    args_compile(args, 1, commands, env)
+    args_compile(args, 1, commands, data)
     commands.extract_value()
-    args_compile(args, 0, commands, env)
+    args_compile(args, 0, commands, data)
     commands.extract_value()
-    StringCompiler.strget(commands, env)
+    StringCompiler.strget(commands, data)
 
-    commands.set_return_type(types.CHAR)
+    commands.set_and_return_type(types.CHAR)
 
 """ Компиляция built-in функции strset (задание символа строки) """
-def strset(commands, env, args):
-    args_compile(args, 2, commands, env)
+def strset(commands, data, args):
+    args_compile(args, 2, commands, data)
     commands.extract_value()
-    args_compile(args, 1, commands, env)
+    args_compile(args, 1, commands, data)
     commands.extract_value()
-    args_compile(args, 0, commands, env)
+    args_compile(args, 0, commands, data)
     commands.extract_value()
-    StringCompiler.strset(commands, env)
+    StringCompiler.strset(commands, data)
 
 """ Компиляция built-in функции strsub (взятие подстроки строки) """
-def strsub(commands, env, args):
-    args_compile(args, 1, commands, env)
+def strsub(commands, data, args):
+    args_compile(args, 1, commands, data)
     commands.extract_value()
-    args_compile(args, 0, commands, env)
+    args_compile(args, 0, commands, data)
     commands.extract_value()
-    args_compile(args, 2, commands, env)
+    args_compile(args, 2, commands, data)
     commands.extract_value()
-    StringCompiler.strsub(commands, env)
+    StringCompiler.strsub(commands, data)
 
-    commands.set_return_type(types.STRING)
+    commands.set_and_return_type(types.STRING)
 
 """ Компиляция built-in функции strdup (дублирование строки) """
-def strdup(commands, env, args):
-    args_compile(args, 0, commands, env)
+def strdup(commands, data, args):
+    args_compile(args, 0, commands, data)
     commands.extract_value()
-    StringCompiler.strdup(commands, env)
+    StringCompiler.strdup(commands, data)
 
-    commands.set_return_type(types.STRING)
+    commands.set_and_return_type(types.STRING)
 
 """ Компиляция built-in функции strcat (конкатенация двух строк) """
-def strcat(commands, env, args):
-    args_compile(args, 0, commands, env)
+def strcat(commands, data, args):
+    args_compile(args, 0, commands, data)
     commands.extract_value()
-    StringCompiler.strcat_first(commands, env)
-    args_compile(args, 1, commands, env)
+    StringCompiler.strcat_first(commands, data)
+    args_compile(args, 1, commands, data)
     commands.extract_value()
-    StringCompiler.strcat_second(commands, env)
+    StringCompiler.strcat_second(commands, data)
 
-    commands.set_return_type(types.STRING)
+    commands.set_and_return_type(types.STRING)
 
 """ Компиляция built-in функции strmake (создание строки из n одинаковых символов) """
-def strmake(commands, env, args):
-    args_compile(args, 1, commands, env)
+def strmake(commands, data, args):
+    args_compile(args, 1, commands, data)
     commands.extract_value()
-    args_compile(args, 0, commands, env)
+    args_compile(args, 0, commands, data)
     commands.extract_value()
-    StringCompiler.strmake(commands, env)
+    StringCompiler.strmake(commands, data)
 
-    commands.set_return_type(types.STRING)
+    commands.set_and_return_type(types.STRING)
 
 """ Компиляция built-in функции strcmp (посимвольное сравнение двух строк) """
-def strcmp(commands, env, args):
-    args_compile(args, 0, commands, env)
+def strcmp(commands, data, args):
+    args_compile(args, 0, commands, data)
     commands.extract_value()
-    args_compile(args, 1, commands, env)
+    args_compile(args, 1, commands, data)
     commands.extract_value()
-    StringCompiler.strcmp(commands, env)
+    StringCompiler.strcmp(commands, data)
 
-    commands.set_return_type(types.INT)
+    commands.set_and_return_type(types.INT)

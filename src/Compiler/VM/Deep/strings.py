@@ -8,9 +8,9 @@ class StringCompiler:
     Генерация инструкций для записи строки из стека в heap memory.
     """
     @staticmethod
-    def store(commands, env):
-        str_start_pointer = env.var(types.INT)
-        end_str_pointer = env.var(types.INT)
+    def store(commands, data):
+        str_start_pointer = data.var(types.INT)
+        end_str_pointer = data.var(types.INT)
 
         # Добавляем к требуемому размеру памяти 1 - для escape-нуля (маркера конца строки)
         commands.add(Push, 1)
@@ -28,7 +28,7 @@ class StringCompiler:
             # Последовательно сохраняем все символы в выделенной памяти в обратном порядке (т. к. берем со стека)
             dbstore(end_str_pointer, _counter, commands, invert=True, value=-2)
 
-        counter = Loop.stack(commands, env, cycle_body, load_counter=False, return_counter=True)
+        counter = Loop.stack(commands, data, cycle_body, load_counter=False, return_counter=True)
 
         # Дописываем 0 в последнюю ячейку памяти - это маркер конца строки
         commands.add(Push, 0)
@@ -41,20 +41,20 @@ class StringCompiler:
     Генерация инструкций для получения длины строки, находящейся на стеке.
     """
     @staticmethod
-    def strlen(commands, env):
-        str_start_pointer = env.var(types.INT)
+    def strlen(commands, data):
+        str_start_pointer = data.var(types.INT)
 
         # Разыменовываем лежащий на стеке указатель и записываем его в переменную
         bload_and_store(str_start_pointer, commands)
 
         # Считываем строку из памяти до конца (пока не встретим 0), подсчитывая кол-во символов (его кладем на стек)
-        Loop.data_heap(commands, env, str_start_pointer)
+        Loop.data_heap(commands, data, str_start_pointer)
 
     """
     Генерация инструкций для получения определенного символа строки
     """
     @staticmethod
-    def strget(commands, env):
+    def strget(commands, data):
         # Получаем номер ячейки в heap memory с началом строки
         commands.add(BLoad, 0)
         # Прибавляем к номеру ячейки с началом строки номер требуемого символа (offset)
@@ -66,7 +66,7 @@ class StringCompiler:
     Генерация инструкций для замены определенного символа строки
     """
     @staticmethod
-    def strset(commands, env):
+    def strset(commands, data):
         # Получаем номер ячейки в heap memory с началом строки
         commands.add(BLoad, 0)
         # Вычисляем ячейки heap memory, где находится заменяемый символ
@@ -78,11 +78,11 @@ class StringCompiler:
     Генерация инструкций для получение подстроки строки
     """
     @staticmethod
-    def strsub(commands, env):
-        substr_length = env.var(types.INT)
-        substr_start_pointer = env.var(types.INT)
+    def strsub(commands, data):
+        substr_length = data.var(types.INT)
+        substr_start_pointer = data.var(types.INT)
 
-        finish_label = env.label()
+        finish_label = data.label()
 
         # Сохраняем длину подстроки
         commands.add(Store, substr_length)
@@ -104,20 +104,20 @@ class StringCompiler:
             # Загружаем очередной символ подстроки из heap memory
             dbload(substr_start_pointer, _counter, commands)
 
-        Loop.data_heap(commands, env, substr_start_pointer, cycle_body, load_counter=False)
+        Loop.data_heap(commands, data, substr_start_pointer, cycle_body, load_counter=False)
 
         commands.add(Label, finish_label)
         # Записываем на стек длину подстроки + 1 (для маркера конца строки - нуля)
         commands.add(Load, substr_length)
 
-        StringCompiler.store(commands, env)
+        StringCompiler.store(commands, data)
 
     """
     Генерация инструкций для дублирования строки
     """
     @staticmethod
-    def strdup(commands, env):
-        str_start_pointer = env.var(types.INT)
+    def strdup(commands, data):
+        str_start_pointer = data.var(types.INT)
 
         # Разыменовываем лежащий на стеке указатель и записываем его в переменную
         bload_and_store(str_start_pointer, commands)
@@ -129,16 +129,16 @@ class StringCompiler:
             dbload(str_start_pointer, _counter, commands)
 
         # Читаем строку и кладем её на стек
-        Loop.data_heap(commands, env, str_start_pointer, cycle_body)
+        Loop.data_heap(commands, data, str_start_pointer, cycle_body)
 
-        StringCompiler.store(commands, env)
+        StringCompiler.store(commands, data)
 
     """
     Генерация инструкций для дублирования первой из конкатенируемых строки
     """
     @staticmethod
-    def strcat_first(commands, env):
-        str_start_pointer = env.var(types.INT)
+    def strcat_first(commands, data):
+        str_start_pointer = data.var(types.INT)
 
         bload_and_store(str_start_pointer, commands)
         commands.add(Push, 0)
@@ -147,15 +147,15 @@ class StringCompiler:
             dbload(str_start_pointer, _counter, commands)
 
         # Читаем строку и кладем её на стек
-        Loop.data_heap(commands, env, str_start_pointer, cycle_body)
+        Loop.data_heap(commands, data, str_start_pointer, cycle_body)
 
     """
     Генерация инструкций для дублирования второй из конкатенируемых строки и запись её в памяти за первой
     """
     @staticmethod
-    def strcat_second(commands, env):
-        str_start_pointer = env.var(types.INT)
-        str_length = env.var(types.INT)
+    def strcat_second(commands, data):
+        str_start_pointer = data.var(types.INT)
+        str_length = data.var(types.INT)
 
         bload_and_store(str_start_pointer, commands)
         commands.add(Store, str_length)
@@ -164,23 +164,23 @@ class StringCompiler:
             dbload(str_start_pointer, _counter, commands)
 
         # Читаем строку и кладем её на стек
-        Loop.data_heap(commands, env, str_start_pointer, cycle_body)
+        Loop.data_heap(commands, data, str_start_pointer, cycle_body)
 
         commands.add(Load, str_length)
         commands.add(Add)
 
-        StringCompiler.store(commands, env)
+        StringCompiler.store(commands, data)
 
     """
     Генерация инструкций для создания строки заданной длины с повторяющимся символом
     """
     @staticmethod
-    def strmake(commands, env):
-        str_start_pointer = env.var(types.INT)
-        str_length = env.var(types.INT)
-        basis_symbol = env.var(types.CHAR)
+    def strmake(commands, data):
+        str_start_pointer = data.var(types.INT)
+        str_length = data.var(types.INT)
+        basis_symbol = data.var(types.CHAR)
 
-        finish_label = env.label()
+        finish_label = data.label()
 
         commands.add(Dup)
         # Сохраняем длину строки в переменную
@@ -198,7 +198,7 @@ class StringCompiler:
             commands.add(Load, basis_symbol)
             dbstore(str_start_pointer, _counter, commands)
 
-        counter = Loop.simple(commands, env, cycle_body, return_counter=True)
+        counter = Loop.simple(commands, data, cycle_body, return_counter=True)
 
         # Сюда переходим после того, как запишем нужное количество символов в создаваемую строку
         commands.add(Label, finish_label)
@@ -214,13 +214,13 @@ class StringCompiler:
     Генерация инструкций для посимвольного сравнивания двух строк
     """
     @staticmethod
-    def strcmp(commands, env):
-        str1_start_pointer = env.var(types.INT)
-        str2_start_pointer = env.var(types.INT)
+    def strcmp(commands, data):
+        str1_start_pointer = data.var(types.INT)
+        str2_start_pointer = data.var(types.INT)
 
-        eq_label = env.label()
-        not_eq_label = env.label()
-        finish_label = env.label()
+        eq_label = data.label()
+        not_eq_label = data.label()
+        finish_label = data.label()
 
         bload_and_store(str1_start_pointer, commands)
         bload_and_store(str2_start_pointer, commands)
@@ -246,7 +246,7 @@ class StringCompiler:
             # Сюда попадаем, когда достигли конца одновременно двух строк - т. е. они полностью равны
             commands.add(Jump, eq_label)
 
-        counter = Loop.simple(commands, env, cycle_body, return_counter=True)
+        counter = Loop.simple(commands, data, cycle_body, return_counter=True)
 
         # Секция полного равенства строк: пишем на стек 0
         commands.add(Label, eq_label)

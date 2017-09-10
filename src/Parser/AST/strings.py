@@ -10,8 +10,8 @@ class Char(Stackable):
     def eval(self, env):
         return interpreter.char(env, self.character)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.char(commands, env, self.character)
+    def compile_vm(self, commands, data):
+        return compile_vm.char(commands, data, self.character)
 
 class String(Heapable):
     def __init__(self, characters):
@@ -20,8 +20,8 @@ class String(Heapable):
     def eval(self, env):
         return interpreter.string(env, self.characters)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.string(commands, env, self.characters)
+    def compile_vm(self, commands, data):
+        return compile_vm.string(commands, data, self.characters)
 
 class StrLen(Stackable):
     def __init__(self, args):
@@ -30,8 +30,8 @@ class StrLen(Stackable):
     def eval(self, env):
         return interpreter.str_len(env, self.args)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.strlen(commands, env, self.args)
+    def compile_vm(self, commands, data):
+        return compile_vm.strlen(commands, data, self.args)
 
 class StrGet(Stackable):
     def __init__(self, args):
@@ -40,8 +40,8 @@ class StrGet(Stackable):
     def eval(self, env):
         return interpreter.str_get(env, self.args)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.strget(commands, env, self.args)
+    def compile_vm(self, commands, data):
+        return compile_vm.strget(commands, data, self.args)
 
 class StrSub(Heapable):
     def __init__(self, args):
@@ -50,8 +50,8 @@ class StrSub(Heapable):
     def eval(self, env):
         return interpreter.str_sub(env, self.args)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.strsub(commands, env, self.args)
+    def compile_vm(self, commands, data):
+        return compile_vm.strsub(commands, data, self.args)
 
 class StrDup(Heapable):
     def __init__(self, args):
@@ -60,8 +60,8 @@ class StrDup(Heapable):
     def eval(self, env):
         return interpreter.str_dup(env, self.args)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.strdup(commands, env, self.args)
+    def compile_vm(self, commands, data):
+        return compile_vm.strdup(commands, data, self.args)
 
 class StrSet:
     def __init__(self, args):
@@ -70,8 +70,8 @@ class StrSet:
     def eval(self, env):
         return interpreter.str_set(env, self.args)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.strset(commands, env, self.args)
+    def compile_vm(self, commands, data):
+        return compile_vm.strset(commands, data, self.args)
 
 class StrCat(Heapable):
     def __init__(self, args):
@@ -80,8 +80,8 @@ class StrCat(Heapable):
     def eval(self, env):
         return interpreter.str_cat(env, self.args)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.strcat(commands, env, self.args)
+    def compile_vm(self, commands, data):
+        return compile_vm.strcat(commands, data, self.args)
 
 class StrCmp:
     def __init__(self, args):
@@ -90,8 +90,8 @@ class StrCmp:
     def eval(self, env):
         return interpreter.str_cmp(env, self.args)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.strcmp(commands, env, self.args)
+    def compile_vm(self, commands, data):
+        return compile_vm.strcmp(commands, data, self.args)
 
 class StrMake:
     def __init__(self, args):
@@ -100,5 +100,5 @@ class StrMake:
     def eval(self, env):
         return interpreter.str_make(env, self.args)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.strmake(commands, env, self.args)
+    def compile_vm(self, commands, data):
+        return compile_vm.strmake(commands, data, self.args)

@@ -16,8 +16,8 @@ class Function:
     def eval(self, env):
         return interpreter.function(env, self.name, self.args, self.body)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.function(commands, env, self.name, self.args, self.body)
+    def compile_vm(self, commands, data):
+        return compile_vm.function(commands, data, self.name, self.args, self.body)
 
 """
 'Return' statement class for AST.
@@ -30,8 +30,8 @@ class ReturnStatement:
     def eval(self, env):
         return interpreter.return_statement(env, self.expr)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.return_statement(commands, env, self.expr)
+    def compile_vm(self, commands, data):
+        return compile_vm.return_statement(commands, data, self.expr)
 
 """
 'Function call' statement class for AST.
@@ -54,5 +54,5 @@ class FunctionCallStatement:
         fun['body'].eval(func_env)
         return func_env['r']
 
-    def compile_vm(self, commands, env):
-        return compile_vm.call_statement(commands, env, self.name, self.args)
+    def compile_vm(self, commands, data):
+        return compile_vm.call_statement(commands, data, self.name, self.args)

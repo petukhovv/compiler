@@ -1,10 +1,10 @@
 from Helpers.base import *
 
-def read_statement(commands, env):
+def read_statement(commands, data):
     commands.add(Read)
-    commands.set_return_type(types.INT)
+    commands.set_and_return_type(types.INT)
 
-def write_statement(commands, env, aexp):
-    aexp.compile_vm(commands, env)
+def write_statement(commands, data, aexp):
+    aexp.compile_vm(commands, data)
     commands.extract_value()
     commands.add(Write)

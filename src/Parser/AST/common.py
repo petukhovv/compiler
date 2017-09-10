@@ -21,5 +21,5 @@ class Enumeration:
     def eval(self):
         return interpreter.enumeration(self.elements)
 
-    def compile_vm(self, commands, env):
-        return compile_vm.enumeration(commands, env, self.elements)
+    def compile_vm(self, commands, data):
+        return compile_vm.enumeration(commands, data, self.elements)

@@ -12,22 +12,22 @@ binop_compare_map = {
 }
 
 """ Компиляция арифметического выражения """
-def binop_aexp(commands, env, op, left, right):
-    left.compile_vm(commands, env)
+def binop_aexp(commands, data, op, left, right):
+    left.compile_vm(commands, data)
     commands.extract_value()
-    right.compile_vm(commands, env)
+    right.compile_vm(commands, data)
     commands.extract_value()
 
     commands.add(binop_compare_map[op])
 
-    return commands.set_return_type(types.INT)
+    return commands.set_and_return_type(types.INT)
 
 """ Компиляция числа """
-def int_aexp(commands, env, i):
+def int_aexp(commands, data, i):
     commands.add(Push, i)
 
-    return commands.set_return_type(types.INT)
+    return commands.set_and_return_type(types.INT)
 
 """ Компиляция переменной """
-def var_aexp(commands, env, name):
-    commands.load_value(env.get_var(name))
+def var_aexp(commands, data, name):
+    commands.load_value(data.get_var(name))
