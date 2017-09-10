@@ -8,10 +8,10 @@ class FunctionCompiler:
         # Для всех аргументов создаем переменные
         arg_names = []
         for arg in args.elements:
-            arg_names.append(env.var(arg))
+            arg_names.append(env.var(alias=arg, type=types.DYNAMIC))
 
         # Компилируем конструкции изъятия из стека (в обратном порядке) аргументов функции и записи их в environment
         for _ in args.elements:
-            type_variable = env.var()
+            type_variable = env.var(type=types.INT)
             commands.add(Store, type_variable)
             commands.store_value(arg_names.pop(), type_variable=type_variable)

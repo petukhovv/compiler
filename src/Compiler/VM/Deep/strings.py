@@ -9,8 +9,8 @@ class StringCompiler:
     """
     @staticmethod
     def store(commands, env):
-        str_start_pointer = env.var()
-        end_str_pointer = env.var()
+        str_start_pointer = env.var(types.INT)
+        end_str_pointer = env.var(types.INT)
 
         # Добавляем к требуемому размеру памяти 1 - для escape-нуля (маркера конца строки)
         commands.add(Push, 1)
@@ -42,7 +42,7 @@ class StringCompiler:
     """
     @staticmethod
     def strlen(commands, env):
-        str_start_pointer = env.var()
+        str_start_pointer = env.var(types.INT)
 
         # Разыменовываем лежащий на стеке указатель и записываем его в переменную
         bload_and_store(str_start_pointer, commands)
@@ -79,8 +79,8 @@ class StringCompiler:
     """
     @staticmethod
     def strsub(commands, env):
-        substr_length = env.var()
-        substr_start_pointer = env.var()
+        substr_length = env.var(types.INT)
+        substr_start_pointer = env.var(types.INT)
 
         finish_label = env.label()
 
@@ -117,7 +117,7 @@ class StringCompiler:
     """
     @staticmethod
     def strdup(commands, env):
-        str_start_pointer = env.var()
+        str_start_pointer = env.var(types.INT)
 
         # Разыменовываем лежащий на стеке указатель и записываем его в переменную
         bload_and_store(str_start_pointer, commands)
@@ -138,7 +138,7 @@ class StringCompiler:
     """
     @staticmethod
     def strcat_first(commands, env):
-        str_start_pointer = env.var()
+        str_start_pointer = env.var(types.INT)
 
         bload_and_store(str_start_pointer, commands)
         commands.add(Push, 0)
@@ -154,8 +154,8 @@ class StringCompiler:
     """
     @staticmethod
     def strcat_second(commands, env):
-        str_start_pointer = env.var()
-        str_length = env.var()
+        str_start_pointer = env.var(types.INT)
+        str_length = env.var(types.INT)
 
         bload_and_store(str_start_pointer, commands)
         commands.add(Store, str_length)
@@ -176,9 +176,9 @@ class StringCompiler:
     """
     @staticmethod
     def strmake(commands, env):
-        str_start_pointer = env.var()
-        str_length = env.var()
-        basis_symbol = env.var()
+        str_start_pointer = env.var(types.INT)
+        str_length = env.var(types.INT)
+        basis_symbol = env.var(types.CHAR)
 
         finish_label = env.label()
 
@@ -215,8 +215,8 @@ class StringCompiler:
     """
     @staticmethod
     def strcmp(commands, env):
-        str1_start_pointer = env.var()
-        str2_start_pointer = env.var()
+        str1_start_pointer = env.var(types.INT)
+        str2_start_pointer = env.var(types.INT)
 
         eq_label = env.label()
         not_eq_label = env.label()

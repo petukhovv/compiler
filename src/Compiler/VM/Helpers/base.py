@@ -9,7 +9,8 @@ class types:
     BOOL = 3
     STRING = 4
     BOXED_ARR = 5
-    UNBOXED_ARR = 6
+    UNBOXED_ARR = 6,
+    DYNAMIC = 7
 
 """ Хелпер для компиляции заданных аргументов built-in функций """
 def args_compile(args, numbers, commands, env):

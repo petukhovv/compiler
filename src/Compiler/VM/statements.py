@@ -14,7 +14,7 @@ def assign_statement(commands, env, variable, aexp):
         commands.load_value(env.get_var(variable.array))
         ArrayCompiler.set_element(commands, env)
     else:
-        commands.store_value(env.var(variable.name), type_variable=value_type)
+        commands.store_value(env.var(alias=variable.name, type=types.DYNAMIC), type_variable=value_type)
 
 """ Компиляция составного выражения """
 def compound_statement(commands, env, first, second):

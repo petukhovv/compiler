@@ -45,7 +45,7 @@ class Commands(list):
 
     """ Генерация строкового представления заданной команды для стековой машины """
     def bload_value(self, env, only_value=False):
-        variable = env.var(with_type=False)
+        variable = env.var(type=None)
 
         if not only_value:
             self.add(Dup)
@@ -56,7 +56,7 @@ class Commands(list):
 
     """ Генерация строкового представления заданной команды для стековой машины """
     def bstore_value(self, env):
-        variable = env.var(with_type=False)
+        variable = env.var(type=None)
 
         self.add(Dup)
         self.add(Store, variable)
@@ -80,7 +80,9 @@ class Commands(list):
     def set_return_type(self, value_type):
         self.add(Push, value_type)
 
+        return value_type
+
     def get_type(self, env):
-        variable_type = env.var(with_type=False)
+        variable_type = env.var(type=None)
         self.add(Store, variable_type)
         return variable_type

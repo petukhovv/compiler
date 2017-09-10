@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from src.VM.commands import *
+from ..Helpers.base import *
 
 """ Генератор команд для организации циклов """
 class Loop():
@@ -16,7 +17,7 @@ class Loop():
     @staticmethod
     def base(commands, env, check_break_condition, callback, load_counter=True, return_counter=False):
         # Создаем метки и переменные, необходимые для прохождения цикла.
-        counter = env.var()
+        counter = env.var(types.INT)
 
         start_label = env.label()
         finish_label = env.label()

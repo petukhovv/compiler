@@ -21,14 +21,18 @@ class Environment:
     Создание новой переменной в stack memory
     Если name не передано, просто инкрементируем счетчик
     """
-    def var(self, name=None, with_type=True):
+    def var(self, type=None, alias=None):
         var_number = self.var_counter
         # Если переменная уже существует, возвращаем её
-        if self.is_exist_var(name):
-            return self.get_var(name)
-        if name is not None:
-            self.vars[name] = {'number': var_number}
-        if with_type:
+        if self.is_exist_var(alias):
+            return self.get_var(alias)
+        if alias is not None:
+            self.vars[alias] = {
+                'number': var_number
+            }
+        self.vars[var_number] = {}
+        if type:
+            self.vars[var_number]['type'] = type
             self.var_counter += 2
         else:
             self.var_counter += 1

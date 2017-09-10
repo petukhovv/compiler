@@ -9,7 +9,7 @@ class ArrayCompiler:
     """
     @staticmethod
     def unboxed_arrmake(commands, env, values_type):
-        arr_length = env.var()
+        arr_length = env.var(types.INT)
 
         commands.add(Dup)
         # Сохраняем длину массива в переменную
@@ -21,7 +21,7 @@ class ArrayCompiler:
         if values_type == 'none':
             return
 
-        arr_pointer = env.var()
+        arr_pointer = env.var(types.INT)
 
         finish_label = env.label()
 
@@ -32,7 +32,7 @@ class ArrayCompiler:
 
         # Если все элементы должны быть одинаковыми, равными одному значению (basis_element), загружаем его
         if is_repeated_values:
-            basis_element = env.var()
+            basis_element = env.var(types.CHAR)
             # Сохраняем повторяемое значение в переменную
             commands.add(Store, basis_element)
 
@@ -82,7 +82,7 @@ class ArrayCompiler:
     """
     @staticmethod
     def arrlen(commands, env):
-        arr_start_pointer = env.var()
+        arr_start_pointer = env.var(types.INT)
 
         # Записываем указатель на начало массива в переменную
         commands.add(Store, arr_start_pointer)
