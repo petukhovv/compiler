@@ -6,7 +6,7 @@ from src.Compiler.VM.Deep.arrays import *
 def unboxed_arrmake(commands, data, args):
     # Если были переданы default values (2-м аргументом), смотрим, в каком именно формате
     if len(args.elements) == 2:
-        default_value_type = args_compile(args, 1, commands, data)
+        default_value_type = args.elements[1].compile_vm(commands, data)
         commands.extract_value()
         # Если вторым аргументом был передан [], то дублируемым элементом будет 0 ( сигнатура: arrmake(n, []) )
         if default_value_type == types.UNBOXED_ARR and len(args.elements[1].elements.elements) == 0:
@@ -31,7 +31,6 @@ def unboxed_arrmake(commands, data, args):
 """ Компиляция конструкции константного задания unboxed-массива: [n1, n2, ...]  """
 def unboxed(commands, data, elements):
     arr_elements = elements.compile_vm(commands, data)
-    commands.extract_value()
     for element in reversed(arr_elements):
         commands.add(Push, element)
 

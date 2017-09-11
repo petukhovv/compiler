@@ -14,7 +14,7 @@ def function(commands, data, name, args, body):
     # На эту метку переходим при вызове
     commands.add(Label, start_function)
 
-    FunctionCompiler.args_wrtite(commands, data, args)
+    FunctionCompiler.args_write(commands, data, args)
 
     # Компилируем код тела функции
     body.compile_vm(commands, data)
@@ -34,6 +34,7 @@ def return_statement(commands, data, expr):
 def call_statement(commands, data, name, args):
     for arg in args.elements:
         arg.compile_vm(commands, data)
+    commands.add(Push, len(args.elements))
     commands.add(Call, data.get_label(name))
 
     return data.get_return_type(name)

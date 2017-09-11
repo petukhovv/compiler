@@ -9,7 +9,7 @@ class types:
     BOOL = 3
     STRING = 4
     BOXED_ARR = 5
-    UNBOXED_ARR = 6,
+    UNBOXED_ARR = 6
     DYNAMIC = 7
 
 """ Хелпер для компиляции заданных аргументов built-in функций """
@@ -29,8 +29,11 @@ def dbload(address, offset, commands):
 
 """ Хелпер для генерации инструкций для сохранения значения в heap memory по заданному адресу с заданным смещением """
 def dbstore(address, offset, commands, invert=False, value=0):
-    commands.add(Load, address)\
-        .add(Load, offset)
+    commands.add(Load, address)
+    if offset is None:
+        commands.add(Push, 0)
+    else:
+        commands.add(Load, offset)
     if invert:
         commands.add(Sub)
     else:

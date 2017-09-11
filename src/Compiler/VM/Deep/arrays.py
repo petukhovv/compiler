@@ -45,15 +45,14 @@ class ArrayCompiler:
             # в противном случае, при полном задании default values, они уже будут находиться на стеке
             if is_repeated_values:
                 commands.add(Load, basis_element)
-            dbstore(arr_pointer, _counter, commands)
+            dbstore(arr_pointer, _counter, commands, value=1)
 
-        counter = Loop.simple(commands, data, cycle_body, return_counter=True)
+        Loop.simple(commands, data, cycle_body)
 
         commands.add(Label, finish_label)
 
-        # Записываем маркер конца массива - 0
-        commands.add(Push, 0)
-        dbstore(arr_pointer, counter, commands)
+        commands.add(Load, arr_length)
+        dbstore(arr_pointer, None, commands)
 
         commands.add(Load, arr_pointer)
 
@@ -82,10 +81,4 @@ class ArrayCompiler:
     """
     @staticmethod
     def arrlen(commands, data):
-        arr_start_pointer = data.var(types.INT)
-
-        # Записываем указатель на начало массива в переменную
-        commands.add(Store, arr_start_pointer)
-
-        # Считываем массив из памяти до конца (пока не встретим 0), подсчитывая кол-во элементов (его кладем на стек)
-        Loop.data_heap(commands, data, arr_start_pointer)
+        commands.add(DBLoad, 0)

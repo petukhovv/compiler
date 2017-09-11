@@ -4,7 +4,7 @@ from ..Helpers.base import *
 
 class FunctionCompiler:
     @staticmethod
-    def args_wrtite(commands, data, args):
+    def args_write(commands, data, args):
         # Для всех аргументов создаем переменные
         arg_names = []
         for arg in args.elements:

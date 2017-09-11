@@ -4,7 +4,8 @@ import sys
 
 from pprint import pprint
 
-from src.VM.Helpers.environment import Environment
+from Helpers.environment import Environment
+from Helpers.data import *
 
 """
 Перечисление команд стековой машины.
@@ -90,9 +91,11 @@ class DBLoad:
     def __init__(self, name):
         self.name = name
 
-    def eval(self, commands, data, stack):
+    def eval(self, commands, data, stack, need_current=False):
         n = self.name + stack.pop()
 
+        if need_current:
+            data = Environment.get_current_env(data)
         value = data['heap'][n]
         if value is None:
             raise RuntimeError('Unknown variable \'' + self.name + '\'')
@@ -331,10 +334,28 @@ class Call:
         if len(stack) == 0:
             raise RuntimeError('Stack is empty')
 
+        new_environment = Environment.create(data)
+        new_stack_state = []
+        args_count = stack.pop()
+        i = 0
+        while i < args_count:
+            arg_type = stack.pop()
+            arg_value = stack.pop()
+            if arg_type in [0, 1, 2, 3]:
+                new_stack_state.append(arg_value)
+                new_stack_state.append(arg_type)
+            elif arg_type == 4:
+                Data.clone_string(arg_value, data, new_environment, new_stack_state)
+            elif arg_type == 6:
+                Data.clone_unboxed_array(arg_value, data, new_environment, new_stack_state)
+            i += 1
+
+        for item in new_stack_state:
+            stack.append(item)
+
         label = data['labels'][self.name]
         data['call_stack'].append(commands['current'])
         commands['current'] = label
-        Environment.create(data)
 
 """ Осуществление возврата к месту вызова. """
 class Return:
@@ -384,6 +405,7 @@ class Log:
         self.type = type
 
     def eval(self, commands, data, stack):
+        data = Environment.get_current_env(data)
         if self.type == 0:
             pprint(stack)
         elif self.type == 1:

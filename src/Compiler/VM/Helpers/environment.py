@@ -50,6 +50,8 @@ class Environment:
         if self.is_exist_var(alias):
             return self.get_var(alias)
         if alias is not None:
+            if self.current_function is not None:
+                alias = '!' + str(self.current_function) + '!' + str(alias)
             self.vars[alias] = {
                 'number': var_number
             }
@@ -68,6 +70,8 @@ class Environment:
 
     """ Получение переменной по имени """
     def get_var(self, name):
+        if self.current_function is not None:
+            name = '!' + str(self.current_function) + '!' + str(name)
         return self.vars[name]['number']
 
     """ Получение переменной по имени """
@@ -76,4 +80,6 @@ class Environment:
 
     """ Проверка переменной на существование """
     def is_exist_var(self, name):
+        if self.current_function is not None:
+            name = '!' + str(self.current_function) + '!' + str(name)
         return name in self.vars
