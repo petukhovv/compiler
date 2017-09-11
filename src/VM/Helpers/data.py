@@ -15,9 +15,8 @@ class Data:
     def clone_unboxed_array(pointer, current_data, new_data, new_stack):
         arrlen = current_data['heap'][pointer]
         start_pointer = len(new_data['heap'])
-        new_data['heap'].append(arrlen)
         arr_counter = 0
-        while arr_counter < arrlen:
+        while arr_counter <= arrlen:
             current_symbol = current_data['heap'][pointer + arr_counter]
             new_data['heap'].append(current_symbol)
             arr_counter += 1
