@@ -341,13 +341,13 @@ class Call:
         while i < args_count:
             arg_type = stack.pop()
             arg_value = stack.pop()
-            if arg_type in [0, 1, 2, 3]:
-                new_stack_state.append(arg_value)
-                new_stack_state.append(arg_type)
-            elif arg_type == 4:
+            if arg_type == 4:
                 Data.clone_string(arg_value, data, new_environment, new_stack_state)
             elif arg_type == 6:
                 Data.clone_unboxed_array(arg_value, data, new_environment, new_stack_state)
+            else:
+                new_stack_state.append(arg_value)
+                new_stack_state.append(arg_type)
             i += 1
 
         for item in new_stack_state:
@@ -364,6 +364,24 @@ class Return:
     def eval(self, commands, data, stack):
         if len(data['call_stack']) == 0:
             raise RuntimeError('Call stack is empty')
+
+        return_type = stack.pop()
+        return_value = stack.pop()
+
+        current_env = Environment.get_current_env(data)
+        new_stack_state = []
+
+        if return_type in [0, 1, 2, 3]:
+            new_stack_state.append(return_value)
+            new_stack_state.append(return_type)
+        elif return_type == 4:
+            Data.clone_string(return_value, current_env, data, new_stack_state)
+        elif return_type == 6:
+            Data.clone_unboxed_array(return_value, current_env, data, new_stack_state)
+
+        for item in new_stack_state:
+            stack.append(item)
+
         Environment.clear(data)
         commands['current'] = data['call_stack'].pop()
 
