@@ -29,25 +29,20 @@ class Environment:
 
     @staticmethod
     def search_variable(data, variable):
-        env_counter = 0
-        env = Environment.get_env(data, env_counter)
-        while env:
-            if variable in env['stack']:
-                return env['stack'][variable]
-            env_counter += 1
-            env = Environment.get_env(data, env_counter)
-        return None
+        data = Environment.get_current_env(data)
+
+        if variable in data['stack']:
+            return data['stack'][variable]
+        else:
+            return None
 
     @staticmethod
     def search_heap_variable(data, variable):
-        env_counter = 0
-        env = Environment.get_env(data, env_counter)
-        while env:
-            if variable in env['heap']:
-                return env['heap'][variable]
-            env_counter += 1
-            env = Environment.get_env(data, env_counter)
-        return None
+        data = Environment.get_current_env(data)
+        if variable in data['heap']:
+            return data['heap'][variable]
+        else:
+            return None
 
     @staticmethod
     def create(data):

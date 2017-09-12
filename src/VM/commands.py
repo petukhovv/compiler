@@ -94,8 +94,7 @@ class DBLoad:
     def eval(self, commands, data, stack, need_current=False):
         n = self.name + stack.pop()
 
-        if need_current:
-            data = Environment.get_current_env(data)
+        data = Environment.get_current_env(data)
         value = data['heap'][n]
         if value is None:
             raise RuntimeError('Unknown variable \'' + self.name + '\'')
@@ -123,7 +122,7 @@ class BStore:
     def eval(self, commands, data, stack):
         if len(stack) == 0:
             raise RuntimeError('Stack is empty')
-        
+
         n = self.name + stack.pop()
         value = stack.pop()
         Environment.store_variable(data, n, value)
@@ -346,11 +345,11 @@ class Call:
             elif arg_type == 6:
                 Data.clone_unboxed_array(arg_value, data, new_environment, new_stack_state)
             else:
-                new_stack_state.append(arg_value)
                 new_stack_state.append(arg_type)
+                new_stack_state.append(arg_value)
             i += 1
 
-        for item in new_stack_state:
+        for item in reversed(new_stack_state):
             stack.append(item)
 
         label = data['labels'][self.name]
