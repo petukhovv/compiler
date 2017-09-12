@@ -35,7 +35,7 @@ class StringCompiler:
         dbstore(str_start_pointer, counter, commands)
 
         # Отдаем на стек указатель на начало строки для дальнейшего использования
-        commands.add(Push, str_start_pointer)
+        commands.add(Load, str_start_pointer)
 
     """
     Генерация инструкций для получения длины строки, находящейся на стеке.
@@ -43,9 +43,8 @@ class StringCompiler:
     @staticmethod
     def strlen(commands, data):
         str_start_pointer = data.var(types.INT)
-
         # Разыменовываем лежащий на стеке указатель и записываем его в переменную
-        bload_and_store(str_start_pointer, commands)
+        commands.add(Store, str_start_pointer)
 
         # Считываем строку из памяти до конца (пока не встретим 0), подсчитывая кол-во символов (его кладем на стек)
         Loop.data_heap(commands, data, str_start_pointer)
@@ -55,8 +54,6 @@ class StringCompiler:
     """
     @staticmethod
     def strget(commands, data):
-        # Получаем номер ячейки в heap memory с началом строки
-        commands.add(BLoad, 0)
         # Прибавляем к номеру ячейки с началом строки номер требуемого символа (offset)
         commands.add(Add)
         # Загружаем на стек символ по номеру его ячейки в heap memory
@@ -67,8 +64,6 @@ class StringCompiler:
     """
     @staticmethod
     def strset(commands, data):
-        # Получаем номер ячейки в heap memory с началом строки
-        commands.add(BLoad, 0)
         # Вычисляем ячейки heap memory, где находится заменяемый символ
         commands.add(Add)
         # Производим замену символа
@@ -87,8 +82,6 @@ class StringCompiler:
         # Сохраняем длину подстроки
         commands.add(Store, substr_length)
 
-        # Вычисляем и сохраняем указатель на начало подстроки
-        commands.add(BLoad, 0)
         commands.add(Add)
         commands.add(Store, substr_start_pointer)
 
@@ -208,7 +201,7 @@ class StringCompiler:
         dbstore(str_start_pointer, counter, commands)
 
         # Отдаем на стек указатель на начало созданной строки для дальнейшего использования
-        commands.add(Push, str_start_pointer)
+        commands.add(Load, str_start_pointer)
 
     """
     Генерация инструкций для посимвольного сравнивания двух строк
