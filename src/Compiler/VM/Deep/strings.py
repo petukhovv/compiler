@@ -3,13 +3,16 @@
 from ..Helpers.base import *
 from ..Helpers.loop import Loop
 
+typesConfDefault = {
+    'memory': 'heap',
+    'bload': DBLoad,
+    'bstore': DBStore,
+    'load_helper': dbload
+}
+
 typesMap = {
-    types.STRING: {
-        'memory': 'heap',
-        'bload': DBLoad,
-        'bstore': DBStore,
-        'load_helper': dbload
-    },
+    types.STRING: typesConfDefault,
+    types.DYNAMIC: typesConfDefault,
     types.STRING_INLINE: {
         'memory': 'stack',
         'bload': BLoad,

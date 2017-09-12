@@ -55,24 +55,15 @@ def array_element(commands, data, array, index, other_indexes, context):
     commands.load_value(var_number)
     commands.extract_value()
     if context == 'assign':
-        if var_type == types.UNBOXED_ARR_INLINE:
-            ArrayCompiler.set_inline_element(commands, data)
-        else:
-            ArrayCompiler.set_element(commands, data)
+        ArrayCompiler.set_element(commands, data, var_type)
     else:
-        if var_type == types.UNBOXED_ARR_INLINE:
-            ArrayCompiler.get_inline_element(commands, data)
-        else:
-            ArrayCompiler.get_element(commands, data)
+        ArrayCompiler.get_element(commands, data, var_type)
         return commands.set_and_return_type(types.INT)
 
 """ Компиляция built-in функции arrlen для получения длины массива """
 def arrlen(commands, data, args):
     array_type = args.elements[0].compile_vm(commands, data)
     commands.extract_value()
-    if array_type == types.UNBOXED_ARR_INLINE:
-        ArrayCompiler.arrlen_inline(commands, data)
-    else:
-        ArrayCompiler.arrlen(commands, data)
+    ArrayCompiler.arrlen(commands, data, array_type)
 
     return commands.set_and_return_type(types.INT)
