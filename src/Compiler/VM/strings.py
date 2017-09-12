@@ -10,23 +10,31 @@ def char(commands, data, character, need_typify=True):
 
 """ Компиляция выражения "строка" """
 def string(commands, data, characters):
-    # Записываем маркер конца строки
-    commands.add(Push, 0)
+    str_start = None
+
     # Кладем на стек строку
     for character in characters:
+        element_var = data.var()
+        if str_start is None:
+            str_start = element_var
         char(commands, data, character, need_typify=False)
-    commands.add(Push, len(characters))
+        commands.add(Store, element_var)
 
-    # Записываем строку со стека в heap memory
-    StringCompiler.store(commands, data)
+    end_str_var = data.var()
+    # Записываем маркер конца строки
+    commands.add(Push, 0)
+    commands.add(Store, end_str_var)
 
-    return commands.set_and_return_type(types.STRING)
+    commands.add(Push, str_start)
+
+    return commands.set_and_return_type(types.STRING_INLINE)
 
 """ Компиляция built-in функции strlen (длина строки) """
 def strlen(commands, data, args):
-    args_compile(args, 0, commands, data)
+    array_type = args.elements[0].compile_vm(commands, data)
     commands.extract_value()
-    StringCompiler.strlen(commands, data)
+
+    StringCompiler.strlen(commands, data, array_type)
 
     return commands.set_and_return_type(types.INT)
 
@@ -35,9 +43,9 @@ def strget(commands, data, args):
     # Порядок компиляции аргументов здесь и ниже задаём удобным для дальнейшей работы образом
     args_compile(args, 1, commands, data)
     commands.extract_value()
-    args_compile(args, 0, commands, data)
+    array_type = args.elements[0].compile_vm(commands, data)
     commands.extract_value()
-    StringCompiler.strget(commands, data)
+    StringCompiler.strget(commands, data, array_type)
 
     return commands.set_and_return_type(types.CHAR)
 
@@ -47,38 +55,38 @@ def strset(commands, data, args):
     commands.extract_value()
     args_compile(args, 1, commands, data)
     commands.extract_value()
-    args_compile(args, 0, commands, data)
+    array_type = args.elements[0].compile_vm(commands, data)
     commands.extract_value()
-    StringCompiler.strset(commands, data)
+    StringCompiler.strset(commands, data, array_type)
 
 """ Компиляция built-in функции strsub (взятие подстроки строки) """
 def strsub(commands, data, args):
     args_compile(args, 1, commands, data)
     commands.extract_value()
-    args_compile(args, 0, commands, data)
+    array_type = args.elements[0].compile_vm(commands, data)
     commands.extract_value()
     args_compile(args, 2, commands, data)
     commands.extract_value()
-    StringCompiler.strsub(commands, data)
+    StringCompiler.strsub(commands, data, array_type)
 
     return commands.set_and_return_type(types.STRING)
 
 """ Компиляция built-in функции strdup (дублирование строки) """
 def strdup(commands, data, args):
-    args_compile(args, 0, commands, data)
+    array_type = args.elements[0].compile_vm(commands, data)
     commands.extract_value()
-    StringCompiler.strdup(commands, data)
+    StringCompiler.strdup(commands, data, array_type)
 
     return commands.set_and_return_type(types.STRING)
 
 """ Компиляция built-in функции strcat (конкатенация двух строк) """
 def strcat(commands, data, args):
-    args_compile(args, 0, commands, data)
+    array_type1 = args.elements[0].compile_vm(commands, data)
     commands.extract_value()
-    StringCompiler.strcat_first(commands, data)
-    args_compile(args, 1, commands, data)
+    StringCompiler.strcat_first(commands, data, array_type1)
+    array_type2 = args.elements[1].compile_vm(commands, data)
     commands.extract_value()
-    StringCompiler.strcat_second(commands, data)
+    StringCompiler.strcat_second(commands, data, array_type2)
 
     return commands.set_and_return_type(types.STRING)
 
@@ -94,10 +102,10 @@ def strmake(commands, data, args):
 
 """ Компиляция built-in функции strcmp (посимвольное сравнение двух строк) """
 def strcmp(commands, data, args):
-    args_compile(args, 0, commands, data)
+    array_type2 = args.elements[0].compile_vm(commands, data)
     commands.extract_value()
-    args_compile(args, 1, commands, data)
+    array_type1 = args.elements[1].compile_vm(commands, data)
     commands.extract_value()
-    StringCompiler.strcmp(commands, data)
+    StringCompiler.strcmp(commands, data, array_type1, array_type2)
 
     return commands.set_and_return_type(types.INT)

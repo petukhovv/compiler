@@ -41,39 +41,48 @@ class StringCompiler:
     Генерация инструкций для получения длины строки, находящейся на стеке.
     """
     @staticmethod
-    def strlen(commands, data):
+    def strlen(commands, data, type):
         str_start_pointer = data.var(types.INT)
         # Разыменовываем лежащий на стеке указатель и записываем его в переменную
         commands.add(Store, str_start_pointer)
 
         # Считываем строку из памяти до конца (пока не встретим 0), подсчитывая кол-во символов (его кладем на стек)
-        Loop.data_heap(commands, data, str_start_pointer)
+        if type == types.STRING_INLINE:
+            Loop.data_stack(commands, data, str_start_pointer)
+        else:
+            Loop.data_heap(commands, data, str_start_pointer)
 
     """
     Генерация инструкций для получения определенного символа строки
     """
     @staticmethod
-    def strget(commands, data):
+    def strget(commands, data, type):
         # Прибавляем к номеру ячейки с началом строки номер требуемого символа (offset)
         commands.add(Add)
         # Загружаем на стек символ по номеру его ячейки в heap memory
-        commands.add(DBLoad, 0)
+        if type == types.STRING_INLINE:
+            commands.add(BLoad, 0)
+        else:
+            commands.add(DBLoad, 0)
 
     """
     Генерация инструкций для замены определенного символа строки
     """
     @staticmethod
-    def strset(commands, data):
+    def strset(commands, data, type):
         # Вычисляем ячейки heap memory, где находится заменяемый символ
         commands.add(Add)
         # Производим замену символа
-        commands.add(DBStore, 0)
+        if type == types.STRING_INLINE:
+            commands.add(BStore, 0)
+        else:
+            commands.add(DBStore, 0)
 
     """
     Генерация инструкций для получение подстроки строки
     """
     @staticmethod
-    def strsub(commands, data):
+    def strsub(commands, data, type):
         substr_length = data.var(types.INT)
         substr_start_pointer = data.var(types.INT)
 
@@ -95,9 +104,15 @@ class StringCompiler:
             # Если уже прочитали и записали подстркоу требуемой длины - выходим из цикла
             commands.add(Jnz, finish_label)
             # Загружаем очередной символ подстроки из heap memory
-            dbload(substr_start_pointer, _counter, commands)
+            if type == types.STRING_INLINE:
+                bload(substr_start_pointer, _counter, commands)
+            else:
+                dbload(substr_start_pointer, _counter, commands)
 
-        Loop.data_heap(commands, data, substr_start_pointer, cycle_body, load_counter=False)
+        if type == types.STRING_INLINE:
+            Loop.data_stack(commands, data, substr_start_pointer, cycle_body, load_counter=False)
+        else:
+            Loop.data_heap(commands, data, substr_start_pointer, cycle_body, load_counter=False)
 
         commands.add(Label, finish_label)
         # Записываем на стек длину подстроки + 1 (для маркера конца строки - нуля)
@@ -109,7 +124,7 @@ class StringCompiler:
     Генерация инструкций для дублирования строки
     """
     @staticmethod
-    def strdup(commands, data):
+    def strdup(commands, data, type):
         str_start_pointer = data.var(types.INT)
 
         # Разыменовываем лежащий на стеке указатель и записываем его в переменную
@@ -119,10 +134,16 @@ class StringCompiler:
         commands.add(Push, 0)
 
         def cycle_body(_counter, a, b):
-            dbload(str_start_pointer, _counter, commands)
+            if type == types.STRING_INLINE:
+                bload(str_start_pointer, _counter, commands)
+            else:
+                dbload(str_start_pointer, _counter, commands)
 
         # Читаем строку и кладем её на стек
-        Loop.data_heap(commands, data, str_start_pointer, cycle_body)
+        if type == types.STRING_INLINE:
+            Loop.data_stack(commands, data, str_start_pointer, cycle_body)
+        else:
+            Loop.data_heap(commands, data, str_start_pointer, cycle_body)
 
         StringCompiler.store(commands, data)
 
@@ -130,23 +151,29 @@ class StringCompiler:
     Генерация инструкций для дублирования первой из конкатенируемых строки
     """
     @staticmethod
-    def strcat_first(commands, data):
+    def strcat_first(commands, data, type):
         str_start_pointer = data.var(types.INT)
 
         bload_and_store(str_start_pointer, commands)
         commands.add(Push, 0)
 
         def cycle_body(_counter, a, b):
-            dbload(str_start_pointer, _counter, commands)
+            if type == types.STRING_INLINE:
+                bload(str_start_pointer, _counter, commands)
+            else:
+                dbload(str_start_pointer, _counter, commands)
 
         # Читаем строку и кладем её на стек
-        Loop.data_heap(commands, data, str_start_pointer, cycle_body)
+        if type == types.STRING_INLINE:
+            Loop.data_stack(commands, data, str_start_pointer, cycle_body)
+        else:
+            Loop.data_heap(commands, data, str_start_pointer, cycle_body)
 
     """
     Генерация инструкций для дублирования второй из конкатенируемых строки и запись её в памяти за первой
     """
     @staticmethod
-    def strcat_second(commands, data):
+    def strcat_second(commands, data, type):
         str_start_pointer = data.var(types.INT)
         str_length = data.var(types.INT)
 
@@ -154,10 +181,16 @@ class StringCompiler:
         commands.add(Store, str_length)
 
         def cycle_body(_counter, a, b):
-            dbload(str_start_pointer, _counter, commands)
+            if type == types.STRING_INLINE:
+                bload(str_start_pointer, _counter, commands)
+            else:
+                dbload(str_start_pointer, _counter, commands)
 
         # Читаем строку и кладем её на стек
-        Loop.data_heap(commands, data, str_start_pointer, cycle_body)
+        if type == types.STRING_INLINE:
+            Loop.data_stack(commands, data, str_start_pointer, cycle_body)
+        else:
+            Loop.data_heap(commands, data, str_start_pointer, cycle_body)
 
         commands.add(Load, str_length)
         commands.add(Add)
@@ -207,7 +240,7 @@ class StringCompiler:
     Генерация инструкций для посимвольного сравнивания двух строк
     """
     @staticmethod
-    def strcmp(commands, data):
+    def strcmp(commands, data, type1, type2):
         str1_start_pointer = data.var(types.INT)
         str2_start_pointer = data.var(types.INT)
 
@@ -220,11 +253,17 @@ class StringCompiler:
 
         def cycle_body(_counter, a, continue_label):
             # Загружаем n-ный символ 1-й строки
-            dbload(str1_start_pointer, _counter, commands)
+            if type1 == types.STRING_INLINE:
+                bload(str1_start_pointer, _counter, commands)
+            else:
+                dbload(str1_start_pointer, _counter, commands)
             # Дублируем на стек для дальнейшей проверки (чтобы не загружать снова)
             commands.add(Dup)
             # Загружаем n-ный символ 2-й строки
-            dbload(str2_start_pointer, _counter, commands)
+            if type2 == types.STRING_INLINE:
+                bload(str2_start_pointer, _counter, commands)
+            else:
+                dbload(str2_start_pointer, _counter, commands)
             commands.add(Compare, 1)
             # Если символы не равны, сразу переходим в секцию not_eq_label и выясняем уже там - какой из них больше
             # Это также работает, когда мы достиги конца одной из строк (какой-то символ и 0)
@@ -249,7 +288,10 @@ class StringCompiler:
         # Секция неравенства строк
         commands.add(Label, not_eq_label)
         # Загружаем только второй символ - первый у нас уже содержится на стеке (см. тело цикла)
-        dbload(str2_start_pointer, counter, commands)
+        if type2 == types.STRING_INLINE:
+            bload(str2_start_pointer, counter, commands)
+        else:
+            dbload(str2_start_pointer, counter, commands)
         # Сравниваем символы оператором <
         commands.add(Compare, 2)
         # Производим нормировку результата сравнения: 0|1 -> -1|1

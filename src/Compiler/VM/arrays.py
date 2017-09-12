@@ -44,8 +44,7 @@ def unboxed(commands, data, elements):
 
     commands.add(Push, arrlen_var)
 
-    tt = commands.set_and_return_type(types.UNBOXED_ARR_INLINE)
-    return tt
+    return commands.set_and_return_type(types.UNBOXED_ARR_INLINE)
 
 """ Компиляция оператора получения элемента массива: A[n] """
 def array_element(commands, data, array, index, other_indexes, context):

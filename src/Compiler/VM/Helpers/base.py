@@ -13,6 +13,7 @@ class types:
     BOXED_ARR_INLINE = 7
     UNBOXED_ARR_INLINE = 8
     DYNAMIC = 9
+    STRING_INLINE = 10
 
 """ Хелпер для компиляции заданных аргументов built-in функций """
 def args_compile(args, numbers, commands, data):
@@ -28,6 +29,13 @@ def dbload(address, offset, commands):
         .add(Load, offset)\
         .add(Add)\
         .add(DBLoad, 0)
+
+""" Хелпер для генерации инструкций для загрузки значения из heap memory по заданному адресу с заданным смещением """
+def bload(address, offset, commands):
+    commands.add(Load, address)\
+        .add(Load, offset)\
+        .add(Add)\
+        .add(BLoad, 0)
 
 """ Хелпер для генерации инструкций для сохранения значения в heap memory по заданному адресу с заданным смещением """
 def dbstore(address, offset, commands, invert=False, value=0):

@@ -342,6 +342,8 @@ class Call:
             arg_value = stack.pop()
             if arg_type == 4:
                 Data.clone_string(arg_value, data, new_environment, new_stack_state)
+            elif arg_type == 10:
+                Data.clone_string_inline(arg_value, data, new_environment, new_stack_state)
             elif arg_type == 6:
                 Data.clone_unboxed_array(arg_value, data, new_environment, new_stack_state)
             elif arg_type == 8:
@@ -377,6 +379,8 @@ class Return:
             new_stack_state.append(return_type)
         elif return_type == 4:
             Data.clone_string(return_value, current_env, data, new_stack_state)
+        elif return_type == 10:
+            Data.clone_string_inline(return_value, current_env, data, new_stack_state)
         elif return_type == 6:
             Data.clone_unboxed_array(return_value, current_env, data, new_stack_state)
         elif return_type == 8:

@@ -14,6 +14,18 @@ class Data:
         new_stack.append(start_pointer)
 
     @staticmethod
+    def clone_string_inline(pointer, current_data, new_data, new_stack):
+        stack_offset = pointer
+        current_symbol = None
+        start_pointer = len(new_data['heap'])
+        while current_symbol != 0:
+            current_symbol = current_data['stack'][stack_offset]
+            new_data['heap'].append(current_symbol)
+            stack_offset += 1
+        new_stack.append(4)
+        new_stack.append(start_pointer)
+
+    @staticmethod
     def clone_unboxed_array(pointer, current_data, new_data, new_stack):
         arrlen = current_data['heap'][pointer]
         start_pointer = len(new_data['heap'])
