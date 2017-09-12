@@ -49,7 +49,3 @@ def dbstore(address, offset, commands, invert=False, value=0):
     else:
         commands.add(Add)
     commands.add(DBStore, value)
-
-""" Хелпер для генерации инструкций для загрузки значения из heap memory с адресом = значению на стеке и сохранения его в переменную """
-def bload_and_store(variable, commands):
-    commands.add(Store, variable)

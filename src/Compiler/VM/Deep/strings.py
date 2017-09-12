@@ -128,7 +128,7 @@ class StringCompiler:
         str_start_pointer = data.var(types.INT)
 
         # Разыменовываем лежащий на стеке указатель и записываем его в переменную
-        bload_and_store(str_start_pointer, commands)
+        commands.add(Store, str_start_pointer)
 
         # Кладем на стек 0 - маркер конца строки
         commands.add(Push, 0)
@@ -154,7 +154,7 @@ class StringCompiler:
     def strcat_first(commands, data, type):
         str_start_pointer = data.var(types.INT)
 
-        bload_and_store(str_start_pointer, commands)
+        commands.add(Store, str_start_pointer)
         commands.add(Push, 0)
 
         def cycle_body(_counter, a, b):
@@ -177,7 +177,7 @@ class StringCompiler:
         str_start_pointer = data.var(types.INT)
         str_length = data.var(types.INT)
 
-        bload_and_store(str_start_pointer, commands)
+        commands.add(Store, str_start_pointer)
         commands.add(Store, str_length)
 
         def cycle_body(_counter, a, b):
@@ -248,8 +248,8 @@ class StringCompiler:
         not_eq_label = data.label()
         finish_label = data.label()
 
-        bload_and_store(str1_start_pointer, commands)
-        bload_and_store(str2_start_pointer, commands)
+        commands.add(Store, str1_start_pointer)
+        commands.add(Store, str2_start_pointer)
 
         def cycle_body(_counter, a, continue_label):
             # Загружаем n-ный символ 1-й строки
