@@ -67,6 +67,16 @@ class ArrayCompiler:
         commands.add(DBLoad, 1)
 
     """
+    Генерация инструкций для оператора получения элемента массива: A[n]
+    """
+    @staticmethod
+    def get_inline_element(commands, data):
+        # Прибавляем к номеру ячейки с началом массива индекс требуемого значения (offset)
+        commands.add(Add)
+        # Загружаем на стек значение по номеру его ячейки в heap memory
+        commands.add(BLoad, 1)
+
+    """
     Генерация инструкций для присвоения значения элементу массива: A[n] := t
     """
     @staticmethod
@@ -77,8 +87,25 @@ class ArrayCompiler:
         commands.add(DBStore, 1)
 
     """
+    Генерация инструкций для оператора получения элемента массива: A[n]
+    """
+    @staticmethod
+    def set_inline_element(commands, data):
+        # Прибавляем к номеру ячейки с началом массива индекс требуемого значения (offset)
+        commands.add(Add)
+        # Загружаем на стек значение по номеру его ячейки в heap memory
+        commands.add(BStore, 1)
+
+    """
     Генерация инструкций для получения длина массива
     """
     @staticmethod
     def arrlen(commands, data):
         commands.add(DBLoad, 0)
+
+    """
+    Генерация инструкций для получения длина массива
+    """
+    @staticmethod
+    def arrlen_inline(commands, data):
+        commands.add(BLoad, 0)

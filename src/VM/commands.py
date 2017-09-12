@@ -91,7 +91,7 @@ class DBLoad:
     def __init__(self, name):
         self.name = name
 
-    def eval(self, commands, data, stack, need_current=False):
+    def eval(self, commands, data, stack):
         n = self.name + stack.pop()
 
         data = Environment.get_current_env(data)
@@ -344,6 +344,8 @@ class Call:
                 Data.clone_string(arg_value, data, new_environment, new_stack_state)
             elif arg_type == 6:
                 Data.clone_unboxed_array(arg_value, data, new_environment, new_stack_state)
+            elif arg_type == 8:
+                Data.clone_unboxed_inline_array(arg_value, data, new_environment, new_stack_state)
             else:
                 new_stack_state.append(arg_type)
                 new_stack_state.append(arg_value)
@@ -377,6 +379,8 @@ class Return:
             Data.clone_string(return_value, current_env, data, new_stack_state)
         elif return_type == 6:
             Data.clone_unboxed_array(return_value, current_env, data, new_stack_state)
+        elif return_type == 8:
+            Data.clone_unboxed_inline_array(return_value, current_env, data, new_stack_state)
 
         for item in new_stack_state:
             stack.append(item)

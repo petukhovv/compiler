@@ -34,11 +34,11 @@ def var_aexp(commands, data, name, context, value_type):
         commands.store_value(data.var(alias=name, type=value_type), type=value_type)
     else:
         var_number = data.get_var(name)
-        commands.add(Load, var_number)
         compile_time_type = data.get_type(var_number)
+        commands.add(Load, var_number)
         if compile_time_type == types.DYNAMIC:
             commands.add(Push, var_number)
             commands.add(BLoad, 1)
             return types.DYNAMIC
         else:
-            return commands.set_and_return_type(data.get_type(var_number))
+            return commands.set_and_return_type(compile_time_type)

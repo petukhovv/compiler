@@ -24,3 +24,15 @@ class Data:
             arr_counter += 1
         new_stack.append(6)
         new_stack.append(start_pointer)
+
+    @staticmethod
+    def clone_unboxed_inline_array(pointer, current_data, new_data, new_stack):
+        arrlen = current_data['stack'][pointer]
+        start_pointer = len(new_data['heap'])
+        arr_counter = 0
+        while arr_counter <= arrlen:
+            current_symbol = current_data['stack'][pointer + arr_counter]
+            new_data['heap'].append(current_symbol)
+            arr_counter += 1
+        new_stack.append(6)
+        new_stack.append(start_pointer)

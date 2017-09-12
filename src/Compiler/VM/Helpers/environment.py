@@ -40,15 +40,8 @@ class Environment:
         self.label_counter += 1
         return label_number
 
-    """
-    Создание новой переменной в stack memory
-    Если name не передано, просто инкрементируем счетчик
-    """
-    def var(self, type=None, alias=None):
+    def create_var(self, type=None, alias=None):
         var_number = self.var_counter
-        # Если переменная уже существует, возвращаем её
-        if self.is_exist_var(alias):
-            return self.get_var(alias)
         if alias is not None:
             if self.current_function is not None:
                 alias = '!' + str(self.current_function) + '!' + str(alias)
@@ -64,6 +57,20 @@ class Environment:
             self.var_counter += 1
         return var_number
 
+    """
+    Создание новой переменной в stack memory
+    Если name не передано, просто инкрементируем счетчик
+    """
+    def var(self, type=None, alias=None):
+        # Если переменная уже существует, возвращаем её
+        if self.is_exist_var(alias):
+            var_number = self.get_var(alias)
+            if type is not None and type != 9:
+                self.set_type(var_number, type)
+            return var_number
+        else:
+            return self.create_var(type, alias)
+
     """ Получение метки по имени """
     def get_label(self, name):
         return self.labels[name]['number']
@@ -72,11 +79,22 @@ class Environment:
     def get_var(self, name):
         if self.current_function is not None:
             name = '!' + str(self.current_function) + '!' + str(name)
-        return self.vars[name]['number']
+        if name in self.vars:
+            return self.vars[name]['number']
+        else:
+            return None
 
     """ Получение переменной по имени """
     def get_type(self, number):
-        return self.vars[number]['type']
+        if number in self.vars:
+            return self.vars[number]['type']
+        else:
+            return None
+
+    """ Получение переменной по имени """
+    def set_type(self, number, type):
+        if number in self.vars:
+            self.vars[number]['type'] = type
 
     """ Проверка переменной на существование """
     def is_exist_var(self, name):
