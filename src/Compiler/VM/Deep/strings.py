@@ -3,6 +3,21 @@
 from ..Helpers.base import *
 from ..Helpers.loop import Loop
 
+typesMap = {
+    types.STRING: {
+        'memory': 'heap',
+        'bload': DBLoad,
+        'bstore': DBStore,
+        'load_helper': dbload
+    },
+    types.STRING_INLINE: {
+        'memory': 'stack',
+        'bload': BLoad,
+        'bstore': BStore,
+        'load_helper': bload
+    }
+}
+
 class StringCompiler:
     """
     Генерация инструкций для записи строки из стека в heap memory.
@@ -47,10 +62,7 @@ class StringCompiler:
         commands.add(Store, str_start_pointer)
 
         # Считываем строку из памяти до конца (пока не встретим 0), подсчитывая кол-во символов (его кладем на стек)
-        if type == types.STRING_INLINE:
-            Loop.data_stack(commands, data, str_start_pointer)
-        else:
-            Loop.data_heap(commands, data, str_start_pointer)
+        Loop.data(commands, data, str_start_pointer, memory_type=typesMap[type]['memory'])
 
     """
     Генерация инструкций для получения определенного символа строки
@@ -60,10 +72,7 @@ class StringCompiler:
         # Прибавляем к номеру ячейки с началом строки номер требуемого символа (offset)
         commands.add(Add)
         # Загружаем на стек символ по номеру его ячейки в heap memory
-        if type == types.STRING_INLINE:
-            commands.add(BLoad, 0)
-        else:
-            commands.add(DBLoad, 0)
+        commands.add(typesMap[type]['bload'], 0)
 
     """
     Генерация инструкций для замены определенного символа строки
@@ -73,10 +82,7 @@ class StringCompiler:
         # Вычисляем ячейки heap memory, где находится заменяемый символ
         commands.add(Add)
         # Производим замену символа
-        if type == types.STRING_INLINE:
-            commands.add(BStore, 0)
-        else:
-            commands.add(DBStore, 0)
+        commands.add(typesMap[type]['bstore'], 0)
 
     """
     Генерация инструкций для получение подстроки строки
@@ -104,15 +110,9 @@ class StringCompiler:
             # Если уже прочитали и записали подстркоу требуемой длины - выходим из цикла
             commands.add(Jnz, finish_label)
             # Загружаем очередной символ подстроки из heap memory
-            if type == types.STRING_INLINE:
-                bload(substr_start_pointer, _counter, commands)
-            else:
-                dbload(substr_start_pointer, _counter, commands)
+            typesMap[type]['load_helper'](substr_start_pointer, _counter, commands)
 
-        if type == types.STRING_INLINE:
-            Loop.data_stack(commands, data, substr_start_pointer, cycle_body, load_counter=False)
-        else:
-            Loop.data_heap(commands, data, substr_start_pointer, cycle_body, load_counter=False)
+        Loop.data(commands, data, substr_start_pointer, cycle_body, load_counter=False, memory_type=typesMap[type]['memory'])
 
         commands.add(Label, finish_label)
         # Записываем на стек длину подстроки + 1 (для маркера конца строки - нуля)
@@ -134,16 +134,10 @@ class StringCompiler:
         commands.add(Push, 0)
 
         def cycle_body(_counter, a, b):
-            if type == types.STRING_INLINE:
-                bload(str_start_pointer, _counter, commands)
-            else:
-                dbload(str_start_pointer, _counter, commands)
+            typesMap[type]['load_helper'](str_start_pointer, _counter, commands)
 
         # Читаем строку и кладем её на стек
-        if type == types.STRING_INLINE:
-            Loop.data_stack(commands, data, str_start_pointer, cycle_body)
-        else:
-            Loop.data_heap(commands, data, str_start_pointer, cycle_body)
+        Loop.data(commands, data, str_start_pointer, cycle_body, memory_type=typesMap[type]['memory'])
 
         StringCompiler.store(commands, data)
 
@@ -158,16 +152,10 @@ class StringCompiler:
         commands.add(Push, 0)
 
         def cycle_body(_counter, a, b):
-            if type == types.STRING_INLINE:
-                bload(str_start_pointer, _counter, commands)
-            else:
-                dbload(str_start_pointer, _counter, commands)
+            typesMap[type]['load_helper'](str_start_pointer, _counter, commands)
 
         # Читаем строку и кладем её на стек
-        if type == types.STRING_INLINE:
-            Loop.data_stack(commands, data, str_start_pointer, cycle_body)
-        else:
-            Loop.data_heap(commands, data, str_start_pointer, cycle_body)
+        Loop.data(commands, data, str_start_pointer, cycle_body, memory_type=typesMap[type]['memory'])
 
     """
     Генерация инструкций для дублирования второй из конкатенируемых строки и запись её в памяти за первой
@@ -181,16 +169,10 @@ class StringCompiler:
         commands.add(Store, str_length)
 
         def cycle_body(_counter, a, b):
-            if type == types.STRING_INLINE:
-                bload(str_start_pointer, _counter, commands)
-            else:
-                dbload(str_start_pointer, _counter, commands)
+            typesMap[type]['load_helper'](str_start_pointer, _counter, commands)
 
         # Читаем строку и кладем её на стек
-        if type == types.STRING_INLINE:
-            Loop.data_stack(commands, data, str_start_pointer, cycle_body)
-        else:
-            Loop.data_heap(commands, data, str_start_pointer, cycle_body)
+        Loop.data(commands, data, str_start_pointer, cycle_body, memory_type=typesMap[type]['memory'])
 
         commands.add(Load, str_length)
         commands.add(Add)
@@ -253,17 +235,11 @@ class StringCompiler:
 
         def cycle_body(_counter, a, continue_label):
             # Загружаем n-ный символ 1-й строки
-            if type1 == types.STRING_INLINE:
-                bload(str1_start_pointer, _counter, commands)
-            else:
-                dbload(str1_start_pointer, _counter, commands)
+            typesMap[type1]['load_helper'](str1_start_pointer, _counter, commands)
             # Дублируем на стек для дальнейшей проверки (чтобы не загружать снова)
             commands.add(Dup)
             # Загружаем n-ный символ 2-й строки
-            if type2 == types.STRING_INLINE:
-                bload(str2_start_pointer, _counter, commands)
-            else:
-                dbload(str2_start_pointer, _counter, commands)
+            typesMap[type2]['load_helper'](str2_start_pointer, _counter, commands)
             commands.add(Compare, 1)
             # Если символы не равны, сразу переходим в секцию not_eq_label и выясняем уже там - какой из них больше
             # Это также работает, когда мы достиги конца одной из строк (какой-то символ и 0)
@@ -288,10 +264,7 @@ class StringCompiler:
         # Секция неравенства строк
         commands.add(Label, not_eq_label)
         # Загружаем только второй символ - первый у нас уже содержится на стеке (см. тело цикла)
-        if type2 == types.STRING_INLINE:
-            bload(str2_start_pointer, counter, commands)
-        else:
-            dbload(str2_start_pointer, counter, commands)
+        typesMap[type2]['load_helper'](str2_start_pointer, counter, commands)
         # Сравниваем символы оператором <
         commands.add(Compare, 2)
         # Производим нормировку результата сравнения: 0|1 -> -1|1
