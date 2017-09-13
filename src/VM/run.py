@@ -11,17 +11,20 @@ def run(commands_list):
     current_scope = VM.root_scope
     stack_memory_sizes = {current_scope: 0}
 
+    labels_count = sum(isinstance(x, Label) for x in commands.list)
+    vm.allocate_labels(labels_count)
+
     # Первый проход: находим метки и заносим их в runtime-environment
     while commands.current < len(commands.list):
-        command_class = commands.list[commands.current]
-        if isinstance(command_class, Label):
-            command_class.eval(vm)
-        if isinstance(command_class, Function):
-            current_scope = command_class.name
+        command = commands.list[commands.current]
+        if isinstance(command, Label):
+            command.eval(vm)
+        if isinstance(command, Function):
+            current_scope = command.name
             stack_memory_sizes[current_scope] = 0
-        if isinstance(command_class, Return):
+        if isinstance(command, Return):
             current_scope = VM.root_scope
-        if isinstance(command_class, Store) or isinstance(command_class, BStore):
+        if isinstance(command, Store) or isinstance(command, BStore):
             stack_memory_sizes[current_scope] += 1
         commands.current += 1
     commands.current = 0
@@ -31,8 +34,8 @@ def run(commands_list):
 
     # Второй проход: выполняем программу
     while commands.current < len(commands.list):
-        command_class = commands.list[commands.current]
-        if not isinstance(command_class, Label):
-            command_class.eval(vm)
+        command = commands.list[commands.current]
+        if not isinstance(command, Label):
+            command.eval(vm)
         commands.current += 1
     commands.current = 0
