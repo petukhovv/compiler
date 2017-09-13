@@ -11,9 +11,9 @@ typesConfDefault = {
 }
 
 typesMap = {
-    types.UNBOXED_ARR: typesConfDefault,
-    types.DYNAMIC: typesConfDefault,
-    types.UNBOXED_ARR_INLINE: {
+    Types.UNBOXED_ARR: typesConfDefault,
+    Types.DYNAMIC: typesConfDefault,
+    Types.UNBOXED_ARR_INLINE: {
         'bload': BLoad,
         'bstore': BStore
     }
@@ -25,7 +25,7 @@ class ArrayCompiler:
     """
     @staticmethod
     def unboxed_arrmake(commands, data, values_type):
-        arr_length = data.var(types.INT)
+        arr_length = data.var(Types.INT)
 
         commands.add(Dup)
         # Сохраняем длину массива в переменную
@@ -37,7 +37,7 @@ class ArrayCompiler:
         if values_type == 'none':
             return
 
-        arr_pointer = data.var(types.INT)
+        arr_pointer = data.var(Types.INT)
 
         finish_label = data.label()
 
@@ -48,7 +48,7 @@ class ArrayCompiler:
 
         # Если все элементы должны быть одинаковыми, равными одному значению (basis_element), загружаем его
         if is_repeated_values:
-            basis_element = data.var(types.CHAR)
+            basis_element = data.var(Types.CHAR)
             # Сохраняем повторяемое значение в переменную
             commands.add(Store, basis_element)
 

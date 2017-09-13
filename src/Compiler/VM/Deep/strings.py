@@ -13,9 +13,9 @@ typesConfDefault = {
 }
 
 typesMap = {
-    types.STRING: typesConfDefault,
-    types.DYNAMIC: typesConfDefault,
-    types.STRING_INLINE: {
+    Types.STRING: typesConfDefault,
+    Types.DYNAMIC: typesConfDefault,
+    Types.STRING_INLINE: {
         'memory': 'stack',
         'bload': BLoad,
         'bstore': BStore,
@@ -29,8 +29,8 @@ class StringCompiler:
     """
     @staticmethod
     def store(commands, data):
-        str_start_pointer = data.var(types.INT)
-        end_str_pointer = data.var(types.INT)
+        str_start_pointer = data.var(Types.INT)
+        end_str_pointer = data.var(Types.INT)
 
         # Добавляем к требуемому размеру памяти 1 - для escape-нуля (маркера конца строки)
         commands.add(Push, 1)
@@ -62,7 +62,7 @@ class StringCompiler:
     """
     @staticmethod
     def strlen(commands, data, type):
-        str_start_pointer = data.var(types.INT)
+        str_start_pointer = data.var(Types.INT)
         # Разыменовываем лежащий на стеке указатель и записываем его в переменную
         commands.add(Store, str_start_pointer)
 
@@ -94,8 +94,8 @@ class StringCompiler:
     """
     @staticmethod
     def strsub(commands, data, type):
-        substr_length = data.var(types.INT)
-        substr_start_pointer = data.var(types.INT)
+        substr_length = data.var(Types.INT)
+        substr_start_pointer = data.var(Types.INT)
 
         finish_label = data.label()
 
@@ -130,7 +130,7 @@ class StringCompiler:
     """
     @staticmethod
     def strdup(commands, data, type):
-        str_start_pointer = data.var(types.INT)
+        str_start_pointer = data.var(Types.INT)
 
         # Разыменовываем лежащий на стеке указатель и записываем его в переменную
         commands.add(Store, str_start_pointer)
@@ -151,7 +151,7 @@ class StringCompiler:
     """
     @staticmethod
     def strcat_first(commands, data, type):
-        str_start_pointer = data.var(types.INT)
+        str_start_pointer = data.var(Types.INT)
 
         commands.add(Store, str_start_pointer)
         commands.add(Push, 0)
@@ -167,8 +167,8 @@ class StringCompiler:
     """
     @staticmethod
     def strcat_second(commands, data, type):
-        str_start_pointer = data.var(types.INT)
-        str_length = data.var(types.INT)
+        str_start_pointer = data.var(Types.INT)
+        str_length = data.var(Types.INT)
 
         commands.add(Store, str_start_pointer)
         commands.add(Store, str_length)
@@ -189,9 +189,9 @@ class StringCompiler:
     """
     @staticmethod
     def strmake(commands, data):
-        str_start_pointer = data.var(types.INT)
-        str_length = data.var(types.INT)
-        basis_symbol = data.var(types.CHAR)
+        str_start_pointer = data.var(Types.INT)
+        str_length = data.var(Types.INT)
+        basis_symbol = data.var(Types.CHAR)
 
         finish_label = data.label()
 
@@ -228,8 +228,8 @@ class StringCompiler:
     """
     @staticmethod
     def strcmp(commands, data, type1, type2):
-        str1_start_pointer = data.var(types.INT)
-        str2_start_pointer = data.var(types.INT)
+        str1_start_pointer = data.var(Types.INT)
+        str2_start_pointer = data.var(Types.INT)
 
         eq_label = data.label()
         not_eq_label = data.label()

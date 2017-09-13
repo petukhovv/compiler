@@ -9,11 +9,11 @@ def unboxed_arrmake(commands, data, args):
         default_value_type = args.elements[1].compile_vm(commands, data)
         commands.extract_value()
         # Если вторым аргументом был передан [], то дублируемым элементом будет 0 ( сигнатура: arrmake(n, []) )
-        if default_value_type == types.UNBOXED_ARR_INLINE and len(args.elements[1].elements.elements) == 0:
+        if default_value_type == Types.UNBOXED_ARR_INLINE and len(args.elements[1].elements.elements) == 0:
             commands.add(Push, 0)
             values_type = 'zeros'
         # Если [n1, n2, ...], то будем записывать в элементы заданные значения
-        elif default_value_type == types.UNBOXED_ARR_INLINE and len(args.elements[1].elements.elements) != 0:
+        elif default_value_type == Types.UNBOXED_ARR_INLINE and len(args.elements[1].elements.elements) != 0:
             values_type = 'preset'
         # Если был передан не массив, а число, то оно и будет дублируемым элементом
         else:
@@ -26,7 +26,7 @@ def unboxed_arrmake(commands, data, args):
     commands.extract_value()
     ArrayCompiler.unboxed_arrmake(commands, data, values_type)
 
-    return commands.set_and_return_type(types.UNBOXED_ARR)
+    return commands.set_and_return_type(Types.UNBOXED_ARR)
 
 """ Компиляция конструкции константного задания unboxed-массива: [n1, n2, ...]  """
 def unboxed(commands, data, elements):
@@ -44,7 +44,7 @@ def unboxed(commands, data, elements):
 
     commands.add(Push, arrlen_var)
 
-    return commands.set_and_return_type(types.UNBOXED_ARR_INLINE)
+    return commands.set_and_return_type(Types.UNBOXED_ARR_INLINE)
 
 """ Компиляция оператора получения элемента массива: A[n] """
 def array_element(commands, data, array, index, other_indexes, context):
@@ -58,7 +58,7 @@ def array_element(commands, data, array, index, other_indexes, context):
         ArrayCompiler.set_element(commands, data, var_type)
     else:
         ArrayCompiler.get_element(commands, data, var_type)
-        return commands.set_and_return_type(types.INT)
+        return commands.set_and_return_type(Types.INT)
 
 """ Компиляция built-in функции arrlen для получения длины массива """
 def arrlen(commands, data, args):
@@ -66,4 +66,4 @@ def arrlen(commands, data, args):
     commands.extract_value()
     ArrayCompiler.arrlen(commands, data, array_type)
 
-    return commands.set_and_return_type(types.INT)
+    return commands.set_and_return_type(Types.INT)

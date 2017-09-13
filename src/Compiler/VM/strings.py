@@ -6,7 +6,7 @@ from src.Compiler.VM.Deep.strings import *
 def char(commands, data, character, need_typify=True):
     commands.add(Push, ord(character))
     if need_typify:
-        return commands.set_and_return_type(types.CHAR)
+        return commands.set_and_return_type(Types.CHAR)
 
 """ Компиляция выражения "строка" """
 def string(commands, data, characters):
@@ -27,7 +27,7 @@ def string(commands, data, characters):
 
     commands.add(Push, str_start)
 
-    return commands.set_and_return_type(types.STRING_INLINE)
+    return commands.set_and_return_type(Types.STRING_INLINE)
 
 """ Компиляция built-in функции strlen (длина строки) """
 def strlen(commands, data, args):
@@ -36,7 +36,7 @@ def strlen(commands, data, args):
 
     StringCompiler.strlen(commands, data, array_type)
 
-    return commands.set_and_return_type(types.INT)
+    return commands.set_and_return_type(Types.INT)
 
 """ Компиляция built-in функции strget (получение символа строки) """
 def strget(commands, data, args):
@@ -47,7 +47,7 @@ def strget(commands, data, args):
     commands.extract_value()
     StringCompiler.strget(commands, data, array_type)
 
-    return commands.set_and_return_type(types.CHAR)
+    return commands.set_and_return_type(Types.CHAR)
 
 """ Компиляция built-in функции strset (задание символа строки) """
 def strset(commands, data, args):
@@ -69,7 +69,7 @@ def strsub(commands, data, args):
     commands.extract_value()
     StringCompiler.strsub(commands, data, array_type)
 
-    return commands.set_and_return_type(types.STRING)
+    return commands.set_and_return_type(Types.STRING)
 
 """ Компиляция built-in функции strdup (дублирование строки) """
 def strdup(commands, data, args):
@@ -77,7 +77,7 @@ def strdup(commands, data, args):
     commands.extract_value()
     StringCompiler.strdup(commands, data, array_type)
 
-    return commands.set_and_return_type(types.STRING)
+    return commands.set_and_return_type(Types.STRING)
 
 """ Компиляция built-in функции strcat (конкатенация двух строк) """
 def strcat(commands, data, args):
@@ -88,7 +88,7 @@ def strcat(commands, data, args):
     commands.extract_value()
     StringCompiler.strcat_second(commands, data, array_type2)
 
-    return commands.set_and_return_type(types.STRING)
+    return commands.set_and_return_type(Types.STRING)
 
 """ Компиляция built-in функции strmake (создание строки из n одинаковых символов) """
 def strmake(commands, data, args):
@@ -98,7 +98,7 @@ def strmake(commands, data, args):
     commands.extract_value()
     StringCompiler.strmake(commands, data)
 
-    return commands.set_and_return_type(types.STRING)
+    return commands.set_and_return_type(Types.STRING)
 
 """ Компиляция built-in функции strcmp (посимвольное сравнение двух строк) """
 def strcmp(commands, data, args):
@@ -108,4 +108,4 @@ def strcmp(commands, data, args):
     commands.extract_value()
     StringCompiler.strcmp(commands, data, array_type1, array_type2)
 
-    return commands.set_and_return_type(types.INT)
+    return commands.set_and_return_type(Types.INT)

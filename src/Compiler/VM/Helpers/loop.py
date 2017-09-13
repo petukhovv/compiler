@@ -17,7 +17,7 @@ class Loop():
     @staticmethod
     def base(commands, data, check_break_condition, callback, load_counter=True, return_counter=False):
         # Создаем метки и переменные, необходимые для прохождения цикла.
-        counter = data.var(types.INT)
+        counter = data.var(Types.INT)
 
         start_label = data.label()
         finish_label = data.label()

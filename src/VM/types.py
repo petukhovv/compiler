@@ -1,4 +1,7 @@
-class types:
+# -*- coding: utf-8 -*-
+
+""" Перечень типов виртуальной машины """
+class Types:
     NONE = 0
     INT = 1
     CHAR = 2
@@ -11,26 +14,38 @@ class types:
     DYNAMIC = 9
     STRING_INLINE = 10
 
+""" Перечень примитивных типов """
 PRIMITIVE_TYPES = [
-    types.NONE,
-    types.INT,
-    types.CHAR,
-    types.BOOL
+    Types.NONE,
+    Types.INT,
+    Types.CHAR,
+    Types.BOOL
 ]
 
+""" Перечень ссылочных типов """
+POINTER_TYPES = [
+    Types.STRING,
+    Types.STRING_INLINE,
+    Types.BOXED_ARR,
+    Types.UNBOXED_ARR,
+    Types.BOXED_ARR_INLINE,
+    Types.UNBOXED_ARR_INLINE
+]
+
+""" Перечень типов, значения которых хранятся в стековой памяти """
 STACKABLE_TYPES = [
-    types.NONE,
-    types.INT,
-    types.CHAR,
-    types.BOOL,
-    types.BOXED_ARR_INLINE,
-    types.UNBOXED_ARR_INLINE,
-    types.STRING_INLINE
+    Types.NONE,
+    Types.INT,
+    Types.CHAR,
+    Types.BOOL,
+    Types.STRING_INLINE,
+    Types.BOXED_ARR_INLINE,
+    Types.UNBOXED_ARR_INLINE
 ]
 
+""" Перечень типов, значения которых хранятся в куче """
 HEAPABLE_TYPES = [
-    types.STRING,
-    types.BOXED_ARR,
-    types.UNBOXED_ARR,
-    types.DYNAMIC
+    Types.STRING,
+    Types.BOXED_ARR,
+    Types.UNBOXED_ARR
 ]

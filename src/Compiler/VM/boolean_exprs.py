@@ -22,7 +22,7 @@ def relop_bexp(commands, data, op, left, right):
 
     commands.add(Compare, relop_compare_map[op])
 
-    return commands.set_and_return_type(types.INT)
+    return commands.set_and_return_type(Types.INT)
 
 """ Компиляция оператора логического "И" (and) """
 def and_bexp(commands, data, left, right):
@@ -55,7 +55,7 @@ def and_bexp(commands, data, left, right):
     # Полное завершения выполнения and
     commands.add(Label, finish_label)
 
-    return commands.set_and_return_type(types.BOOL)
+    return commands.set_and_return_type(Types.BOOL)
 
 """ Компиляция оператора логического "ИЛИ" (or) """
 def or_bexp(commands, data, left, right):
@@ -88,7 +88,7 @@ def or_bexp(commands, data, left, right):
     # Полное завершения выполнения or
     commands.add(Label, finish_label)
 
-    return commands.set_and_return_type(types.BOOL)
+    return commands.set_and_return_type(Types.BOOL)
 
 """ Компиляция оператора логического "НЕ" (not) """
 def not_bexp(commands, data, exp):
@@ -112,4 +112,4 @@ def not_bexp(commands, data, exp):
     # Полное завершения выполнения оператора not
     commands.add(Label, finish_label)
 
-    return commands.set_and_return_type(types.BOOL)
+    return commands.set_and_return_type(Types.BOOL)

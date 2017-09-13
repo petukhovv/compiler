@@ -1,9 +1,12 @@
+# -*- coding: utf-8 -*-
+
 from src.VM.commands import *
 from pprint import pprint
 
 COMMAND_SEPARATOR = '\n'
 ARGS_SEPARATOR = ' '
 
+# Парсинг программы в стековом коде (преобразование в список команд): простой split строк
 def parse(program):
     commands = program.split(COMMAND_SEPARATOR)
     command_classes = []

@@ -3,10 +3,10 @@ from pprint import pprint
 from ..types import *
 
 typesMap = {
-    types.STRING: lambda scope: scope.heap,
-    types.STRING_INLINE: lambda scope: scope.stack,
-    types.UNBOXED_ARR: lambda scope: scope.heap,
-    types.UNBOXED_ARR_INLINE: lambda scope: scope.stack
+    Types.STRING: lambda scope: scope.heap,
+    Types.STRING_INLINE: lambda scope: scope.stack,
+    Types.UNBOXED_ARR: lambda scope: scope.heap,
+    Types.UNBOXED_ARR_INLINE: lambda scope: scope.stack
 }
 
 class Clonner:
@@ -19,7 +19,7 @@ class Clonner:
             current_symbol = typesMap[string_type](source)[heap_offset]
             target.heap.append(current_symbol)
             heap_offset += 1
-        stack.append(types.STRING)
+        stack.append(Types.STRING)
         stack.append(start_pointer)
 
     @staticmethod
@@ -31,12 +31,12 @@ class Clonner:
             current_symbol = typesMap[string_type](source)[pointer + arr_counter]
             target.heap.append(current_symbol)
             arr_counter += 1
-        stack.append(types.UNBOXED_ARR)
+        stack.append(Types.UNBOXED_ARR)
         stack.append(start_pointer)
 
     @staticmethod
     def clone(pointer, stack, object_type, source, target):
-        if object_type == types.STRING or object_type == types.STRING_INLINE:
+        if object_type == Types.STRING or object_type == Types.STRING_INLINE:
             Clonner.string(pointer, stack, object_type, source, target)
         else:
             Clonner.unboxed_array(pointer, stack, object_type, source, target)

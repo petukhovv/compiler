@@ -1,18 +1,16 @@
 import sys
 sys.path.append(len(sys.argv) == 4 and sys.argv[3] or 'src/..')
 
-from pprint import pprint
-
 from os.path import isfile
 
 from Lexer.tokenizer import tokenize
 from Parser.run import parse
 from Interpreter.Helpers.run import interpret
 from Compiler.VM.Helpers.run import compile_vm
-from src.VM.Helpers.parser import parse as vm_parse
-from VM.run import interpret as vm_interpret
+from src.VM.parser import parse as vm_parse
+from VM.run import run as vm_interpret
 
-help_commands = '-i - interpret, -s - compile in virtual machine code, -o - compile in executable file'
+help_commands = '-i - run, -s - compile in virtual machine code, -o - compile in executable file'
 
 if len(sys.argv) <= 1:
     sys.stderr.write('Mode not specified (' + help_commands + ').\n')
@@ -51,7 +49,7 @@ if mode == '-i':
 if mode == '-s':
     ast = parse_program(program)
     vm_program = compile_vm(ast)
-    f = open('src/test_vm2_out', 'w')
-    f.write(vm_program)
+    # f = open('src/test_vm2_out', 'w')
+    # f.write(vm_program)
     commands = vm_parse(vm_program)
     vm_interpret(commands)
