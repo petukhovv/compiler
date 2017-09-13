@@ -8,7 +8,7 @@ class FunctionCompiler:
         # Для всех аргументов создаем переменные
         arg_names = []
         for arg in args.elements:
-            arg_names.append(data.var(alias=arg, type=types.DYNAMIC))
+            arg_names.append(data.var(alias=arg, type=types.DYNAMIC, double_size=True))
 
         # Компилируем конструкции изъятия из стека (в обратном порядке) аргументов функции и записи их в environment
         for _ in args.elements:

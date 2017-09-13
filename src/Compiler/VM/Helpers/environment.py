@@ -4,7 +4,8 @@ from pprint import pprint
 
 """ Compile-time environment """
 class Environment:
-    var_counter = 1     # Счетчик переменных для stack memory
+    var_counter_root = 0     # Счетчик переменных для stack memory
+    var_counter = 0     # Счетчик переменных для stack memory
     vars = {}           # Переменные в stack memory
     label_counter = 1   # Счетчик меток
     labels = {}         # Метки
@@ -21,12 +22,15 @@ class Environment:
         return self.labels[name]['return_type']
 
     def start_function(self, name):
+        self.var_counter_root = self.var_counter
+        self.var_counter = 0
         start_function = self.label(name)
         self.current_function = name
 
         return start_function
 
     def finish_function(self):
+        self.var_counter = self.var_counter_root
         self.current_function = None
 
     """ Создание новой метки """
@@ -40,7 +44,7 @@ class Environment:
         self.label_counter += 1
         return label_number
 
-    def create_var(self, type=None, alias=None):
+    def create_var(self, type=None, alias=None, double_size=False):
         var_number = self.var_counter
         if alias is not None:
             if self.current_function is not None:
@@ -51,7 +55,7 @@ class Environment:
         self.vars[var_number] = {
             'type': type
         }
-        if type:
+        if double_size:
             self.var_counter += 2
         else:
             self.var_counter += 1
@@ -61,7 +65,7 @@ class Environment:
     Создание новой переменной в stack memory
     Если name не передано, просто инкрементируем счетчик
     """
-    def var(self, type=None, alias=None):
+    def var(self, type=None, alias=None, double_size=False):
         # Если переменная уже существует, возвращаем её
         if self.is_exist_var(alias):
             var_number = self.get_var(alias)
@@ -69,7 +73,7 @@ class Environment:
                 self.set_type(var_number, type)
             return var_number
         else:
-            return self.create_var(type, alias)
+            return self.create_var(type, alias, double_size)
 
     """ Получение метки по имени """
     def get_label(self, name):

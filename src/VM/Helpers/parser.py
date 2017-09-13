@@ -32,6 +32,7 @@ command_class_relation_map = {
     'WRITE': Write,
     'ENTER': Enter,
     'CALL': Call,
+    'FUNCTION': Function,
     'RETURN': Return,
     'ALLOCATE': Allocate,
     'DALLOCATE': DAllocate,

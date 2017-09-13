@@ -12,7 +12,7 @@ def function(commands, data, name, args, body):
     commands.add(Jump, finish_function)
 
     # На эту метку переходим при вызове
-    commands.add(Label, start_function)
+    commands.add(Function, start_function)
 
     FunctionCompiler.args_write(commands, data, args)
 

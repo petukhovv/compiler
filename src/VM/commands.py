@@ -103,7 +103,6 @@ class Store:
     def eval(self, vm):
         if len(vm.stack) == 0:
             raise RuntimeError('Stack is empty')
-
         vm.scope().stack[self.address] = vm.stack.pop()
 
 """
@@ -248,6 +247,9 @@ class Label:
     def eval(self, vm):
         vm.labels[self.name] = vm.commands.current
 
+""" Установка метки. """
+class Function(Label): pass
+
 """ Выполнение перехода к заданной метке. """
 class Jump:
     def __init__(self, label):
@@ -327,7 +329,7 @@ class Call:
             raise RuntimeError('Stack is empty')
 
         global_scope = vm.scope()
-        func_scope = vm.create_scope()
+        func_scope = vm.create_scope(self.name)
 
         stack = []
         args_count = vm.stack.pop()
