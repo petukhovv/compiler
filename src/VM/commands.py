@@ -5,6 +5,7 @@ import sys
 from pprint import pprint
 
 from Helpers.data import *
+from .types import *
 
 """
 Перечисление команд стековой машины.
@@ -337,17 +338,11 @@ class Call:
         while i < args_count:
             arg_type = vm.stack.pop()
             arg_value = vm.stack.pop()
-            if arg_type == 4:
-                Data.clone_string(arg_value, global_scope, func_scope, stack)
-            elif arg_type == 10:
-                Data.clone_string_inline(arg_value, global_scope, func_scope, stack)
-            elif arg_type == 6:
-                Data.clone_unboxed_array(arg_value, global_scope, func_scope, stack)
-            elif arg_type == 8:
-                Data.clone_unboxed_inline_array(arg_value, global_scope, func_scope, stack)
-            else:
+            if arg_type in PRIMITIVE_TYPES:
                 stack.append(arg_type)
                 stack.append(arg_value)
+            else:
+                Data.clone(arg_value, stack, arg_type, source=global_scope, target=func_scope)
             i += 1
 
         for item in reversed(stack):
@@ -372,17 +367,11 @@ class Return:
 
         stack = []
 
-        if return_type in [0, 1, 2, 3]:
+        if return_type in PRIMITIVE_TYPES:
             stack.append(return_value)
             stack.append(return_type)
-        elif return_type == 4:
-            Data.clone_string(return_value, func_scope, global_scope, stack)
-        elif return_type == 10:
-            Data.clone_string_inline(return_value, func_scope, global_scope, stack)
-        elif return_type == 6:
-            Data.clone_unboxed_array(return_value, func_scope, global_scope, stack)
-        elif return_type == 8:
-            Data.clone_unboxed_inline_array(return_value, func_scope, global_scope, stack)
+        else:
+            Data.clone(return_value, stack, return_type, source=func_scope, target=global_scope)
 
         for item in stack:
             vm.stack.append(item)

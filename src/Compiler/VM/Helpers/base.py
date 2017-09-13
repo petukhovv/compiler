@@ -2,19 +2,6 @@
 
 from src.VM.commands import *
 
-class types:
-    NONE = 0
-    INT = 1
-    CHAR = 2
-    BOOL = 3
-    STRING = 4
-    BOXED_ARR = 5
-    UNBOXED_ARR = 6
-    BOXED_ARR_INLINE = 7
-    UNBOXED_ARR_INLINE = 8
-    DYNAMIC = 9
-    STRING_INLINE = 10
-
 """ Хелпер для компиляции заданных аргументов built-in функций """
 def args_compile(args, numbers, commands, data):
     if isinstance(numbers, list):

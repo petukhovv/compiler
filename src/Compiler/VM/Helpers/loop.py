@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from src.VM.commands import *
+from src.VM.types import *
 from ..Helpers.base import *
 
 """ Генератор команд для организации циклов """

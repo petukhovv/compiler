@@ -1,3 +1,5 @@
+from src.VM.types import *
+
 from Helpers.base import *
 
 def read_statement(commands, data):

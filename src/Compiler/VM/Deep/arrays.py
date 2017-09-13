@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from src.VM.types import *
+
 from ..Helpers.base import *
 from ..Helpers.loop import Loop
 

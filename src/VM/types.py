@@ -1,0 +1,16 @@
+class types:
+    NONE = 0
+    INT = 1
+    CHAR = 2
+    BOOL = 3
+    STRING = 4
+    BOXED_ARR = 5
+    UNBOXED_ARR = 6
+    BOXED_ARR_INLINE = 7
+    UNBOXED_ARR_INLINE = 8
+    DYNAMIC = 9
+    STRING_INLINE = 10
+
+PRIMITIVE_TYPES = [0, 1, 2, 3]
+STACKABLE_TYPES = [0, 1, 2, 3, 7, 8, 10]
+HEAPABLE_TYPES = [4, 5, 6, 9]

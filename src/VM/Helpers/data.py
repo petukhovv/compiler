@@ -1,50 +1,42 @@
 from pprint import pprint
 
+from ..types import *
+
+typesMap = {
+    types.STRING: lambda scope: scope.heap,
+    types.STRING_INLINE: lambda scope: scope.stack,
+    types.UNBOXED_ARR: lambda scope: scope.heap,
+    types.UNBOXED_ARR_INLINE: lambda scope: scope.stack
+}
+
 class Data:
     @staticmethod
-    def clone_string(pointer, current_scope, new_scope, stack):
+    def clone_string(pointer, stack, string_type, source, target):
         heap_offset = pointer
         current_symbol = None
-        start_pointer = len(new_scope.heap)
+        start_pointer = len(target.heap)
         while current_symbol != 0:
-            current_symbol = current_scope.heap[heap_offset]
-            new_scope.heap.append(current_symbol)
+            current_symbol = typesMap[string_type](source)[heap_offset]
+            target.heap.append(current_symbol)
             heap_offset += 1
-        stack.append(4)
+        stack.append(types.STRING)
         stack.append(start_pointer)
 
     @staticmethod
-    def clone_string_inline(pointer, current_scope, new_scope, stack):
-        stack_offset = pointer
-        current_symbol = None
-        start_pointer = len(new_scope.heap)
-        while current_symbol != 0:
-            current_symbol = current_scope.stack[stack_offset]
-            new_scope.heap.append(current_symbol)
-            stack_offset += 1
-        stack.append(4)
-        stack.append(start_pointer)
-
-    @staticmethod
-    def clone_unboxed_array(pointer, current_scope, new_scope, stack):
-        arrlen = current_scope.heap[pointer]
-        start_pointer = len(new_scope.heap)
+    def clone_unboxed_array(pointer, stack, string_type, source, target):
+        arrlen = typesMap[string_type](source)[pointer]
+        start_pointer = len(target.heap)
         arr_counter = 0
         while arr_counter <= arrlen:
-            current_symbol = current_scope.heap[pointer + arr_counter]
-            new_scope.heap.append(current_symbol)
+            current_symbol = typesMap[string_type](source)[pointer + arr_counter]
+            target.heap.append(current_symbol)
             arr_counter += 1
-        stack.append(6)
+        stack.append(types.UNBOXED_ARR)
         stack.append(start_pointer)
 
     @staticmethod
-    def clone_unboxed_inline_array(pointer, current_scope, new_scope, stack):
-        arrlen = current_scope.stack[pointer]
-        start_pointer = len(new_scope.heap)
-        arr_counter = 0
-        while arr_counter <= arrlen:
-            current_symbol = current_scope.stack[pointer + arr_counter]
-            new_scope.heap.append(current_symbol)
-            arr_counter += 1
-        stack.append(6)
-        stack.append(start_pointer)
+    def clone(pointer, stack, object_type, source, target):
+        if object_type == types.STRING or object_type == types.STRING_INLINE:
+            Data.clone_string(pointer, stack, object_type, source, target)
+        else:
+            Data.clone_unboxed_array(pointer, stack, object_type, source, target)

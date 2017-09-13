@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from Helpers.base import *
+from src.VM.types import *
 from src.VM.commands import *
 
 """ Мапа: оператор сравнения в языке программирования - оператор сравнения в коде стековой машины """
