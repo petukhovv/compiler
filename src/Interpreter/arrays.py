@@ -19,7 +19,7 @@ def array_element(env, array, index, other_indexes):
     if index >= len(arr):
         raise RuntimeError('Array index out of range')
     element = arr[index]
-    # TODO: interpret [] operators independently (Arr[]...[]..., not Arr[][])
+    # TODO: run [] operators independently (Arr[]...[]..., not Arr[][])
     if other_indexes:
         if isinstance(element, Pointer):
             element = element.eval()

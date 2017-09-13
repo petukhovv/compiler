@@ -11,6 +11,26 @@ class types:
     DYNAMIC = 9
     STRING_INLINE = 10
 
-PRIMITIVE_TYPES = [0, 1, 2, 3]
-STACKABLE_TYPES = [0, 1, 2, 3, 7, 8, 10]
-HEAPABLE_TYPES = [4, 5, 6, 9]
+PRIMITIVE_TYPES = [
+    types.NONE,
+    types.INT,
+    types.CHAR,
+    types.BOOL
+]
+
+STACKABLE_TYPES = [
+    types.NONE,
+    types.INT,
+    types.CHAR,
+    types.BOOL,
+    types.BOXED_ARR_INLINE,
+    types.UNBOXED_ARR_INLINE,
+    types.STRING_INLINE
+]
+
+HEAPABLE_TYPES = [
+    types.STRING,
+    types.BOXED_ARR,
+    types.UNBOXED_ARR,
+    types.DYNAMIC
+]

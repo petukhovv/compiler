@@ -9,9 +9,9 @@ typesMap = {
     types.UNBOXED_ARR_INLINE: lambda scope: scope.stack
 }
 
-class Data:
+class Clonner:
     @staticmethod
-    def clone_string(pointer, stack, string_type, source, target):
+    def string(pointer, stack, string_type, source, target):
         heap_offset = pointer
         current_symbol = None
         start_pointer = len(target.heap)
@@ -23,7 +23,7 @@ class Data:
         stack.append(start_pointer)
 
     @staticmethod
-    def clone_unboxed_array(pointer, stack, string_type, source, target):
+    def unboxed_array(pointer, stack, string_type, source, target):
         arrlen = typesMap[string_type](source)[pointer]
         start_pointer = len(target.heap)
         arr_counter = 0
@@ -37,6 +37,6 @@ class Data:
     @staticmethod
     def clone(pointer, stack, object_type, source, target):
         if object_type == types.STRING or object_type == types.STRING_INLINE:
-            Data.clone_string(pointer, stack, object_type, source, target)
+            Clonner.string(pointer, stack, object_type, source, target)
         else:
-            Data.clone_unboxed_array(pointer, stack, object_type, source, target)
+            Clonner.unboxed_array(pointer, stack, object_type, source, target)

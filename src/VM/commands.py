@@ -4,7 +4,7 @@ import sys
 
 from pprint import pprint
 
-from Helpers.data import *
+from Helpers.clonner import *
 from .types import *
 
 """
@@ -342,7 +342,7 @@ class Call:
                 stack.append(arg_type)
                 stack.append(arg_value)
             else:
-                Data.clone(arg_value, stack, arg_type, source=global_scope, target=func_scope)
+                Clonner.clone(arg_value, stack, arg_type, source=global_scope, target=func_scope)
             i += 1
 
         for item in reversed(stack):
@@ -371,7 +371,7 @@ class Return:
             stack.append(return_value)
             stack.append(return_type)
         else:
-            Data.clone(return_value, stack, return_type, source=func_scope, target=global_scope)
+            Clonner.clone(return_value, stack, return_type, source=func_scope, target=global_scope)
 
         for item in stack:
             vm.stack.append(item)
@@ -432,3 +432,38 @@ class Log:
                 i += 1
                 print str(i) + ': ' + str(item)
             print '==========  Log end (heap memory)  ==========='
+
+commands_map = {
+    'PUSH': Push,
+    'POP': Pop,
+    'NOP': Nop,
+    'DUP': Dup,
+    'LOAD': Load,
+    'BLOAD': BLoad,
+    'DLOAD': DLoad,
+    'DBLOAD': DBLoad,
+    'STORE': Store,
+    'BSTORE': BStore,
+    'DSTORE': DStore,
+    'DBSTORE': DBStore,
+    'ADD': Add,
+    'MUL': Mul,
+    'SUB': Sub,
+    'DIV': Div,
+    'MOD': Mod,
+    'INVERT': Invert,
+    'COMPARE': Compare,
+    'LABEL': Label,
+    'JUMP': Jump,
+    'JZ': Jz,
+    'JNZ': Jnz,
+    'READ': Read,
+    'WRITE': Write,
+    'ENTER': Enter,
+    'CALL': Call,
+    'FUNCTION': Function,
+    'RETURN': Return,
+    'ALLOCATE': Allocate,
+    'DALLOCATE': DAllocate,
+    'LOG': Log
+}

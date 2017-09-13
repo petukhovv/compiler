@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from src.VM.Helpers.parser import command_class_relation_map, ARGS_SEPARATOR
 from src.VM.commands import *
+from src.VM.parser import ARGS_SEPARATOR
 
-commands_relation_map = dict((command_class_relation_map[k], k) for k in command_class_relation_map)
+commands_relation_map = dict((commands_map[k], k) for k in commands_map)
 
 class Commands(list):
     """ Добалвение команды в список команд для стековой машины """
