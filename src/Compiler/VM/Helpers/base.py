@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from src.VM.commands import *
+from commands import *
 
 """ Хелпер для компиляции заданных аргументов built-in функций """
 def args_compile(args, numbers, commands, data):

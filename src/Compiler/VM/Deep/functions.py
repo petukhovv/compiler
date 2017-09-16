@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from src.VM.types import *
+from ..Helpers.types import *
 
 from ..Helpers.base import *
 

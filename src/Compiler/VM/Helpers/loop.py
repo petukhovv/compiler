@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from src.VM.types import *
-from ..Helpers.base import *
+from base import *
+from .types import *
 
 """ Генератор команд для организации циклов """
 class Loop():

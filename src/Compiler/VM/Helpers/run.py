@@ -2,7 +2,8 @@
 
 from commands import Commands
 from environment import Environment
-from src.VM.parser import COMMAND_SEPARATOR as VM_COMMANDS_SEPARATOR
+
+VM_COMMANDS_SEPARATOR = '\n'
 
 """ Запуск компилятора в стековый код (точка входа) """
 def compile_vm(ast):

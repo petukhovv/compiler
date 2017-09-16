@@ -1,9 +1,41 @@
 # -*- coding: utf-8 -*-
 
-from src.VM.commands import *
-from src.VM.parser import ARGS_SEPARATOR
+from pprint import pprint
 
-commands_relation_map = dict((commands_map[k], k) for k in commands_map)
+ARGS_SEPARATOR = ' '
+
+Push = 'PUSH'
+Pop = 'POP'
+Nop = 'NOP'
+Dup = 'DUP'
+Load = 'LOAD'
+BLoad = 'BLOAD'
+DLoad = 'DLOAD'
+DBLoad = 'DBLOAD'
+Store = 'STORE'
+BStore = 'BSTORE'
+DStore = 'DSTORE'
+DBStore = 'DBSTORE'
+Add = 'ADD'
+Mul = 'MUL'
+Sub = 'SUB'
+Div = 'DIV'
+Mod = 'MOD'
+Invert = 'INVERT'
+Compare = 'COMPARE'
+Label = 'LABEL'
+Jump = 'JUMP'
+Jz = 'JZ'
+Jnz = 'JNZ'
+Read = 'READ'
+Write = 'WRITE'
+Enter = 'ENTER'
+Call = 'CALL'
+Function = 'FUNCTION'
+Return = 'RETURN'
+Allocate = 'ALLOCATE'
+DAllocate = 'DALLOCATE'
+Log = 'LOG'
 
 class Commands(list):
     """ Добалвение команды в список команд для стековой машины """
@@ -15,7 +47,7 @@ class Commands(list):
     @staticmethod
     def gen(command, argument=None):
         argument = '' if argument is None else ARGS_SEPARATOR + str(argument)
-        return commands_relation_map[command] + argument
+        return command + argument
 
     """ Генерация строкового представления заданной команды для стековой машины """
     def push_value(self, value, value_type):

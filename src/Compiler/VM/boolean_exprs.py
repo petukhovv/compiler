@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from src.VM.types import *
-from src.VM.commands import *
+from Helpers.commands import *
+from Helpers.types import *
 
 """ Мапа: оператор сравнения в языке программирования - оператор сравнения в коде стековой машины """
 relop_compare_map = {
