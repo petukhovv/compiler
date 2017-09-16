@@ -432,38 +432,3 @@ class Log:
                 i += 1
                 print str(i) + ': ' + str(item)
             print '==========  Log end (heap memory)  ==========='
-
-commands_map = {
-    'PUSH': Push,
-    'POP': Pop,
-    'NOP': Nop,
-    'DUP': Dup,
-    'LOAD': Load,
-    'BLOAD': BLoad,
-    'DLOAD': DLoad,
-    'DBLOAD': DBLoad,
-    'STORE': Store,
-    'BSTORE': BStore,
-    'DSTORE': DStore,
-    'DBSTORE': DBStore,
-    'ADD': Add,
-    'MUL': Mul,
-    'SUB': Sub,
-    'DIV': Div,
-    'MOD': Mod,
-    'INVERT': Invert,
-    'COMPARE': Compare,
-    'LABEL': Label,
-    'JUMP': Jump,
-    'JZ': Jz,
-    'JNZ': Jnz,
-    'READ': Read,
-    'WRITE': Write,
-    'ENTER': Enter,
-    'CALL': Call,
-    'FUNCTION': Function,
-    'RETURN': Return,
-    'ALLOCATE': Allocate,
-    'DALLOCATE': DAllocate,
-    'LOG': Log
-}
