@@ -36,7 +36,7 @@ class Dup:
     def eval(self, vm):
         if len(vm.stack) == 0:
             raise RuntimeError('Stack is empty')
-        vm.stack.append(vm.stack[len(vm.stack) - 1])
+        vm.stack.append(vm.stack[-1])
 
 """ Отсутствие операции, команда пропускается. """
 class Nop:
@@ -45,7 +45,7 @@ class Nop:
     def eval(self, vm):
         pass
 
-""" Помещение в стек значение переменной с именем name, взимаемой из памяти данных. """
+""" Помещение в стек значения переменной с адресом address, взимаемой из стековой памяти данных. """
 class Load:
     def __init__(self, address):
         self.address = address
@@ -53,12 +53,12 @@ class Load:
     def eval(self, vm):
         value = vm.scope().stack[self.address]
         if value is None:
-            raise RuntimeError('Unknown variable \'' + self.address + '\'')
+            raise RuntimeError('Unknown variable \'' + str(self.address) + '\'')
         vm.stack.append(value)
 
 """
-Помещение в стек значение переменной с именем name, взимаемой из ячейки памяти данных,
-адрес которой расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
+Помещение в стек значение переменной с адресом address, взимаемой из стековой памяти данных,
+который расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
 """
 class BLoad:
     def __init__(self, address):
@@ -66,13 +66,12 @@ class BLoad:
 
     def eval(self, vm):
         address = self.address + vm.stack.pop()
-
         value = vm.scope().stack[address]
         if value is None:
-            raise RuntimeError('Unknown variable \'' + self.address + '\'')
+            raise RuntimeError('Unknown variable \'' + str(self.address) + '\'')
         vm.stack.append(value)
 
-""" Помещение в стек значение переменной с именем name, взимаемой из памяти данных. """
+""" Помещение в стек значение переменной с адресом address, взимаемой из кучи. """
 class DLoad:
     def __init__(self, address):
         self.address = address
@@ -80,23 +79,23 @@ class DLoad:
     def eval(self, vm):
         value = vm.scope().heap[self.address]
         if value is None:
-            raise RuntimeError('Unknown variable \'' + self.address + '\'')
+            raise RuntimeError('Unknown variable \'' + str(self.address) + '\'')
         vm.stack.append(value)
 
 """
-Помещение в стек значение переменной с именем name, взимаемой из ячейки памяти данных,
-адрес которой расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
+Помещение в стек значение переменной с адресом address, взимаемой из кучи,
+который расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
 """
 class DBLoad:
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, address):
+        self.address = address
 
     def eval(self, vm):
-        n = self.name + vm.stack.pop()
-        value = vm.scope().heap[n]
+        address = self.address + vm.stack.pop()
+        value = vm.scope().heap[address]
         vm.stack.append(value)
 
-""" Сохранение значения переменной с именем name в память данных. """
+""" Сохранение значения переменной с адресом address в стекуовую память данных. """
 class Store:
     def __init__(self, address):
         self.address = address
@@ -107,8 +106,8 @@ class Store:
         vm.scope().stack[self.address] = vm.stack.pop()
 
 """
-Сохранение значения переменной с именем name в ячейку памяти данных,
-адрес которой расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
+Сохранение значения переменной с адресом address в стековую памяти данных,
+который расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
 """
 class BStore:
     def __init__(self, address):
@@ -121,7 +120,7 @@ class BStore:
         address = self.address + vm.stack.pop()
         vm.scope().stack[address] = vm.stack.pop()
 
-""" Сохранение значения переменной с именем name в память данных. """
+""" Сохранение значения переменной с адресом address в кучу. """
 class DStore:
     def __init__(self, address):
         self.address = address
@@ -133,8 +132,8 @@ class DStore:
         vm.scope().heap[self.address] = vm.stack.pop()
 
 """
-Сохранение значения переменной с именем name в ячейку памяти данных,
-адрес которой расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
+Сохранение значения переменной с адресом address в кучу,
+который расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
 """
 class DBStore:
     def __init__(self, address):
@@ -174,6 +173,8 @@ class Sub:
     def __init__(self): pass
 
     def eval(self, vm):
+        if len(vm.stack) < 2:
+            raise RuntimeError('Stack not contains two values')
         num1 = vm.stack.pop()
         num2 = vm.stack.pop()
         vm.stack.append(num2 - num1)
@@ -248,10 +249,13 @@ class Label:
     def eval(self, vm):
         vm.labels[self.name] = vm.commands.current
 
-""" Установка метки. """
+"""
+Пометка начала функции.
+Тоже самое, что и метка. Отдельный класс используются для расчетов размера стековой памяти перед запуском.
+"""
 class Function(Label): pass
 
-""" Выполнение перехода к заданной метке. """
+""" Выполнение безусловного перехода к заданной метке. """
 class Jump:
     def __init__(self, label):
         self.label = label
@@ -302,7 +306,7 @@ class Write:
         value = vm.stack.pop()
         sys.stdout.write(str(value) + '\n')
 
-""" Создание и вход в новый environment с заданным набором переменных (variables). """
+""" Создание и вход в новый scope с заданным набором переменных (variables). """
 class Enter:
     def __init__(self, name, variables):
         self.name = name
@@ -311,7 +315,7 @@ class Enter:
     def eval(self, vm):
         vm.create_scope()
 
-""" Выход из текущего environment и переход в родительский. """
+""" Выход из текущего scope и переход в вышестоящий. """
 class Exit:
     def __init__(self, name, variables):
         self.name = name
@@ -335,19 +339,24 @@ class Call:
         stack = []
         args_count = vm.stack.pop()
         i = 0
+        # Осуществляем клонирование аргументов (проброс значений в новый scope)
         while i < args_count:
             arg_type = vm.stack.pop()
             arg_value = vm.stack.pop()
             if arg_type in PRIMITIVE_TYPES:
+                # Для примитивных типов записываем информацию о типе и значении во временный стек
                 stack.append(arg_type)
                 stack.append(arg_value)
             else:
+                # Для ссылочных типов запускаем особые механизмы клонирования
                 Clonner.clone(arg_value, stack, arg_type, source=global_scope, target=func_scope)
             i += 1
 
+        # Переносим значения из временного стека в основной
         for item in reversed(stack):
             vm.stack.append(item)
 
+        # Наращиваем call stack и переходим к нужной метке
         vm.call_stack.append(vm.commands.current)
         vm.commands.current = vm.labels[self.name]
 
@@ -362,24 +371,29 @@ class Return:
         return_type = vm.stack.pop()
         return_value = vm.stack.pop()
 
+        # Вышестоящий scope 2-й с конца на стеке scope'ов
         global_scope = vm.scope(-2)
         func_scope = vm.scope()
 
         stack = []
 
         if return_type in PRIMITIVE_TYPES:
+            # Для примитивных типов записываем информацию о типе и значении во временный стек
             stack.append(return_value)
             stack.append(return_type)
         else:
+            # Для ссылочных типов запускаем особые механизмы клонирования
             Clonner.clone(return_value, stack, return_type, source=func_scope, target=global_scope)
 
+        # Переносим значения из временного стека в основной
         for item in stack:
             vm.stack.append(item)
 
+        # Удаляем точку вызова из call stack'а, переходим к нужной метке и удаляем внутренний scope функции
         vm.commands.current = vm.call_stack.pop()
         vm.remove_scope()
 
-""" Выделение памяти заданного размера (dynamic allocation data). """
+""" Выделение в куче памяти заданного размера. """
 class Allocate:
     def __init__(self, size):
         self.size = size
@@ -394,7 +408,7 @@ class Allocate:
         vm.stack.append(start_data_pointer)
 
 """
-Выделение памяти заданного размера (dynamic allocation data),
+Выделение памяти заданного размера,
 который расчитывается по следующему правилу: <размер> = <переданный размер> + <значение с вершины стека>.
 """
 class DAllocate:
