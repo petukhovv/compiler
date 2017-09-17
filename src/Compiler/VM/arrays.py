@@ -37,7 +37,11 @@ def array_inline(commands, data, elements, type):
     commands.add(Store, arrlen_var)
 
     for element in arr_elements:
-        commands.add(Push, element)
+        if type == 'boxed':
+            element = data.get_var(element)
+            commands.add(Load, element)
+        else:
+            commands.add(Push, element)
         commands.add(Store, data.var())
 
     commands.add(Push, arrlen_var)
