@@ -16,6 +16,10 @@ typesMap = {
     Types.UNBOXED_ARR_INLINE: {
         'bload': BLoad,
         'bstore': BStore
+    },
+    Types.BOXED_ARR_INLINE: {
+        'bload': BLoad,
+        'bstore': BStore
     }
 }
 

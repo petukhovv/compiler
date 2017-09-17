@@ -3,6 +3,8 @@ from src.Parser.AST.arithmetic_exprs import *
 from src.Compiler.VM import arrays as compile_vm
 from src.Interpreter import arrays as interpreter
 
+from pprint import pprint
+
 class UnboxedArray:
     pointers = 0
 
@@ -13,7 +15,7 @@ class UnboxedArray:
         return interpreter.unboxed_array(env, self.elements)
 
     def compile_vm(self, commands, data):
-        return compile_vm.unboxed(commands, data, self.elements)
+        return compile_vm.array_inline(commands, data, self.elements, 'unboxed')
 
 class BoxedArray:
     pointers = 0
@@ -23,6 +25,9 @@ class BoxedArray:
 
     def eval(self, env):
         return interpreter.boxed_array(env, self.elements)
+
+    def compile_vm(self, commands, data):
+        return compile_vm.array_inline(commands, data, self.elements, 'boxed')
 
 class ArrayElement:
     pointers = 0
@@ -65,3 +70,6 @@ class BoxedArrMake:
 
     def eval(self, env):
         return interpreter.boxed_arr_make(env, self.args)
+
+    def compile_vm(self, commands, data):
+        return compile_vm.boxed_arrmake(commands, data, self.args)

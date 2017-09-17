@@ -436,13 +436,15 @@ class Log:
             pprint(vm.stack)
         elif self.type == 1:
             print '========== Log start (stack memory) ==========='
+            i = 0
             for item in scope.stack:
-                print str(item) + ': ' + str(scope.stack[item])
+                print str(i) + ': ' + str(item)
+                i += 1
             print '==========  Log end (stack memory)  ==========='
         elif self.type == 2:
             print '========== Log start (heap memory) ==========='
             i = 0
             for item in scope.heap:
-                i += 1
                 print str(i) + ': ' + str(item)
+                i += 1
             print '==========  Log end (heap memory)  ==========='

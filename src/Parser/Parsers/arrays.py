@@ -13,7 +13,7 @@ array_predefined_functions = {
 }
 
 def arr_exp():
-    elements = enumeration(alternative_args_parser=(num | str_exp() | char_exp() | boolean))
+    elements = enumeration(alternative_args_parser=(num | str_exp() | char_exp() | boolean | id))
     return arr_unboxed_exp(elements) | arr_boxed_exp(elements)
 
 def arr_unboxed_exp(elements):
