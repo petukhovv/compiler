@@ -9,12 +9,13 @@ def unboxed_arrmake(commands, data, args):
         default_value_type = args.elements[1].compile_vm(commands, data)
         commands.extract_value()
         # Если вторым аргументом был передан [], то дублируемым элементом будет 0 ( сигнатура: arrmake(n, []) )
-        if default_value_type == Types.UNBOXED_ARR_INLINE and len(args.elements[1].elements.elements) == 0:
+        if default_value_type == Types.UNBOXED_ARR and len(args.elements[1].elements.elements) == 0:
+            commands.add(Pop)
             commands.add(Push, 0)
             values_type = 'zeros'
         # Если [n1, n2, ...], то будем записывать в элементы заданные значения
-        elif default_value_type == Types.UNBOXED_ARR_INLINE and len(args.elements[1].elements.elements) != 0:
-            values_type = 'preset'
+        elif default_value_type == Types.UNBOXED_ARR and len(args.elements[1].elements.elements) != 0:
+            return commands.set_and_return_type(Types.UNBOXED_ARR)
         # Если был передан не массив, а число, то оно и будет дублируемым элементом
         else:
             values_type = 'repeated'
@@ -36,32 +37,37 @@ def array_inline(commands, data, elements, type):
     commands.add(Push, len(arr_elements))
     commands.add(Store, arrlen_var)
 
-    for element in arr_elements:
+    for element in reversed(arr_elements):
         if type == 'boxed':
             element = data.get_var(element)
+            element_type = data.get_type(element)
             commands.add(Load, element)
         else:
+            element_type = Types.DYNAMIC
             commands.add(Push, element)
-        commands.add(Store, data.var())
+        commands.add(Push, element_type)
 
-    commands.add(Push, arrlen_var)
+    commands.add(Load, arrlen_var)
 
-    return_type = Types.BOXED_ARR_INLINE if type == 'boxed' else Types.UNBOXED_ARR_INLINE
+    ArrayCompiler.unboxed_arrmake(commands, data, 'preset')
+
+    return_type = Types.BOXED_ARR if type == 'boxed' else Types.UNBOXED_ARR
     return commands.set_and_return_type(return_type)
 
 """ Компиляция оператора получения элемента массива: A[n] """
 def array_element(commands, data, array, index, other_indexes, context):
-    index.compile_vm(commands, data)
-    commands.extract_value()
     var_number = data.get_var(array)
     var_type = data.get_type(var_number)
     commands.load_value(var_number)
+    commands.extract_value()
+
+    index.compile_vm(commands, data)
     commands.extract_value()
     if context == 'assign':
         ArrayCompiler.set_element(commands, data, var_type)
     else:
         ArrayCompiler.get_element(commands, data, var_type)
-        return commands.set_and_return_type(Types.DYNAMIC)
+        return Types.DYNAMIC
 
 """ Компиляция built-in функции arrlen для получения длины массива """
 def arrlen(commands, data, args):

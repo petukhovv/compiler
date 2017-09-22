@@ -12,15 +12,10 @@ typesConfDefault = {
 
 typesMap = {
     Types.UNBOXED_ARR: typesConfDefault,
+    Types.BOXED_ARR: typesConfDefault,
     Types.DYNAMIC: typesConfDefault,
-    Types.UNBOXED_ARR_INLINE: {
-        'bload': BLoad,
-        'bstore': BStore
-    },
-    Types.BOXED_ARR_INLINE: {
-        'bload': BLoad,
-        'bstore': BStore
-    }
+    Types.UNBOXED_ARR_INLINE: typesConfDefault,
+    Types.BOXED_ARR_INLINE: typesConfDefault
 }
 
 class ArrayCompiler:
@@ -30,10 +25,13 @@ class ArrayCompiler:
     @staticmethod
     def unboxed_arrmake(commands, data, values_type):
         arr_length = data.var(Types.INT)
+        element_place = data.var()
 
         commands.add(Dup)
         # Сохраняем длину массива в переменную
         commands.add(Store, arr_length)
+        commands.add(Push, 2)
+        commands.add(Mul)
         # Выделяем память = переданной длине массива +1 (плюс маркер конца массива - 0)
         commands.add(DAllocate, 1)
 
@@ -65,7 +63,19 @@ class ArrayCompiler:
             # в противном случае, при полном задании default values, они уже будут находиться на стеке
             if is_repeated_values:
                 commands.add(Load, basis_element)
-            dbstore(arr_pointer, _counter, commands, value=1)
+                commands.add(Push, Types.INT)
+
+            commands.add(Load, arr_pointer)
+            commands.add(Load, _counter)
+            commands.add(Push, 2)
+            commands.add(Mul)
+            commands.add(Add)
+            commands.add(Dup)
+            commands.add(Store, element_place)
+
+            commands.add(DBStore, 1)
+            commands.add(Load, element_place)
+            commands.add(DBStore, 2)
 
         Loop.simple(commands, data, cycle_body)
 
@@ -81,9 +91,17 @@ class ArrayCompiler:
     """
     @staticmethod
     def get_element(commands, data, type):
+        arr_address = data.var()
+
+        commands.add(Push, 2)
+        commands.add(Mul)
         # Прибавляем к номеру ячейки с началом массива индекс требуемого значения (offset)
         commands.add(Add)
+        commands.add(Dup)
+        commands.add(Store, arr_address)
         # Загружаем на стек значение по номеру его ячейки в heap memory
+        commands.add(typesMap[type]['bload'], 2)
+        commands.add(Load, arr_address)
         commands.add(typesMap[type]['bload'], 1)
 
     """
@@ -91,9 +109,18 @@ class ArrayCompiler:
     """
     @staticmethod
     def set_element(commands, data, type):
+        arr_address = data.var()
+
+        commands.add(Push, 2)
+        commands.add(Mul)
         # Прибавляем к номеру ячейки с началом массива индекс требуемого значения (offset)
         commands.add(Add)
+        commands.add(Store, arr_address)
+        commands.add(Dup)
+        commands.add(Load, arr_address)
         # Записываем в heap memory значение по номеру его ячейки
+        commands.add(typesMap[type]['bstore'], 2)
+        commands.add(Load, arr_address)
         commands.add(typesMap[type]['bstore'], 1)
 
     """

@@ -73,3 +73,6 @@ class BoxedArrMake:
 
     def compile_vm(self, commands, data):
         return compile_vm.boxed_arrmake(commands, data, self.args)
+
+    def compile_vm(self, commands, data):
+        return compile_vm.boxed_arrmake(commands, data, self.args)

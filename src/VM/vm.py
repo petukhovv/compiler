@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from pprint import pprint
+
 """ Команды виртуальной машины """
 class Commands:
     list = []       # Список команд
@@ -11,7 +13,6 @@ class Commands:
 """ Область видимости """
 class Scope:
     def __init__(self):
-        self.heap = []      # Куча (dynamic allocation data)
         self.stack = []     # Стековая память (static allocation data)
 
 """ Виртуальная машина """
@@ -22,6 +23,7 @@ class VM:
         self.labels = []                # Список меток
         self.scopes = [initial_scope]   # Стек областей видимости
         self.stack = []                 # Основной рабочий стек виртуальный машины
+        self.heap = []                  # Куча (dynamic allocation data)
         self.call_stack = []            # Стек вызовов
         self.commands = commands        # Список комманд
         self.stack_memory_sizes = {}    # Мапа с областями видимости и требуемыми для них размерами стековой памяти

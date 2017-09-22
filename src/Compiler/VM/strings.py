@@ -10,24 +10,15 @@ def char(commands, data, character, need_typify=True):
 
 """ Компиляция выражения "строка" """
 def string(commands, data, characters):
-    str_start = None
-
     # Кладем на стек строку
-    for character in characters:
-        element_var = data.var()
-        if str_start is None:
-            str_start = element_var
-        char(commands, data, character, need_typify=False)
-        commands.add(Store, element_var)
-
-    end_str_var = data.var()
-    # Записываем маркер конца строки
     commands.add(Push, 0)
-    commands.add(Store, end_str_var)
+    for character in characters:
+        char(commands, data, character, need_typify=False)
 
-    commands.add(Push, str_start)
+    commands.add(Push, len(characters))
+    StringCompiler.store(commands, data)
 
-    return commands.set_and_return_type(Types.STRING_INLINE)
+    return commands.set_and_return_type(Types.STRING)
 
 """ Компиляция built-in функции strlen (длина строки) """
 def strlen(commands, data, args):

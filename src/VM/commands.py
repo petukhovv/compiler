@@ -77,7 +77,7 @@ class DLoad:
         self.address = address
 
     def eval(self, vm):
-        value = vm.scope().heap[self.address]
+        value = vm.heap[self.address]
         if value is None:
             raise RuntimeError('Unknown variable \'' + str(self.address) + '\'')
         vm.stack.append(value)
@@ -92,7 +92,7 @@ class DBLoad:
 
     def eval(self, vm):
         address = self.address + vm.stack.pop()
-        value = vm.scope().heap[address]
+        value = vm.heap[address]
         vm.stack.append(value)
 
 """ Сохранение значения переменной с адресом address в стекуовую память данных. """
@@ -129,7 +129,7 @@ class DStore:
         if len(vm.stack) == 0:
             raise RuntimeError('Stack is empty')
 
-        vm.scope().heap[self.address] = vm.stack.pop()
+        vm.heap[self.address] = vm.stack.pop()
 
 """
 Сохранение значения переменной с адресом address в кучу,
@@ -144,7 +144,7 @@ class DBStore:
             raise RuntimeError('Stack is empty')
 
         address = self.address + vm.stack.pop()
-        vm.scope().heap[address] = vm.stack.pop()
+        vm.heap[address] = vm.stack.pop()
 
 """ Взятие со стека двух чисел, их сложение и помещение результата обратно в стек. """
 class Add:
@@ -333,28 +333,9 @@ class Call:
         if len(vm.stack) == 0:
             raise RuntimeError('Stack is empty')
 
-        global_scope = vm.scope()
-        func_scope = vm.create_scope(self.name)
+        vm.create_scope(self.name)
 
-        stack = []
-        args_count = vm.stack.pop()
-        i = 0
-        # Осуществляем клонирование аргументов (проброс значений в новый scope)
-        while i < args_count:
-            arg_type = vm.stack.pop()
-            arg_value = vm.stack.pop()
-            if arg_type in PRIMITIVE_TYPES:
-                # Для примитивных типов записываем информацию о типе и значении во временный стек
-                stack.append(arg_type)
-                stack.append(arg_value)
-            else:
-                # Для ссылочных типов запускаем особые механизмы клонирования
-                Clonner.clone(arg_value, stack, arg_type, source=global_scope, target=func_scope)
-            i += 1
-
-        # Переносим значения из временного стека в основной
-        for item in reversed(stack):
-            vm.stack.append(item)
+        vm.stack.pop()
 
         # Наращиваем call stack и переходим к нужной метке
         vm.call_stack.append(vm.commands.current)
@@ -367,28 +348,6 @@ class Return:
     def eval(self, vm):
         if len(vm.call_stack) == 0:
             raise RuntimeError('Call stack is empty')
-
-        return_type = vm.stack.pop()
-        return_value = vm.stack.pop()
-
-        # Вышестоящий scope 2-й с конца на стеке scope'ов
-        global_scope = vm.scope(-2)
-        func_scope = vm.scope()
-
-        stack = []
-
-        if return_type in PRIMITIVE_TYPES:
-            # Для примитивных типов записываем информацию о типе и значении во временный стек
-            stack.append(return_value)
-            stack.append(return_type)
-        else:
-            # Для ссылочных типов запускаем особые механизмы клонирования
-            Clonner.clone(return_value, stack, return_type, source=func_scope, target=global_scope)
-
-        # Переносим значения из временного стека в основной
-        for item in stack:
-            vm.stack.append(item)
-
         # Удаляем точку вызова из call stack'а, переходим к нужной метке и удаляем внутренний scope функции
         vm.commands.current = vm.call_stack.pop()
         vm.remove_scope()
@@ -399,11 +358,10 @@ class Allocate:
         self.size = size
 
     def eval(self, vm):
-        scope = vm.scope()
-        start_data_pointer = len(scope.heap)
+        start_data_pointer = len(vm.heap)
         i = 0
         while i < self.size:
-            scope.heap.append(None)
+            vm.heap.append(None)
             i += 1
         vm.stack.append(start_data_pointer)
 
@@ -416,12 +374,11 @@ class DAllocate:
         self.size = size
 
     def eval(self, vm):
-        scope = vm.scope()
-        start_data_pointer = len(scope.heap)
+        start_data_pointer = len(vm.heap)
         memory_size = self.size + vm.stack.pop()
         i = 0
         while i < memory_size:
-            scope.heap.append(None)
+            vm.heap.append(None)
             i += 1
         vm.stack.append(start_data_pointer)
 
@@ -444,7 +401,7 @@ class Log:
         elif self.type == 2:
             print '========== Log start (heap memory) ==========='
             i = 0
-            for item in scope.heap:
+            for item in vm.heap:
                 print str(i) + ': ' + str(item)
                 i += 1
             print '==========  Log end (heap memory)  ==========='
