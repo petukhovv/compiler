@@ -2,7 +2,7 @@
 
 from Deep.arrays import *
 
-""" Компиляция built-in функции arrmake для создания unboxed-массивов """
+""" Компиляция built-in функции arrmake / Arrmake для создания boxed и unboxed массивов """
 def arrmake(commands, data, args, type):
     type = Types.BOXED_ARR if type == 'boxed' else Types.UNBOXED_ARR
 
@@ -10,36 +10,36 @@ def arrmake(commands, data, args, type):
     if len(args.elements) == 2:
         default_value_type = args.elements[1].compile_vm(commands, data)
         commands.extract_value()
-        # Если вторым аргументом был передан [], то дублируемым элементом будет 0 ( сигнатура: arrmake(n, []) )
+        # Если вторым аргументом был передан [] или {}, то дублируемым элементом будет 0
+        # ( сигнатура: arrmake(n, []), Arrmake(n, {}) )
         if default_value_type == type and len(args.elements[1].elements.elements) == 0:
+            # Очищаем указатель на пустой массив
+            # TODO: после реализации GC сделать здесь delete массива
             commands.add(Pop)
             commands.add(Push, 0)
-            values_type = 'zeros'
-        # Если [n1, n2, ...], то будем записывать в элементы заданные значения
-        elif default_value_type == type and len(args.elements[1].elements.elements) != 0:
-            return commands.set_and_return_type(type)
-        # Если был передан не массив, а число, то оно и будет дублируемым элементом
+            default_values_variant = 'zeros'
+        # Если передано [n1, n2, ...] или {a1, a2, ...}, то массив уже создан, возвращаем тип и выходим
+        elif default_value_type == type:
+            return type
+        # Если был передан не массив, а число (или указатель), то оно и будет дублируемым элементом
         else:
-            values_type = 'repeated'
+            default_values_variant = 'repeated'
     # Если ничего не было передано, то элементы массива будет пустыми (None)
     else:
-        values_type = 'none'
+        default_values_variant = 'none'
 
-    args_compile(args, 0, commands, data)
+    args.elements[0].compile_vm(commands, data)
     commands.extract_value()
-    ArrayCompiler.arrmake(commands, data, values_type)
+
+    ArrayCompiler.arrmake(commands, data, default_values_variant)
 
     return commands.set_and_return_type(type)
 
-""" Компиляция конструкции константного задания unboxed-массива: [n1, n2, ...]  """
+""" Компиляция конструкции inline задания boxed и unboxed массивов: [n1, n2, ...] / {a1, a2, ...}  """
 def arrmake_inline(commands, data, elements, type):
     type = Types.BOXED_ARR if type == 'boxed' else Types.UNBOXED_ARR
 
     arr_elements = elements.compile_vm(commands, data)
-
-    arrlen_var = data.var()
-    commands.add(Push, len(arr_elements))
-    commands.add(Store, arrlen_var)
 
     for element in reversed(arr_elements):
         if type == Types.BOXED_ARR:
@@ -51,8 +51,9 @@ def arrmake_inline(commands, data, elements, type):
             commands.add(Push, element)
         commands.add(Push, element_type)
 
-    commands.add(Load, arrlen_var)
+    commands.add(Push, len(arr_elements))
 
+    # Сохраняем записанные на стек элементы в память
     ArrayCompiler.arrmake(commands, data, 'preset')
 
     return commands.set_and_return_type(type)
@@ -61,33 +62,42 @@ def arrmake_inline(commands, data, elements, type):
 def array_element(commands, data, array, index, other_indexes, context):
     var_number = data.get_var(array)
     var_type = data.get_type(var_number)
+
+    # Компилируем получение указателя на начало массива
     commands.load_value(var_number)
     commands.extract_value()
 
+    # Компилируем получение индекса
     index.compile_vm(commands, data)
     commands.extract_value()
+
+    def other_index_compile(other_index):
+        commands.extract_value()
+        other_index.compile_vm(commands, data)
+        commands.extract_value()
+
     if context == 'assign':
+        # Если несколько последовательных индексов, разыменовываем каждый
         if other_indexes is not None:
             for other_index in other_indexes:
                 ArrayCompiler.get_element(commands, data, var_type)
-                commands.extract_value()
-                other_index.compile_vm(commands, data)
-                commands.extract_value()
+                other_index_compile(other_index)
         ArrayCompiler.set_element(commands, data, var_type)
     else:
         ArrayCompiler.get_element(commands, data, var_type)
+        # Если несколько последовательных индексов, разыменовываем каждый
         if other_indexes is not None:
             for other_index in other_indexes:
-                commands.extract_value()
-                other_index.compile_vm(commands, data)
-                commands.extract_value()
+                other_index_compile(other_index)
                 ArrayCompiler.get_element(commands, data, var_type)
-        return Types.DYNAMIC
+
+    return Types.DYNAMIC
 
 """ Компиляция built-in функции arrlen для получения длины массива """
 def arrlen(commands, data, args):
-    array_type = args.elements[0].compile_vm(commands, data)
+    args.elements[0].compile_vm(commands, data)
     commands.extract_value()
-    ArrayCompiler.arrlen(commands, data, array_type)
+
+    ArrayCompiler.arrlen(commands, data)
 
     return commands.set_and_return_type(Types.INT)

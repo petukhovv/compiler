@@ -36,3 +36,16 @@ def dbstore(address, offset, commands, invert=False, value=0):
     else:
         commands.add(Add)
     commands.add(DBStore, value)
+
+""" Хелпер для генерации инструкций для сохранения значения в heap memory по заданному адресу с заданным смещением """
+def calc_arr_element_address(commands, data, arr_pointer, counter):
+    element_place = data.var()
+    commands.add(Load, arr_pointer)
+    commands.add(Load, counter)
+    commands.add(Push, 2)
+    commands.add(Mul)
+    commands.add(Add)
+    commands.add(Dup)
+    commands.add(Store, element_place)
+
+    return element_place
