@@ -29,10 +29,12 @@ def arrmake(commands, data, args, type):
     commands.extract_value()
     ArrayCompiler.arrmake(commands, data, values_type)
 
-    return commands.set_and_return_type(Types.UNBOXED_ARR)
+    return commands.set_and_return_type(type)
 
 """ Компиляция конструкции константного задания unboxed-массива: [n1, n2, ...]  """
 def arrmake_inline(commands, data, elements, type):
+    type = Types.BOXED_ARR if type == 'boxed' else Types.UNBOXED_ARR
+
     arr_elements = elements.compile_vm(commands, data)
 
     arrlen_var = data.var()
@@ -40,7 +42,7 @@ def arrmake_inline(commands, data, elements, type):
     commands.add(Store, arrlen_var)
 
     for element in reversed(arr_elements):
-        if type == 'boxed':
+        if type == Types.BOXED_ARR:
             element = data.get_var(element)
             element_type = data.get_type(element)
             commands.add(Load, element)
@@ -53,8 +55,7 @@ def arrmake_inline(commands, data, elements, type):
 
     ArrayCompiler.arrmake(commands, data, 'preset')
 
-    return_type = Types.BOXED_ARR if type == 'boxed' else Types.UNBOXED_ARR
-    return commands.set_and_return_type(return_type)
+    return commands.set_and_return_type(type)
 
 """ Компиляция оператора получения элемента массива: A[n] """
 def array_element(commands, data, array, index, other_indexes, context):

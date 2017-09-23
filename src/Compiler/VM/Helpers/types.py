@@ -9,7 +9,4 @@ class Types:
     STRING = 4
     BOXED_ARR = 5
     UNBOXED_ARR = 6
-    BOXED_ARR_INLINE = 7
-    UNBOXED_ARR_INLINE = 8
     DYNAMIC = 9
-    STRING_INLINE = 10
