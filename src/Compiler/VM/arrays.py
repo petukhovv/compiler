@@ -25,7 +25,7 @@ def unboxed_arrmake(commands, data, args):
 
     args_compile(args, 0, commands, data)
     commands.extract_value()
-    ArrayCompiler.unboxed_arrmake(commands, data, values_type)
+    ArrayCompiler.arrmake(commands, data, values_type)
 
     return commands.set_and_return_type(Types.UNBOXED_ARR)
 
@@ -49,7 +49,7 @@ def array_inline(commands, data, elements, type):
 
     commands.add(Load, arrlen_var)
 
-    ArrayCompiler.unboxed_arrmake(commands, data, 'preset')
+    ArrayCompiler.arrmake(commands, data, 'preset')
 
     return_type = Types.BOXED_ARR if type == 'boxed' else Types.UNBOXED_ARR
     return commands.set_and_return_type(return_type)
@@ -64,9 +64,21 @@ def array_element(commands, data, array, index, other_indexes, context):
     index.compile_vm(commands, data)
     commands.extract_value()
     if context == 'assign':
+        if other_indexes is not None:
+            for other_index in other_indexes:
+                ArrayCompiler.get_element(commands, data, var_type)
+                commands.extract_value()
+                other_index.compile_vm(commands, data)
+                commands.extract_value()
         ArrayCompiler.set_element(commands, data, var_type)
     else:
         ArrayCompiler.get_element(commands, data, var_type)
+        if other_indexes is not None:
+            for other_index in other_indexes:
+                commands.extract_value()
+                other_index.compile_vm(commands, data)
+                commands.extract_value()
+                ArrayCompiler.get_element(commands, data, var_type)
         return Types.DYNAMIC
 
 """ Компиляция built-in функции arrlen для получения длины массива """
@@ -77,19 +89,20 @@ def arrlen(commands, data, args):
 
     return commands.set_and_return_type(Types.INT)
 
-""" Компиляция built-in функции arrmake для создания unboxed-массивов """
+""" Компиляция built-in функции arrmake для создания boxed-массивов """
 def boxed_arrmake(commands, data, args):
     # Если были переданы default values (2-м аргументом), смотрим, в каком именно формате
     if len(args.elements) == 2:
         default_value_type = args.elements[1].compile_vm(commands, data)
         commands.extract_value()
-        # Если вторым аргументом был передан [], то дублируемым элементом будет 0 ( сигнатура: arrmake(n, []) )
-        if default_value_type == Types.UNBOXED_ARR_INLINE and len(args.elements[1].elements.elements) == 0:
+        # Если вторым аргументом был передан {}, то дублируемым элементом будет None ( сигнатура: Arrmake(n, {}) )
+        if default_value_type == Types.BOXED_ARR and len(args.elements[1].elements.elements) == 0:
+            commands.add(Pop)
             commands.add(Push, 0)
             values_type = 'zeros'
-        # Если [n1, n2, ...], то будем записывать в элементы заданные значения
-        elif default_value_type == Types.UNBOXED_ARR_INLINE and len(args.elements[1].elements.elements) != 0:
-            values_type = 'preset'
+        # Если {x1, x2, ...}, то будем записывать в элементы заданные значения
+        elif default_value_type == Types.BOXED_ARR and len(args.elements[1].elements.elements) != 0:
+            return commands.set_and_return_type(Types.BOXED_ARR)
         # Если был передан не массив, а число, то оно и будет дублируемым элементом
         else:
             values_type = 'repeated'
@@ -99,6 +112,6 @@ def boxed_arrmake(commands, data, args):
 
     args_compile(args, 0, commands, data)
     commands.extract_value()
-    ArrayCompiler.unboxed_arrmake(commands, data, values_type)
+    ArrayCompiler.arrmake(commands, data, values_type)
 
-    return commands.set_and_return_type(Types.UNBOXED_ARR)
+    return commands.set_and_return_type(Types.BOXED_ARR)

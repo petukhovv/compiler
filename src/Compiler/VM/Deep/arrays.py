@@ -23,7 +23,7 @@ class ArrayCompiler:
     Генерация инструкций для выделения памяти под unboxed-массив и записи в него значений по умолчанию
     """
     @staticmethod
-    def unboxed_arrmake(commands, data, values_type):
+    def arrmake(commands, data, values_type):
         arr_length = data.var(Types.INT)
         element_place = data.var()
 
