@@ -3,19 +3,21 @@
 from Deep.arrays import *
 
 """ Компиляция built-in функции arrmake для создания unboxed-массивов """
-def unboxed_arrmake(commands, data, args):
+def arrmake(commands, data, args, type):
+    type = Types.BOXED_ARR if type == 'boxed' else Types.UNBOXED_ARR
+
     # Если были переданы default values (2-м аргументом), смотрим, в каком именно формате
     if len(args.elements) == 2:
         default_value_type = args.elements[1].compile_vm(commands, data)
         commands.extract_value()
         # Если вторым аргументом был передан [], то дублируемым элементом будет 0 ( сигнатура: arrmake(n, []) )
-        if default_value_type == Types.UNBOXED_ARR and len(args.elements[1].elements.elements) == 0:
+        if default_value_type == type and len(args.elements[1].elements.elements) == 0:
             commands.add(Pop)
             commands.add(Push, 0)
             values_type = 'zeros'
         # Если [n1, n2, ...], то будем записывать в элементы заданные значения
-        elif default_value_type == Types.UNBOXED_ARR and len(args.elements[1].elements.elements) != 0:
-            return commands.set_and_return_type(Types.UNBOXED_ARR)
+        elif default_value_type == type and len(args.elements[1].elements.elements) != 0:
+            return commands.set_and_return_type(type)
         # Если был передан не массив, а число, то оно и будет дублируемым элементом
         else:
             values_type = 'repeated'
@@ -30,7 +32,7 @@ def unboxed_arrmake(commands, data, args):
     return commands.set_and_return_type(Types.UNBOXED_ARR)
 
 """ Компиляция конструкции константного задания unboxed-массива: [n1, n2, ...]  """
-def array_inline(commands, data, elements, type):
+def arrmake_inline(commands, data, elements, type):
     arr_elements = elements.compile_vm(commands, data)
 
     arrlen_var = data.var()
@@ -88,30 +90,3 @@ def arrlen(commands, data, args):
     ArrayCompiler.arrlen(commands, data, array_type)
 
     return commands.set_and_return_type(Types.INT)
-
-""" Компиляция built-in функции arrmake для создания boxed-массивов """
-def boxed_arrmake(commands, data, args):
-    # Если были переданы default values (2-м аргументом), смотрим, в каком именно формате
-    if len(args.elements) == 2:
-        default_value_type = args.elements[1].compile_vm(commands, data)
-        commands.extract_value()
-        # Если вторым аргументом был передан {}, то дублируемым элементом будет None ( сигнатура: Arrmake(n, {}) )
-        if default_value_type == Types.BOXED_ARR and len(args.elements[1].elements.elements) == 0:
-            commands.add(Pop)
-            commands.add(Push, 0)
-            values_type = 'zeros'
-        # Если {x1, x2, ...}, то будем записывать в элементы заданные значения
-        elif default_value_type == Types.BOXED_ARR and len(args.elements[1].elements.elements) != 0:
-            return commands.set_and_return_type(Types.BOXED_ARR)
-        # Если был передан не массив, а число, то оно и будет дублируемым элементом
-        else:
-            values_type = 'repeated'
-    # Если ничего не было передано, то элементы массива будет пустыми (None)
-    else:
-        values_type = 'none'
-
-    args_compile(args, 0, commands, data)
-    commands.extract_value()
-    ArrayCompiler.arrmake(commands, data, values_type)
-
-    return commands.set_and_return_type(Types.BOXED_ARR)

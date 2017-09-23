@@ -4,9 +4,6 @@ import sys
 
 from pprint import pprint
 
-from Helpers.clonner import *
-from .types import *
-
 """
 Перечисление команд стековой машины.
 У каждой команды есть метод eval, который реализует её интерпретацию стековой машиной.
@@ -330,12 +327,7 @@ class Call:
         self.name = name
 
     def eval(self, vm):
-        if len(vm.stack) == 0:
-            raise RuntimeError('Stack is empty')
-
         vm.create_scope(self.name)
-
-        vm.stack.pop()
 
         # Наращиваем call stack и переходим к нужной метке
         vm.call_stack.append(vm.commands.current)

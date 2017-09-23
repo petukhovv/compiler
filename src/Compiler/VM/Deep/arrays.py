@@ -5,19 +5,6 @@ from ..Helpers.types import *
 from ..Helpers.base import *
 from ..Helpers.loop import Loop
 
-typesConfDefault = {
-    'bload': DBLoad,
-    'bstore': DBStore
-}
-
-typesMap = {
-    Types.UNBOXED_ARR: typesConfDefault,
-    Types.BOXED_ARR: typesConfDefault,
-    Types.DYNAMIC: typesConfDefault,
-    Types.UNBOXED_ARR_INLINE: typesConfDefault,
-    Types.BOXED_ARR_INLINE: typesConfDefault
-}
-
 class ArrayCompiler:
     """
     Генерация инструкций для выделения памяти под unboxed-массив и записи в него значений по умолчанию
@@ -100,9 +87,9 @@ class ArrayCompiler:
         commands.add(Dup)
         commands.add(Store, arr_address)
         # Загружаем на стек значение по номеру его ячейки в heap memory
-        commands.add(typesMap[type]['bload'], 2)
+        commands.add(DBLoad, 2)
         commands.add(Load, arr_address)
-        commands.add(typesMap[type]['bload'], 1)
+        commands.add(DBLoad, 1)
 
     """
     Генерация инструкций для присвоения значения элементу массива: A[n] := t
@@ -119,13 +106,13 @@ class ArrayCompiler:
         commands.add(Dup)
         commands.add(Load, arr_address)
         # Записываем в heap memory значение по номеру его ячейки
-        commands.add(typesMap[type]['bstore'], 2)
+        commands.add(DBStore, 2)
         commands.add(Load, arr_address)
-        commands.add(typesMap[type]['bstore'], 1)
+        commands.add(DBStore, 1)
 
     """
     Генерация инструкций для получения длина массива
     """
     @staticmethod
     def arrlen(commands, data, type):
-        commands.add(typesMap[type]['bload'], 0)
+        commands.add(DBLoad, 0)

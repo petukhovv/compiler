@@ -34,7 +34,6 @@ def return_statement(commands, data, expr):
 def call_statement(commands, data, name, args):
     for arg in args.elements:
         arg.compile_vm(commands, data)
-    commands.add(Push, len(args.elements))
     commands.add(Call, data.get_label(name))
 
     return data.get_return_type(name)
