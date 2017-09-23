@@ -10,7 +10,6 @@ def char(commands, data, character, need_typify=True):
 
 """ Компиляция выражения "строка" """
 def string(commands, data, characters):
-    # Кладем на стек строку
     commands.add(Push, 0)
     for character in characters:
         char(commands, data, character, need_typify=False)
@@ -32,7 +31,7 @@ def strlen(commands, data, args):
 """ Компиляция built-in функции strget (получение символа строки) """
 def strget(commands, data, args):
     # Порядок компиляции аргументов здесь и ниже задаём удобным для дальнейшей работы образом
-    args_compile(args, 1, commands, data)
+    args.elements[1].compile_vm(commands, data)
     commands.extract_value()
     array_type = args.elements[0].compile_vm(commands, data)
     commands.extract_value()
@@ -42,9 +41,9 @@ def strget(commands, data, args):
 
 """ Компиляция built-in функции strset (задание символа строки) """
 def strset(commands, data, args):
-    args_compile(args, 2, commands, data)
+    args.elements[2].compile_vm(commands, data)
     commands.extract_value()
-    args_compile(args, 1, commands, data)
+    args.elements[1].compile_vm(commands, data)
     commands.extract_value()
     array_type = args.elements[0].compile_vm(commands, data)
     commands.extract_value()
@@ -52,11 +51,11 @@ def strset(commands, data, args):
 
 """ Компиляция built-in функции strsub (взятие подстроки строки) """
 def strsub(commands, data, args):
-    args_compile(args, 1, commands, data)
+    args.elements[1].compile_vm(commands, data)
     commands.extract_value()
     array_type = args.elements[0].compile_vm(commands, data)
     commands.extract_value()
-    args_compile(args, 2, commands, data)
+    args.elements[2].compile_vm(commands, data)
     commands.extract_value()
     StringCompiler.strsub(commands, data, array_type)
 
@@ -83,9 +82,9 @@ def strcat(commands, data, args):
 
 """ Компиляция built-in функции strmake (создание строки из n одинаковых символов) """
 def strmake(commands, data, args):
-    args_compile(args, 1, commands, data)
+    args.elements[1].compile_vm(commands, data)
     commands.extract_value()
-    args_compile(args, 0, commands, data)
+    args.elements[0].compile_vm(commands, data)
     commands.extract_value()
     StringCompiler.strmake(commands, data)
 
