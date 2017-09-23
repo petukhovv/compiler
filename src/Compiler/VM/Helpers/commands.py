@@ -33,8 +33,8 @@ Enter = 'ENTER'
 Call = 'CALL'
 Function = 'FUNCTION'
 Return = 'RETURN'
-Allocate = 'ALLOCATE'
-DAllocate = 'DALLOCATE'
+Malloc = 'MALLOC'
+DMalloc = 'DMALLOC'
 Log = 'LOG'
 
 class Commands(list):

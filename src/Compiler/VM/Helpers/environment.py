@@ -4,11 +4,11 @@ from pprint import pprint
 
 """ Compile-time environment """
 class Environment:
-    var_counter_root = 0     # Счетчик переменных для stack memory
-    var_counter = 0     # Счетчик переменных для stack memory
-    vars = {}           # Переменные в stack memory
-    label_counter = 0   # Счетчик меток
-    labels = {}         # Метки
+    var_counter_root = 0    # Счетчик переменных для stack memory
+    var_counter = 0         # Счетчик переменных для stack memory
+    vars = {}               # Переменные в stack memory
+    label_counter = 0       # Счетчик меток
+    labels = {}             # Метки
 
     current_function = None  # Тип данных возвращаемого значения из подпрограммы
 

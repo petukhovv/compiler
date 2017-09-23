@@ -19,7 +19,7 @@ class ArrayCompiler:
         commands.add(Push, 2)
         commands.add(Mul)
         # Выделяем память = переданной длине массива * 2 + 1 (плюс тип под каждое значение и длина массива)
-        commands.add(DAllocate, 1)
+        commands.add(DMalloc, 1)
 
         # Если значения по умолчанию не заданы, оставляем элементы массива пустыми и выходим
         if default_values_variant == 'none':

@@ -33,8 +33,8 @@ commands_map = {
     'CALL': Call,
     'FUNCTION': Function,
     'RETURN': Return,
-    'ALLOCATE': Allocate,
-    'DALLOCATE': DAllocate,
+    'MALLOC': Malloc,
+    'DMALLOC': DMalloc,
     'LOG': Log
 }
 

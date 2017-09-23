@@ -345,7 +345,7 @@ class Return:
         vm.remove_scope()
 
 """ Выделение в куче памяти заданного размера. """
-class Allocate:
+class Malloc:
     def __init__(self, size):
         self.size = size
 
@@ -361,7 +361,7 @@ class Allocate:
 Выделение памяти заданного размера,
 который расчитывается по следующему правилу: <размер> = <переданный размер> + <значение с вершины стека>.
 """
-class DAllocate:
+class DMalloc:
     def __init__(self, size):
         self.size = size
 

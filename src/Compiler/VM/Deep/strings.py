@@ -19,7 +19,7 @@ class StringCompiler:
         commands.add(Add)
         commands.add(Dup)
         # Выделяем память размером = числу на стеке (ранее мы записали туда длину строки)
-        commands.add(DAllocate, 0)
+        commands.add(DMalloc, 0)
         commands.add(Dup)
         commands.add(Store, str_start_pointer)
         # Выносим инвариант цикла - указатель на конец строки - в переменную
@@ -181,7 +181,7 @@ class StringCompiler:
         # Сохраняем длину строки в переменную
         commands.add(Store, str_length)
         # Выделяем память = указанной длине строки +1 (плюс маркер конца строки - 0)
-        commands.add(DAllocate, 1)
+        commands.add(DMalloc, 1)
         commands.add(Store, str_start_pointer)
         commands.add(Store, basis_symbol)
 
