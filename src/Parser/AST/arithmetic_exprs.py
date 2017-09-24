@@ -1,3 +1,4 @@
+from src.Compiler.X86 import arithmetic_exprs as compile_x86
 from src.Compiler.VM import arithmetic_exprs as compile_vm
 from src.Interpreter import arithmetic_exprs as interpreter
 
@@ -15,6 +16,9 @@ class IntAexp:
 
     def compile_vm(self, commands, data):
         return compile_vm.int_aexp(commands, data, self.i)
+
+    def compile_x86(self, compiler, register):
+        return compile_x86.int_aexp(compiler, register, self.i)
 
 """
 Variable arithmetic expression class for AST.
@@ -49,3 +53,6 @@ class BinopAexp:
 
     def compile_vm(self, commands, data):
         return compile_vm.binop_aexp(commands, data, self.op, self.left, self.right)
+
+    def compile_x86(self, compiler):
+        return compile_x86.binop_aexp(compiler, self.op, self.left, self.right)

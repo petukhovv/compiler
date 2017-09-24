@@ -108,4 +108,5 @@ def stmt():
         return_stmt() | \
         write_stmt() | \
         fun_call_stmt() | \
-        skip_stmt()
+        skip_stmt() | \
+        aexp()
