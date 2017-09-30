@@ -15,6 +15,9 @@ class ReadStatement:
     def compile_vm(self, commands, data):
         return compile_vm.read_statement(commands, data)
 
+    def compile_x86(self, compiler):
+        return compile_x86.read_statement(compiler)
+
 """
 'Write' statement class for AST.
 eval - runtime function for Evaluator (write value to stdout).

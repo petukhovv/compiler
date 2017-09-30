@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from Utils.itoa import Itoa
+from pprint import pprint
+
+from Utils.write import Write
+from Utils.read import Read
+
+def read_statement(compiler):
+    Read(compiler).call()
 
 def write_statement(compiler, aexp):
     aexp.compile_x86(compiler)
-
-    itoa = Itoa(compiler)
-    itoa.call()
+    Write(compiler).call()

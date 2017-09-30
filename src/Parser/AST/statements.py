@@ -19,6 +19,9 @@ class AssignStatement:
     def compile_vm(self, commands, data):
         return compile_vm.assign_statement(commands, data, self.variable, self.aexp)
 
+    def compile_x86(self, compiler):
+        self.aexp.compile_x86(compiler)
+
 """
 Compound statement class for AST.
 eval - runtime function for Evaluator (eval first and second statement operators).

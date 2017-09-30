@@ -24,13 +24,15 @@ binop_compare_map = {
 
 """ Компиляция числа """
 def int_aexp(compiler, i):
-    compiler.code.add('mov', [compiler.target_register, i])
+    compiler.code.add('mov', ['eax', i])
+    compiler.code.add('push', ['eax'])
 
 """ Компиляция арифметического выражения """
 def binop_aexp(compiler, op, left, right):
-    compiler.target_register = 'eax'
     left.compile_x86(compiler)
-    compiler.target_register = 'ebx'
     right.compile_x86(compiler)
+    compiler.code.add('pop', ['ebx'])
+    compiler.code.add('pop', ['eax'])
 
     compiler.code.add(binop_compare_map[op]['operator'], binop_compare_map[op]['operands'])
+    compiler.code.add('push', ['eax'])

@@ -1,9 +1,9 @@
 from pprint import pprint
-import os
 
-from .base import Base
+from base import Base
+from itoa import Itoa
 
-class Itoa(Base):
+class Write(Base):
     is_loaded = False
 
     def __init__(self, compiler):
@@ -12,7 +12,9 @@ class Itoa(Base):
         if self.is_loaded:
             return
 
-        self.load('itoa.asm')
-        self.compiler.data.add('_itoa_radix', 'dd', '10')
-        self.compiler.bss.add('_char', 'resb', 1)
+        self.load('write.asm')
         self.is_loaded = True
+
+    def call(self):
+        Itoa(self.compiler)
+        self.compiler.code.add('call', ['_itoa'])
