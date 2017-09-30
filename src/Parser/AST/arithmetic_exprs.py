@@ -17,8 +17,8 @@ class IntAexp:
     def compile_vm(self, commands, data):
         return compile_vm.int_aexp(commands, data, self.i)
 
-    def compile_x86(self, compiler, register):
-        return compile_x86.int_aexp(compiler, register, self.i)
+    def compile_x86(self, compiler):
+        return compile_x86.int_aexp(compiler, self.i)
 
 """
 Variable arithmetic expression class for AST.

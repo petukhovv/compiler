@@ -29,6 +29,7 @@ class NASMCompiler():
         self.bss = NASMBSS()
         self.code = NASMCode()
         self.labels = NASMLabels()
+        self.target_register = None
 
     def exit(self):
         self.code.add('push', [0])
