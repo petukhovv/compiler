@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from pprint import pprint
+
 """ Компиляция числа """
 def int_aexp(compiler, register, i):
     compiler.code.add('mov', [register, i])

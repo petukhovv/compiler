@@ -1,3 +1,4 @@
+from src.Compiler.X86 import io as compile_x86
 from src.Compiler.VM import io as compile_vm
 from src.Interpreter import io as interpreter
 
@@ -27,3 +28,6 @@ class WriteStatement:
 
     def compile_vm(self, commands, data):
         return compile_vm.write_statement(commands, data, self.aexp)
+
+    def compile_x86(self, compiler):
+        return compile_x86.write_statement(compiler, self.aexp)

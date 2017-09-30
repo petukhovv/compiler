@@ -55,12 +55,11 @@ if mode == '-s':
     vm_interpret(commands)
 
 if mode == '-o':
-    format = 'macho'
     nasm_program = compile_x86(ast)
     f = open('./program.asm', 'w')
     f.write(nasm_program)
     f.close()
-    system('nasm -f ' + format + ' ./program.asm -l ./program.lst')
+    system('nasm -f macho ./program.asm -l ./program.lst')
     system('ld -o ./program ./program.o')
     remove('./program.o')
     # remove('./program.asm')
