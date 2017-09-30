@@ -37,6 +37,9 @@ class VarAexp:
     def compile_vm(self, commands, data):
         return compile_vm.var_aexp(commands, data, self.name, self.context, self.type)
 
+    def compile_x86(self, compiler):
+        return compile_x86.var_aexp(compiler, self.name, self.context, self.type)
+
 """
 Binary operation arithmetic expression class for AST.
 eval - runtime function for Evaluator (return result of applying the aoperation to left and right values).

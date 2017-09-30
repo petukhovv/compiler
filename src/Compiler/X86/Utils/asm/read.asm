@@ -1,6 +1,6 @@
 _read:
     mov eax, 3
-    push dword _read_buffer_size
+    push dword [_read_buffer_size]
     push dword _read_buffer
     push dword 0
     push eax

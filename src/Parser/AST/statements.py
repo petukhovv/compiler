@@ -1,3 +1,4 @@
+from src.Compiler.X86 import statements as compile_x86
 from src.Compiler.VM import statements as compile_vm
 from src.Interpreter import statements as interpreter
 
@@ -20,7 +21,7 @@ class AssignStatement:
         return compile_vm.assign_statement(commands, data, self.variable, self.aexp)
 
     def compile_x86(self, compiler):
-        self.aexp.compile_x86(compiler)
+        return compile_x86.assign_statement(compiler, self.variable, self.aexp)
 
 """
 Compound statement class for AST.
@@ -36,6 +37,9 @@ class CompoundStatement:
 
     def compile_vm(self, commands, data):
         return compile_vm.compound_statement(commands, data, self.first, self.second)
+
+    def compile_x86(self, compiler):
+        return compile_x86.compound_statement(compiler, self.first, self.second)
 
 """
 'If' statement class for AST.
