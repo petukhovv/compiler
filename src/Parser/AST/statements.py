@@ -96,6 +96,9 @@ class ForStatement:
     def compile_vm(self, commands, data):
         return compile_vm.for_statement(commands, data, self.stmt1, self.stmt2, self.stmt3, self.body)
 
+    def compile_x86(self, compiler):
+        return compile_x86.for_statement(compiler, self.stmt1, self.stmt2, self.stmt3, self.body)
+
 """
 'Repeat' statement class for AST.
 eval - runtime function for Evaluator (body eval while condition).

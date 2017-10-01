@@ -39,6 +39,22 @@ def while_statement(compiler, condition, body):
     compiler.code.add('jmp near', [start_label])
     compiler.code.add(finish_label + ':', [])
 
+""" Компиляция цикла for """
+def for_statement(compiler, stmt1, stmt2, stmt3, body):
+    start_label = compiler.labels.create()
+    finish_label = compiler.labels.create()
+
+    stmt1.compile_x86(compiler)
+    compiler.code.add(start_label + ':', [])
+    stmt2.compile_x86(compiler)
+    # Если условия цикла не выполнилось, завешаем цикл
+    compiler.code.add('cmp', ['eax', 1])
+    compiler.code.add('jnz near', [finish_label])
+    body.compile_x86(compiler)
+    stmt3.compile_x86(compiler)
+    compiler.code.add('jmp near', [start_label])
+    compiler.code.add(finish_label + ':', [])
+
 """ Компиляция конструкции if с альтернативными ветками """
 def if_statement(compiler, condition, true_stmt, alternatives_stmt, false_stmt, label_endif):
     skip_true_stmt_label = compiler.labels.create()
