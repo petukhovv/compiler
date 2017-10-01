@@ -76,6 +76,9 @@ class WhileStatement:
     def compile_vm(self, commands, data):
         return compile_vm.while_statement(commands, data, self.condition, self.body)
 
+    def compile_x86(self, compiler):
+        return compile_x86.while_statement(compiler, self.condition, self.body)
+
 """
 'For' statement class for AST.
 eval - runtime function for Evaluator ('for' loop).
