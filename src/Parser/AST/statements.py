@@ -58,6 +58,9 @@ class IfStatement:
     def compile_vm(self, commands, data, label_endif=None):
         return compile_vm.if_statement(commands, data, self.condition, self.true_stmt, self.alternatives_stmt, self.false_stmt, label_endif)
 
+    def compile_x86(self, compiler, label_endif=None):
+        return compile_x86.if_statement(compiler, self.condition, self.true_stmt, self.alternatives_stmt, self.false_stmt, label_endif)
+
 """
 'While' statement class for AST.
 eval - runtime function for Evaluator (body eval while condition).
@@ -104,6 +107,9 @@ class RepeatStatement:
 
     def compile_vm(self, commands, data):
         return compile_vm.repeat_statement(commands, data, self.condition, self.body)
+
+    def compile_x86(self, compiler):
+        return compile_x86.repeat_statement(compiler, self.condition, self.body)
 
 """
 'Skip' statement class for AST.

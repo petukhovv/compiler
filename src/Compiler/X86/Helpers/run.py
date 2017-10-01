@@ -5,11 +5,11 @@ from pprint import pprint
 ASM_COMMANDS_SEPARATOR = '\n'
 ASM_ARGS_SEPARATOR = ','
 
-class NASMData(list):
+class Data(list):
     def add(self, label, command, data):
         self.append(label + ': ' + command + ' ' + data + '\n')
 
-class NASMVars:
+class Vars:
     def __init__(self, bss):
         self.bss = bss
         self.vars = {}
@@ -24,29 +24,39 @@ class NASMVars:
     def get(self, name):
         return 'dword [_var_' + name + ']'
 
-class NASMBSS(list):
+class BSS(list):
     def __init__(self):
-        self.vars = NASMVars(self)
+        self.vars = Vars(self)
 
     def add(self, name, type, bytes):
         self.append(name + ' ' + type + ' ' + str(bytes) + '\n')
 
-class NASMCode(list):
+class Code(list):
     def add(self, command, args):
         self.append(command + ' ' + ASM_ARGS_SEPARATOR.join(str(x) for x in args))
 
-class NASMLabels(list):
+class Labels(list):
+    def __init__(self, bss):
+        self.bss = bss
+        self.labels_counter = 0
+        self.label_names_prefix = '_label_'
+
+    def create(self):
+        self.labels_counter += 1
+
+        return self.label_names_prefix + str(self.labels_counter)
+
     def add(self, code):
         code_lines = code.split('\n')
         for code_line in code_lines:
             self.append(code_line)
 
-class NASMCompiler():
+class Compiler():
     def __init__(self):
-        self.data = NASMData()
-        self.bss = NASMBSS()
-        self.code = NASMCode()
-        self.labels = NASMLabels()
+        self.data = Data()
+        self.bss = BSS()
+        self.code = Code()
+        self.labels = Labels(self.bss)
         self.target_register = None
 
     def exit(self):
@@ -72,7 +82,7 @@ class NASMCompiler():
 
 """ Запуск компилятора в код языка ассемблера NASM (x86) """
 def compile_x86(ast):
-    compiler = NASMCompiler()
+    compiler = Compiler()
 
     ast.compile_x86(compiler)
 

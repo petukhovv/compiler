@@ -23,5 +23,5 @@ class TrueResult:
         return self
 
     def add_return(self):
-        self.compiler.code.add(self.ret_label_name_prefix + str(self.current_number), [])
+        self.compiler.code.add(self.ret_label_name_prefix + str(self.current_number) + ':', [])
 
