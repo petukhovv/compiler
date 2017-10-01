@@ -20,8 +20,8 @@ relop_compare_map = {
 def relop_bexp(compiler, op, left, right):
     left.compile_x86(compiler)
     right.compile_x86(compiler)
-    compiler.code.add('pop', ['eax'])
     compiler.code.add('pop', ['ebx'])
+    compiler.code.add('pop', ['eax'])
 
     compiler.code.add('cmp', ['ebx', 'eax'])
 
