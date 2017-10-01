@@ -9,7 +9,25 @@ class NASMData(list):
     def add(self, label, command, data):
         self.append(label + ': ' + command + ' ' + data + '\n')
 
+class NASMVars:
+    def __init__(self, bss):
+        self.bss = bss
+        self.vars = {}
+
+    def add(self, name, type, bytes):
+        if name in self.vars:
+            return
+
+        self.vars[name] = type
+        self.bss.add('_var_' + name, type, bytes)
+
+    def get(self, name):
+        return 'dword [_var_' + name + ']'
+
 class NASMBSS(list):
+    def __init__(self):
+        self.vars = NASMVars(self)
+
     def add(self, name, type, bytes):
         self.append(name + ' ' + type + ' ' + str(bytes) + '\n')
 

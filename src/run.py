@@ -11,6 +11,8 @@ from Compiler.X86.Helpers.run import compile_x86
 from src.VM.parser import parse as vm_parse
 from VM.run import run as vm_interpret
 
+current_dir = path.dirname(path.abspath(__file__))
+
 help_commands = '-i - run, -s - compile in virtual machine code, -o - compile in executable file'
 
 if len(sys.argv) <= 1:
@@ -55,13 +57,27 @@ if mode == '-s':
     vm_interpret(commands)
 
 if mode == '-o':
+    # test_name = path.splitext(path.basename(target_file))[0]
+    # nasm_program = compile_x86(ast)
+    # f = open(current_dir + '/../runtime/' + test_name + '.asm', 'w')
+    # f.write(nasm_program)
+    # f.close()
+
     nasm_program = compile_x86(ast)
     f = open('./program.asm', 'w')
     f.write(nasm_program)
     f.close()
     system('nasm -f macho ./program.asm -l ./program.lst')
     system('ld -o ./program ./program.o')
-    remove('./program.o')
+    # remove('./program.o')
     # remove('./program.asm')
     system('./program')
     remove('./program')
+
+    # system('nasm -f macho ' + current_dir + '/../runtime/' + test_name + '.asm -l ' + current_dir + '/../runtime/' + test_name + '.lst && ' +
+    #        'ld -o ' + test_name + ' ' + current_dir + '/../runtime/' + test_name + '.o && ' +
+    #        'rm ' + current_dir + '/../runtime/' + test_name + '.asm'
+    #        )
+
+    # p = sub.Popen([current_dir + '/program'], stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE)
+    # output, errors = p.communicate()

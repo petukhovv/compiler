@@ -54,9 +54,9 @@ def binop_aexp(compiler, op, left, right):
 """ Компиляция переменной """
 def var_aexp(compiler, name, context, value_type):
     if context == 'assign':
-        compiler.bss.add('_var_' + name, 'resb', 255)
-        compiler.code.add('pop', ['dword [_var_' + name + ']'])
+        compiler.bss.vars.add(name, 'resb', 255)
+        compiler.code.add('pop', [compiler.bss.vars.get(name)])
     else:
-        compiler.code.add('mov', ['eax', '[_var_' + name + ']'])
+        compiler.code.add('mov', ['eax', compiler.bss.vars.get(name)])
         compiler.code.add('push', ['eax'])
         return value_type

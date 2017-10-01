@@ -1,3 +1,4 @@
+from src.Compiler.X86 import boolean_exprs as compile_x86
 from src.Compiler.VM import boolean_exprs as compile_vm
 from src.Interpreter import boolean_exprs as interpreter
 
@@ -17,6 +18,9 @@ class RelopBexp:
 
     def compile_vm(self, commands, data):
         return compile_vm.relop_bexp(commands, data, self.op, self.left, self.right)
+
+    def compile_x86(self, compiler):
+        return compile_x86.relop_bexp(compiler, self.op, self.left, self.right)
 
 """
 'And' operation boolean expression class for AST.
