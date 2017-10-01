@@ -22,7 +22,7 @@ def repeat_statement(compiler, condition, body):
     body.compile_x86(compiler)
     condition.compile_x86(compiler)
     compiler.code.add('cmp', ['eax', 1])
-    compiler.code.add('jnz', [continue_label])
+    compiler.code.add('jnz near', [continue_label])
 
 """ Компиляция while цикла """
 def while_statement(compiler, condition, body):
@@ -33,10 +33,10 @@ def while_statement(compiler, condition, body):
     condition.compile_x86(compiler)
     # Если перед очередной итерации условие останова не выполнилось, завершаем цикл
     compiler.code.add('cmp', ['eax', 1])
-    compiler.code.add('jnz', [finish_label])
+    compiler.code.add('jnz near', [finish_label])
     body.compile_x86(compiler)
     # Делаем следующую итерацию
-    compiler.code.add('jmp', [start_label])
+    compiler.code.add('jmp near', [start_label])
     compiler.code.add(finish_label + ':', [])
 
 """ Компиляция конструкции if с альтернативными ветками """
@@ -46,7 +46,7 @@ def if_statement(compiler, condition, true_stmt, alternatives_stmt, false_stmt, 
     condition.compile_x86(compiler)
     # Если условие не выполнилось, пропускаем ветку.
     compiler.code.add('cmp', ['eax', 1])
-    compiler.code.add('jnz', [skip_true_stmt_label])
+    compiler.code.add('jnz near', [skip_true_stmt_label])
     true_stmt.compile_x86(compiler)
 
     is_first_if = label_endif is None
@@ -55,7 +55,7 @@ def if_statement(compiler, condition, true_stmt, alternatives_stmt, false_stmt, 
         label_endif = compiler.labels.create()
 
     # Если условие выполнилось, пропускаем все альтернативные ветки и переходим сразу к концу условия.
-    compiler.code.add('jmp', [label_endif])
+    compiler.code.add('jmp near', [label_endif])
     compiler.code.add(skip_true_stmt_label + ':', [])
 
     # Компиляция составных альтернативных веток (elif)
@@ -73,3 +73,7 @@ def if_statement(compiler, condition, true_stmt, alternatives_stmt, false_stmt, 
 
     if is_first_if:
         compiler.code.add(label_endif + ':', [])
+
+""" Компиляция оператора пропуска команды """
+def skip_statement(compiler):
+    compiler.code.add('nop', [])

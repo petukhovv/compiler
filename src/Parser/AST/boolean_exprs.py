@@ -38,6 +38,9 @@ class AndBexp:
     def compile_vm(self, commands, data):
         return compile_vm.and_bexp(commands, data, self.left, self.right)
 
+    def compile_x86(self, compiler):
+        return compile_x86.and_bexp(compiler, self.left, self.right)
+
 """
 'Or' operation boolean expression class for AST.
 eval - runtime function for Evaluator (return result of applying the 'or' operation to left and right values).

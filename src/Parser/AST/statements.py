@@ -125,3 +125,6 @@ class SkipStatement:
 
     def compile_vm(self, commands, data):
         return compile_vm.skip_statement(commands, data)
+
+    def compile_x86(self, compiler):
+        return compile_x86.skip_statement(compiler)
