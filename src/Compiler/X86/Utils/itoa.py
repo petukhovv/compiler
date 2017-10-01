@@ -9,10 +9,10 @@ class Itoa(Base):
     def __init__(self, compiler):
         Base.__init__(self, compiler)
 
-        if self.is_loaded:
+        if Itoa.is_loaded:
             return
 
         self.load('itoa.asm')
         self.compiler.data.add('_itoa_radix', 'dd', '10')
         self.compiler.bss.add('_char', 'resb', 1)
-        self.is_loaded = True
+        Itoa.is_loaded = True

@@ -9,8 +9,8 @@ class Atoi(Base):
     def __init__(self, compiler):
         Base.__init__(self, compiler)
 
-        if self.is_loaded:
+        if Atoi.is_loaded:
             return
 
         self.load('atoi.asm')
-        self.is_loaded = True
+        Atoi.is_loaded = True

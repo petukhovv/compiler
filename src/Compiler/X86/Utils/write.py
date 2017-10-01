@@ -11,15 +11,17 @@ class Write(Base):
     def __init__(self, compiler):
         Base.__init__(self, compiler)
 
-        if self.is_loaded:
+        if Write.is_loaded:
             return
 
         self.load('write.asm')
-        self.is_loaded = True
+        Write.is_loaded = True
 
     def call(self, value_type):
         if value_type == Types.INT or True:
             Itoa(self.compiler)
             self.compiler.code.add('call', ['_itoa'])
+            self.compiler.code.add('mov', ['eax', 10])
+            self.compiler.code.add('call', ['_write'])
         else:
             pass
