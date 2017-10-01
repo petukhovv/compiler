@@ -3,7 +3,7 @@ _atoi:
 	mov	dl, byte [esi]
 	test	dl, dl
 	jz	._atoi_exit
-	cmp dl, 10          ; 10 - ASCII code of EOL
+	cmp dl, 10          ; 10 - ASCII code of EOL (\n)
 	je ._atoi_exit
 	imul	eax, 10
 	sub	dl, 48          ; 48 - ASCII code of 0
@@ -11,4 +11,5 @@ _atoi:
 	inc	esi
 	jmp	_atoi
 ._atoi_exit:
+    mov dl, 0
 	ret

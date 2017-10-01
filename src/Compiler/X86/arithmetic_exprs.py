@@ -18,6 +18,10 @@ binop_compare_map = {
         'operands': ['ebx']
     },
     '/': {
+        'operator': 'idiv',
+        'operands': ['ebx']
+    },
+    '%': {
         'operator': 'div',
         'operands': ['ebx']
     }
@@ -37,6 +41,12 @@ def binop_aexp(compiler, op, left, right):
     compiler.code.add('pop', ['eax'])
 
     compiler.code.add(binop_compare_map[op]['operator'], binop_compare_map[op]['operands'])
+
+    if op == '%':
+        compiler.code.add('movzx', ['eax', 'dx'])
+    elif op == '/':
+        compiler.code.add('movzx', ['eax', 'ax'])
+
     compiler.code.add('push', ['eax'])
 
     return Types.INT
@@ -44,9 +54,9 @@ def binop_aexp(compiler, op, left, right):
 """ Компиляция переменной """
 def var_aexp(compiler, name, context, value_type):
     if context == 'assign':
-        compiler.bss.add(name, 'resb', 255)
-        compiler.code.add('pop', ['dword [' + name + ']'])
+        compiler.bss.add('_var_' + name, 'resb', 255)
+        compiler.code.add('pop', ['dword [_var_' + name + ']'])
     else:
-        compiler.code.add('mov', ['eax', '[' + name + ']'])
+        compiler.code.add('mov', ['eax', '[_var_' + name + ']'])
         compiler.code.add('push', ['eax'])
         return value_type
