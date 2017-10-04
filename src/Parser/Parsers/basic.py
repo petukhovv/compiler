@@ -1,6 +1,6 @@
-from src.Parser.combinators import *
-from src.consts import *
+from src.Lexer.types import *
 from src.Parser.AST.common import *
+from src.Parser.combinators import *
 
 """
 Language keywords parsing (Reserved combinator with 'RESERVED' tag).

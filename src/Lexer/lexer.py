@@ -1,15 +1,17 @@
 import sys
 import re
 
-from pprint import pprint
 
-"""
-Lexer. It breaks the code into tokens by token expressions (regexps).
-Order of tokens in token expressions is important!
-Lexer applies only the first match found (the first must be language expressions: +, :=, and, if, while, etc;
-then - identifiers (e. g. variable names) and numbers).
-"""
 def lex(code, token_expressions):
+    """
+    Lexer breaks the code into tokens by regex (token expressions).
+    Order of tokens in token expressions is important.
+    Lexer applies only the first match found.
+    1) the first must be unused (in parser) constructions: whitespaces and comments
+    2) then - strings, chars and boolean definition
+    3) then - language expressions: +, :=, and, if, while, etc;
+    4) then - identifiers (e. g. variable names) and numbers
+    """
     pos = 0
     tokens = []
     while pos < len(code):

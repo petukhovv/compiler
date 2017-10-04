@@ -1,28 +1,31 @@
 from lexer import lex
-from src.consts import *
+from .types import *
 
-"""
-Wrapper for tokenization.
-Make one parentheses group with optional right context.
-"""
+
 def token(regexp, tag, right_context='', left_context=''):
+    """ Make token definition (regexp with optional left or right context) """
     return r'' + left_context + '(' + regexp + ')' + right_context + '', tag
 
-"""
-Wrapper for tokenization language keywords.
-Keyword is token with non-alphanumeric right context.
-"""
-def keyword(keyword):
-    return token(keyword, RESERVED, right_context='\W')
+
+def keyword(name):
+    """ Make keyword definition (token with RESERVED type) """
+    return token(name, RESERVED, right_context='\W')
+
+
+def tokenize(code):
+    """ Wrapper to run the Lexer (with the token expressions listed here). """
+    return lex(code, token_expressions)
+
 
 token_expressions = [
-    token('[ \n\t]+', None),
-    token('#[^\n]*', None),
+    token('[ \n\t]+', None),    # Whitespaces (source code only, unused in parser)
+    token('#[^\n]*', None),     # Comments (source code only, unused in parser)
 
     token('true|false', BOOLEAN, right_context='\W'),
     token('\"(.*?)\"', STRING),
     token('\'(.)\'', CHAR),
 
+    # Language reserved special characters
     token('\'', None),
     token('\:=', RESERVED),
     token('\(', RESERVED),
@@ -41,7 +44,7 @@ token_expressions = [
     token('==', RESERVED),
     token('\&\&', RESERVED),
     token('\|\|', RESERVED),
-    token('!!', RESERVED),
+    token('!!', RESERVED),      # Same as the || (logical 'or')
     token('!', RESERVED),
     token(',', RESERVED),
     token('\[', RESERVED),
@@ -49,6 +52,7 @@ token_expressions = [
     token('\{', RESERVED),
     token('\}', RESERVED),
 
+    # Language reserved keywords
     keyword('if'),
     keyword('then'),
     keyword('else'),
@@ -68,12 +72,6 @@ token_expressions = [
     keyword('return'),
     keyword('end'),
 
-    token('\d+', INT),
-    token('[A-Za-z]\w*', ID)
+    token('\d+', INT),          # Integers regexp
+    token('[A-Za-z]\w*', ID)    # Identifiers regexp (variable names, function names, etc)
 ]
-
-"""
-Function-wrapper to run the Lexer (with the token expressions listed here).
-"""
-def tokenize(code):
-    return lex(code, token_expressions)
