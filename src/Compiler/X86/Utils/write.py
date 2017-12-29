@@ -2,8 +2,8 @@ from pprint import pprint
 
 from ..Helpers.types import *
 
-from base import Base
-from itoa import Itoa
+from .base import Base
+from .itoa import Itoa
 
 class Write(Base):
     is_loaded = False

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from Deep.arrays import *
+from .Deep.arrays import *
 
-""" Компиляция built-in функции arrmake / Arrmake для создания boxed и unboxed массивов """
+
 def arrmake(commands, data, args, type):
+    """ Компиляция built-in функции arrmake / Arrmake для создания boxed и unboxed массивов """
     type = Types.BOXED_ARR if type == 'boxed' else Types.UNBOXED_ARR
 
     # Если были переданы default values (2-м аргументом), смотрим, в каком именно формате
@@ -35,8 +36,9 @@ def arrmake(commands, data, args, type):
 
     return commands.set_and_return_type(type)
 
-""" Компиляция конструкции inline задания boxed и unboxed массивов: [n1, n2, ...] / {a1, a2, ...}  """
+
 def arrmake_inline(commands, data, elements, type):
+    """ Компиляция конструкции inline задания boxed и unboxed массивов: [n1, n2, ...] / {a1, a2, ...}  """
     type = Types.BOXED_ARR if type == 'boxed' else Types.UNBOXED_ARR
 
     arr_elements = elements.compile_vm(commands, data)
@@ -58,8 +60,9 @@ def arrmake_inline(commands, data, elements, type):
 
     return commands.set_and_return_type(type)
 
-""" Компиляция оператора получения элемента массива: A[n] """
+
 def array_element(commands, data, array, index, other_indexes, context):
+    """ Компиляция оператора получения элемента массива: A[n] """
     var_number = data.get_var(array)
     var_type = data.get_type(var_number)
 
@@ -93,8 +96,9 @@ def array_element(commands, data, array, index, other_indexes, context):
 
     return Types.DYNAMIC
 
-""" Компиляция built-in функции arrlen для получения длины массива """
+
 def arrlen(commands, data, args):
+    """ Компиляция built-in функции arrlen для получения длины массива """
     args.elements[0].compile_vm(commands, data)
     commands.extract_value()
 

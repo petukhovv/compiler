@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 
 from ..Helpers.types import *
-
 from ..Helpers.base import *
 from ..Helpers.loop import Loop
 
+
 class ArrayCompiler:
-    """
-    Генерация инструкций для выделения памяти под boxed и unboxed массивы и записи в него значений по умолчанию
-    """
     @staticmethod
     def arrmake(commands, data, default_values_variant):
+        """ Генерация инструкций для выделения памяти под boxed и unboxed массивы и записи в него значений по умолчанию """
         arr_length = data.var()
 
         commands.add(Dup)
@@ -70,11 +68,9 @@ class ArrayCompiler:
         # Загружаем на стек указатель на начало массива
         commands.add(Load, arr_pointer)
 
-    """
-    Генерация инструкций для оператора получения элемента массива: A[n]
-    """
     @staticmethod
     def get_element(commands, data, type):
+        """ Генерация инструкций для оператора получения элемента массива: A[n] """
         arr_address = data.var()
 
         # Расчитываем адрес элемента (с учетом хранения типов для каждого элемента - умножаем на 2)
@@ -90,11 +86,9 @@ class ArrayCompiler:
         # Загружаем на стек значение элемента по адресу его ячейки в heap memory
         commands.add(DBLoad, 1)
 
-    """
-    Генерация инструкций для присвоения значения элементу массива: A[n] := x
-    """
     @staticmethod
     def set_element(commands, data, type):
+        """ Генерация инструкций для присвоения значения элементу массива: A[n] := x """
         arr_address = data.var()
 
         # Расчитываем адрес элемента (с учетом хранения типов для каждого элемента - умножаем на 2)
@@ -111,9 +105,7 @@ class ArrayCompiler:
         # Записываем в heap memory значение элемента по адресу его ячейки в heap memory
         commands.add(DBStore, 1)
 
-    """
-    Генерация инструкций для получения длины массива
-    """
     @staticmethod
     def arrlen(commands, data):
+        """ Генерация инструкций для получения длины массива """
         commands.add(DBLoad, 0)

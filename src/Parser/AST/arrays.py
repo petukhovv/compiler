@@ -1,9 +1,8 @@
-from src.Parser.AST.arithmetic_exprs import *
+from Parser.AST.arithmetic_exprs import *
 
-from src.Compiler.VM import arrays as compile_vm
-from src.Interpreter import arrays as interpreter
+from Compiler.VM import arrays as compile_vm
+from Interpreter import arrays as interpreter
 
-from pprint import pprint
 
 class UnboxedArray:
     pointers = 0
@@ -17,6 +16,7 @@ class UnboxedArray:
     def compile_vm(self, commands, data):
         return compile_vm.arrmake_inline(commands, data, self.elements, 'unboxed')
 
+
 class BoxedArray:
     pointers = 0
 
@@ -28,6 +28,7 @@ class BoxedArray:
 
     def compile_vm(self, commands, data):
         return compile_vm.arrmake_inline(commands, data, self.elements, 'boxed')
+
 
 class ArrayElement:
     pointers = 0
@@ -44,6 +45,7 @@ class ArrayElement:
     def compile_vm(self, commands, data):
         return compile_vm.array_element(commands, data, self.array, self.index, self.other_indexes, self.context)
 
+
 class ArrLen:
     def __init__(self, args):
         self.args = args
@@ -54,6 +56,7 @@ class ArrLen:
     def compile_vm(self, commands, data):
         return compile_vm.arrlen(commands, data, self.args)
 
+
 class UnboxedArrMake:
     def __init__(self, args):
         self.args = args
@@ -63,6 +66,7 @@ class UnboxedArrMake:
 
     def compile_vm(self, commands, data):
         return compile_vm.arrmake(commands, data, self.args, 'unboxed')
+
 
 class BoxedArrMake:
     def __init__(self, args):

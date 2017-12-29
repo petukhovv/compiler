@@ -1,6 +1,7 @@
-from src.Compiler.VM import common as compile_vm
-from src.Interpreter import common as interpreter
+from Compiler.VM import common as compile_vm
+from Interpreter import common as interpreter
 from pprint import pprint
+
 
 class Pointer:
     def __init__(self, env, element):
@@ -10,11 +11,12 @@ class Pointer:
     def eval(self):
         return interpreter.pointer(self.env, self.element)
 
-"""
-'Enumeration' statement class for AST.
-eval - runtime function for Evaluator (empty function).
-"""
+
 class Enumeration:
+    """
+    'Enumeration' statement class for AST.
+    eval - runtime function for Evaluator (empty function).
+    """
     def __init__(self, elements):
         self.elements = elements
 

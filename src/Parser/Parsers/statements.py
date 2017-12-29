@@ -1,28 +1,30 @@
-from src.Parser.Parsers.functions import *
-from src.Parser.Parsers.io import *
-from src.Parser.Parsers.arrays import *
+from ..AST.statements import *
 
-from src.Parser.AST.statements import *
+from .functions import *
+from .io import *
+from .arrays import *
 
-"""
-Parsing simple assign statement.
-Example: x := 56
-"""
+
 def assign_stmt():
+    """
+    Parsing simple assign statement.
+    Example: x := 56
+    """
     def process(parsed):
         ((name, _), exp) = parsed
         return AssignStatement(name, exp)
     return (el_exp() | id ^ (lambda v: VarAexp(v))) + keyword(':=') + \
         (bexp() | aexp() | read_stmt() | str_exp() | char_exp() | arr_exp()) ^ process
 
-"""
-Parsing statement list (by ';' separator).
-Example:
-x := 56;
-y := 12;
-z := 512
-"""
+
 def stmt_list():
+    """
+    Parsing statement list (by ';' separator).
+    Example:
+    x := 56;
+    y := 12;
+    z := 512
+    """
     def process_stmt(x):
         return lambda l, r: CompoundStatement(l, r)
     def process(parsed_list):
@@ -31,10 +33,11 @@ def stmt_list():
         return reduce(lambda stmt1, stmt2: CompoundStatement(stmt1, stmt2), parsed_list)
     return Rep(fun() | Exp(stmt(), keyword(';') ^ process_stmt)) ^ process
 
-"""
-Parsing 'if' statement.
-"""
+
 def if_stmt():
+    """
+    Parsing 'if' statement.
+    """
     def process(parsed):
         ((((((_, condition), _), true_stmt), alternatives_stmt_parsed), false_stmt_parsed), _) = parsed
         if false_stmt_parsed:
@@ -54,10 +57,11 @@ def if_stmt():
            Opt(keyword('else') + Lazy(stmt_list)) + \
            keyword('fi') ^ process
 
-"""
-Parsing 'while' statement.
-"""
+
 def while_stmt():
+    """
+    Parsing 'while' statement.
+    """
     def process(parsed):
         ((((_, condition), _), body), _) = parsed
         return WhileStatement(condition, body)
@@ -65,10 +69,11 @@ def while_stmt():
         keyword('do') + Lazy(stmt_list) + \
         keyword('od') ^ process
 
-"""
-Parsing 'for' statement.
-"""
+
 def for_stmt():
+    """
+    Parsing 'for' statement.
+    """
     def process(parsed):
         ((((((((_, stmt1), _), stmt2), _), stmt3), _), body), _) = parsed
         return ForStatement(stmt1, stmt2, stmt3, body)
@@ -77,29 +82,32 @@ def for_stmt():
         assign_stmt() + keyword('do') + \
         Lazy(stmt_list) + keyword('od') ^ process
 
-"""
-Parsing 'repeat' statement.
-"""
+
 def repeat_stmt():
+    """
+    Parsing 'repeat' statement.
+    """
     def process(parsed):
         (((_, body), _), condition) = parsed
         return RepeatStatement(condition, body)
     return keyword('repeat') + Lazy(stmt_list) + \
         keyword('until') + bexp(allow_single=True) ^ process
 
-"""
-Parsing 'skip' statement.
-"""
+
 def skip_stmt():
+    """
+    Parsing 'skip' statement.
+    """
     return keyword('skip') ^ (lambda parsed: SkipStatement())
 
-"""
-Main statement parser.
-Try to first parse as 'assign' statement,
-if not possible - as 'if' statement,
-if not possible - as 'while' statement.
-"""
+
 def stmt():
+    """
+    Main statement parser.
+    Try to first parse as 'assign' statement,
+    if not possible - as 'if' statement,
+    if not possible - as 'while' statement.
+    """
     return assign_stmt() | \
         if_stmt() | \
         while_stmt() | \

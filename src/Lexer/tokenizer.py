@@ -1,4 +1,4 @@
-from lexer import lex
+from .lexer import lex
 from .types import *
 
 

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from pprint import pprint
-from Helpers.types import *
+
+from .Helpers.types import *
 
 """ Мапа: арифметический оператор в языке программирования - арифметический оператор в ASM-коде """
 binop_compare_map = {
@@ -27,14 +28,16 @@ binop_compare_map = {
     }
 }
 
-""" Компиляция числа """
+
 def int_aexp(compiler, i):
+    """ Компиляция числа """
     compiler.code.add('mov', ['eax', i])
     compiler.code.add('push', ['eax'])
     return Types.INT
 
-""" Компиляция арифметического выражения """
+
 def binop_aexp(compiler, op, left, right):
+    """ Компиляция арифметического выражения """
     left.compile_x86(compiler)
     right.compile_x86(compiler)
     compiler.code.add('pop', ['ebx'])
@@ -51,8 +54,9 @@ def binop_aexp(compiler, op, left, right):
 
     return Types.INT
 
-""" Компиляция переменной """
+
 def var_aexp(compiler, name, context, value_type):
+    """ Компиляция переменной """
     if context == 'assign':
         compiler.bss.vars.add(name, 'resb', 255)
         compiler.code.add('pop', [compiler.bss.vars.get(name)])

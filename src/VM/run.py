@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from pprint import pprint
-from src.VM.commands import *
-from vm import *
+from .commands import *
+from .vm import *
 
-""" Запуск виртуальной машины """
+
 def run(commands_list):
+    """ Запуск виртуальной машины """
     commands = Commands(commands_list)
     vm = VM(commands, Scope())
 

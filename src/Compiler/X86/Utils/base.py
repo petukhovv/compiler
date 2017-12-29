@@ -1,5 +1,6 @@
 import os
 
+
 class Base:
     path = '/asm/'
 

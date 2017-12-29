@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from src.Compiler.VM.Deep.strings import *
+from .Deep.strings import *
 
 """ Мапа: арифметический оператор в языке программирования - арифметический оператор в коде стековой машины """
 binop_compare_map = {
@@ -11,8 +11,9 @@ binop_compare_map = {
     '%': Mod
 }
 
-""" Компиляция арифметического выражения """
+
 def binop_aexp(commands, data, op, left, right):
+    """ Компиляция арифметического выражения """
     left.compile_vm(commands, data)
     commands.extract_value()
     right.compile_vm(commands, data)
@@ -22,14 +23,16 @@ def binop_aexp(commands, data, op, left, right):
 
     return commands.set_and_return_type(Types.INT)
 
-""" Компиляция числа """
+
 def int_aexp(commands, data, i):
+    """ Компиляция числа """
     commands.add(Push, i)
 
     return commands.set_and_return_type(Types.INT)
 
-""" Компиляция переменной """
+
 def var_aexp(commands, data, name, context, value_type):
+    """ Компиляция переменной """
     if context == 'assign':
         commands.store_value(data.var(alias=name, type=value_type, double_size=True), type=value_type)
     else:

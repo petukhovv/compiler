@@ -1,8 +1,9 @@
 import sys
 
-from src.Parser.Parsers.strings import *
+from ..AST.arrays import *
 
-from src.Parser.AST.arrays import *
+from .strings import *
+
 
 arithmetic_exprs = sys.modules[__package__ + '.arithmetic_exprs']
 
@@ -12,9 +13,11 @@ array_predefined_functions = {
     'arrmake': UnboxedArrMake
 }
 
+
 def arr_exp():
     elements = enumeration(alternative_args_parser=(num | str_exp() | char_exp() | boolean | id))
     return arr_unboxed_exp(elements) | arr_boxed_exp(elements)
+
 
 def arr_unboxed_exp(elements):
     def process(parsed):
@@ -22,11 +25,13 @@ def arr_unboxed_exp(elements):
         return UnboxedArray(elements)
     return keyword('[') + elements + keyword(']') ^ process
 
+
 def arr_boxed_exp(elements):
     def process(parsed):
         ((_, elements), _) = parsed
         return BoxedArray(elements)
     return keyword('{') + elements + keyword('}') ^ process
+
 
 def el_exp():
     def process(parsed):

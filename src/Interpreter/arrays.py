@@ -1,17 +1,20 @@
 import sys
 
-from src.Parser.AST.common import *
+from Parser.AST.common import *
 
-arrays = sys.modules['src.Parser.AST.arrays']
+arrays = sys.modules['Parser.AST.arrays']
 
-from Helpers.environment import *
-from Helpers.common import __fill_array, BoxedArrayWrap, UnboxedArrayWrap
+from .Helpers.environment import *
+from .Helpers.common import __fill_array, BoxedArrayWrap, UnboxedArrayWrap
+
 
 def unboxed_array(env, elements):
     return elements.eval()
 
+
 def boxed_array(env, elements):
     return elements.eval()
+
 
 def array_element(env, array, index, other_indexes):
     arr = Environment(env).get(array)
@@ -38,12 +41,14 @@ def array_element(env, array, index, other_indexes):
     else:
         return element
 
+
 def arr_len(env, args):
     args_node = args.eval()
     if len(args_node) == 0:
         raise RuntimeError('arrlen call without arguments')
     arr = args_node[0].eval(env)
     return len(arr)
+
 
 def unboxed_arr_make(env, args):
     arr = []
@@ -66,6 +71,7 @@ def unboxed_arr_make(env, args):
         arr = __fill_array(arr, count, default_value)
     arr = UnboxedArrayWrap(arr)
     return arr
+
 
 def boxed_arr_make(env, args):
     arr = []

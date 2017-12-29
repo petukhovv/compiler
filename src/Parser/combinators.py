@@ -1,18 +1,19 @@
-"""
-Object of this class will be returned by parsers.
-    Value - intermediate result, part of AST.
-    Position - next token position.
-"""
 class Result:
+    """
+    Object of this class will be returned by parsers.
+        Value - intermediate result, part of AST.
+        Position - next token position.
+    """
     def __init__(self, value, position):
         self.value = value
         self.position = position
 
-"""
-Base class for combinators.
-__call__ will override by subclasses.
-"""
+
 class Combinator:
+    """
+    Base class for combinators.
+    __call__ will override by subclasses.
+    """
     def __call__(self, tokens, position):
         return None
 
@@ -28,11 +29,12 @@ class Combinator:
     def __xor__(self, function):
         return Process(self, function)
 
-"""
-'Reserved' used for parsing language expressions (keywords and operators = RESERVED-tokens).
-It checks token tag and value.
-"""
+
 class Reserved(Combinator):
+    """
+    'Reserved' used for parsing language expressions (keywords and operators = RESERVED-tokens).
+    It checks token tag and value.
+    """
     def __init__(self, value, tag):
         self.value = value
         self.tag = tag
@@ -45,11 +47,12 @@ class Reserved(Combinator):
         else:
             return None
 
-"""
-'Tag' used for parsing tokens with a specific tag.
-It checks token tag only.
-"""
+
 class Tag(Combinator):
+    """
+    'Tag' used for parsing tokens with a specific tag.
+    It checks token tag only.
+    """
     def __init__(self, tag):
         self.tag = tag
 
@@ -59,12 +62,13 @@ class Tag(Combinator):
         else:
             return None
 
-"""
-'Concat' first applies the left parser, and then the right parser.
-If both are successful (result != None), returns a pair (left and right parser);
-if at least one is unsuccessful, it returns None.
-"""
+
 class Concat(Combinator):
+    """
+    'Concat' first applies the left parser, and then the right parser.
+    If both are successful (result != None), returns a pair (left and right parser);
+    if at least one is unsuccessful, it returns None.
+    """
     def __init__(self, left, right):
         self.left = left
         self.right = right
@@ -78,11 +82,12 @@ class Concat(Combinator):
                 return Result(combined_value, right_result.position)
         return None
 
-"""
-'Alternate' applies the left parser, if it succeeds, returns the result;
-if not, returns the right parser.
-"""
+
 class Alternate(Combinator):
+    """
+    'Alternate' applies the left parser, if it succeeds, returns the result;
+    if not, returns the right parser.
+    """
     def __init__(self, left, right):
         self.left = left
         self.right = right
@@ -94,11 +99,13 @@ class Alternate(Combinator):
         else:
             right_result = self.right(tokens, position)
             return right_result
-"""
-'Opt' applies the parser, if it succeeds, returns the result;
-if not, returns the result with None-value.
-"""
+
+
 class Opt(Combinator):
+    """
+    'Opt' applies the parser, if it succeeds, returns the result;
+    if not, returns the result with None-value.
+    """
     def __init__(self, parser):
         self.parser = parser
 
@@ -109,10 +116,11 @@ class Opt(Combinator):
         else:
             return Result(None, position)
 
-"""
-'Rep' applies the parser until it returns a successful result.
-"""
+
 class Rep(Combinator):
+    """
+    'Rep' applies the parser until it returns a successful result.
+    """
     def __init__(self, parser):
         self.parser = parser
 
@@ -125,10 +133,11 @@ class Rep(Combinator):
             result = self.parser(tokens, position)
         return Result(results, position)
 
-"""
-'Process' applies a function to the result of the parser, if it is successful.
-"""
+
 class Process(Combinator):
+    """
+    'Process' applies a function to the result of the parser, if it is successful.
+    """
     def __init__(self, parser, function):
         self.parser = parser
         self.function = function
@@ -139,10 +148,11 @@ class Process(Combinator):
             result.value = self.function(result.value)
             return result
 
-"""
-'Lazy' applies the parser to the place of the call (lazy call).
-"""
+
 class Lazy(Combinator):
+    """
+    'Lazy' applies the parser to the place of the call (lazy call).
+    """
     def __init__(self, parser_function):
         self.parser = None
         self.parser_function = parser_function
@@ -152,10 +162,11 @@ class Lazy(Combinator):
             self.parser = self.parser_function()
         return self.parser(tokens, position)
 
-"""
-'Phrase' applies the parser and returns its result only if the parser has absorbed all the tokens.
-"""
+
 class Phrase(Combinator):
+    """
+    'Phrase' applies the parser and returns its result only if the parser has absorbed all the tokens.
+    """
     def __init__(self, parser):
         self.parser = parser
 
@@ -166,10 +177,11 @@ class Phrase(Combinator):
         else:
             return None
 
-"""
-'Exp' is necessary to parse lists according to the input two parsers: for target elements and for separators.
-"""
+
 class Exp(Combinator):
+    """
+    'Exp' is necessary to parse lists according to the input two parsers: for target elements and for separators.
+    """
     def __init__(self, parser, separator):
         self.parser = parser
         self.separator = separator

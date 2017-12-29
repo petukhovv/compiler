@@ -1,7 +1,9 @@
 from pprint import pprint
 
-from write import Write
 from ..Utils.atoi import *
+
+from .write import Write
+
 
 class Read(Base):
     is_loaded = False

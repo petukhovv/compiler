@@ -2,9 +2,8 @@
 
 from pprint import pprint
 
-from Utils.labels import *
-
-from Helpers.types import *
+from .Helpers.types import *
+from .Utils.labels import *
 
 """ Мапа: арифметический оператор в языке программирования - соответствующая jump-инструкция в ASM """
 relop_compare_map = {
@@ -16,8 +15,9 @@ relop_compare_map = {
     '>=':   'jle'
 }
 
-""" Компиляция логического выражения """
+
 def relop_bexp(compiler, op, left, right):
+    """ Компиляция логического выражения """
     left.compile_x86(compiler)
     right.compile_x86(compiler)
     compiler.code.add('pop', ['ebx'])
@@ -34,8 +34,9 @@ def relop_bexp(compiler, op, left, right):
 
     return Types.INT
 
-""" Компиляция оператора логического "И" (and) """
+
 def and_bexp(compiler, left, right):
+    """ Компиляция оператора логического "И" (and) """
     finish_label = compiler.labels.create()
     finish_false_label = compiler.labels.create()
 

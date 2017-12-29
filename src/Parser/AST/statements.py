@@ -1,15 +1,16 @@
-from src.Compiler.X86 import statements as compile_x86
-from src.Compiler.VM import statements as compile_vm
-from src.Interpreter import statements as interpreter
+from Compiler.X86 import statements as compile_x86
+from Compiler.VM import statements as compile_vm
+from Interpreter import statements as interpreter
 
 from pprint import pprint
 
-"""
-Assign statement class for AST.
-eval - runtime function for Evaluator (return variable by name from environment).
-Example: x := 56
-"""
+
 class AssignStatement:
+    """
+    Assign statement class for AST.
+    eval - runtime function for Evaluator (return variable by name from environment).
+    Example: x := 56
+    """
     def __init__(self, variable, aexp):
         self.variable = variable
         self.aexp = aexp
@@ -23,11 +24,12 @@ class AssignStatement:
     def compile_x86(self, compiler):
         return compile_x86.assign_statement(compiler, self.variable, self.aexp)
 
-"""
-Compound statement class for AST.
-eval - runtime function for Evaluator (eval first and second statement operators).
-"""
+
 class CompoundStatement:
+    """
+    Compound statement class for AST.
+    eval - runtime function for Evaluator (eval first and second statement operators).
+    """
     def __init__(self, first, second):
         self.first = first
         self.second = second
@@ -41,11 +43,12 @@ class CompoundStatement:
     def compile_x86(self, compiler):
         return compile_x86.compound_statement(compiler, self.first, self.second)
 
-"""
-'If' statement class for AST.
-eval - runtime function for Evaluator (true of false statement depending on condition).
-"""
+
 class IfStatement:
+    """
+    'If' statement class for AST.
+    eval - runtime function for Evaluator (true of false statement depending on condition).
+    """
     def __init__(self, condition, true_stmt, alternatives_stmt=None, false_stmt=None):
         self.condition = condition
         self.true_stmt = true_stmt
@@ -61,11 +64,12 @@ class IfStatement:
     def compile_x86(self, compiler, label_endif=None):
         return compile_x86.if_statement(compiler, self.condition, self.true_stmt, self.alternatives_stmt, self.false_stmt, label_endif)
 
-"""
-'While' statement class for AST.
-eval - runtime function for Evaluator (body eval while condition).
-"""
+
 class WhileStatement:
+    """
+    'While' statement class for AST.
+    eval - runtime function for Evaluator (body eval while condition).
+    """
     def __init__(self, condition, body):
         self.condition = condition
         self.body = body
@@ -79,11 +83,12 @@ class WhileStatement:
     def compile_x86(self, compiler):
         return compile_x86.while_statement(compiler, self.condition, self.body)
 
-"""
-'For' statement class for AST.
-eval - runtime function for Evaluator ('for' loop).
-"""
+
 class ForStatement:
+    """
+    'For' statement class for AST.
+    eval - runtime function for Evaluator ('for' loop).
+    """
     def __init__(self, stmt1, stmt2, stmt3, body):
         self.stmt1 = stmt1
         self.stmt2 = stmt2
@@ -99,11 +104,12 @@ class ForStatement:
     def compile_x86(self, compiler):
         return compile_x86.for_statement(compiler, self.stmt1, self.stmt2, self.stmt3, self.body)
 
-"""
-'Repeat' statement class for AST.
-eval - runtime function for Evaluator (body eval while condition).
-"""
+
 class RepeatStatement:
+    """
+    'Repeat' statement class for AST.
+    eval - runtime function for Evaluator (body eval while condition).
+    """
     def __init__(self, condition, body):
         self.condition = condition
         self.body = body
@@ -117,12 +123,12 @@ class RepeatStatement:
     def compile_x86(self, compiler):
         return compile_x86.repeat_statement(compiler, self.condition, self.body)
 
-"""
-'Skip' statement class for AST.
-eval - runtime function for Evaluator (empty function).
-"""
-class SkipStatement:
 
+class SkipStatement:
+    """
+    'Skip' statement class for AST.
+    eval - runtime function for Evaluator (empty function).
+    """
     def eval(self, env):
         return interpreter.skip_statement(env)
 

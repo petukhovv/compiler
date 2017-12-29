@@ -1,7 +1,7 @@
 from pprint import pprint
-import os
 
 from .base import Base
+
 
 class Atoi(Base):
     is_loaded = False

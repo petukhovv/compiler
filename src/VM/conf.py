@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from src.VM.commands import *
+from .commands import *
+
 
 # Мапа соответствий: строковое представление команды VM - класс команды VM
 commands_map = {

@@ -1,15 +1,16 @@
-from src.Parser.AST.common import *
-from src.Parser.AST.arrays import *
+from Parser.AST.common import *
+from Parser.AST.arrays import *
 
-from Helpers.environment import *
-from Helpers.common import BoxedArrayWrap, UnboxedArrayWrap
+from .Helpers.environment import *
+from .Helpers.common import BoxedArrayWrap, UnboxedArrayWrap
 
-"""
-Assign statement def for AST.
-eval - runtime function for Evaluator (return variable by name from environment).
-Example: x := 56
-"""
+
 def assign_statement(env, variable, aexp):
+    """
+    Assign statement def for AST.
+    eval - runtime function for Evaluator (return variable by name from environment).
+    Example: x := 56
+    """
     value = aexp.eval(env)
     if isinstance(variable, ArrayElement):
         arr_descr = variable
@@ -26,19 +27,21 @@ def assign_statement(env, variable, aexp):
         name = variable.name
         Environment(env).set(name, value)
 
-"""
-Compound statement def for AST.
-eval - runtime function for Evaluator (eval first and second statement operators).
-"""
+
 def compound_statement(env, first, second):
+    """
+    Compound statement def for AST.
+    eval - runtime function for Evaluator (eval first and second statement operators).
+    """
     first.eval(env)
     second.eval(env)
 
-"""
-'If' statement def for AST.
-eval - runtime function for Evaluator (true of false statement depending on condition).
-"""
+
 def if_statement(env, condition, true_stmt, alternatives_stmt, false_stmt):
+    """
+    'If' statement def for AST.
+    eval - runtime function for Evaluator (true of false statement depending on condition).
+    """
     condition_value = condition.eval(env)
     if condition_value:
         true_stmt.eval(env)
@@ -52,19 +55,21 @@ def if_statement(env, condition, true_stmt, alternatives_stmt, false_stmt):
             false_stmt.eval(env)
     return condition_value
 
-"""
-'While' statement def for AST.
-eval - runtime function for Evaluator (body eval while condition).
-"""
+
 def while_statement(env, condition, body):
+    """
+    'While' statement def for AST.
+    eval - runtime function for Evaluator (body eval while condition).
+    """
     while condition.eval(env):
         body.eval(env)
 
-"""
-'For' statement def for AST.
-eval - runtime function for Evaluator ('for' loop).
-"""
+
 def for_statement(env, stmt1, stmt2, stmt3, body):
+    """
+    'For' statement def for AST.
+    eval - runtime function for Evaluator ('for' loop).
+    """
     stmt1.eval(env)
     while stmt2.eval(env):
         iteration_env = Environment(env).create()
@@ -72,19 +77,22 @@ def for_statement(env, stmt1, stmt2, stmt3, body):
         stmt3.eval(env)
     return
 
-"""
-'Repeat' statement def for AST.
-eval - runtime function for Evaluator (body eval while condition).
-"""
+
 def repeat_statement(env, condition, body):
+    """
+    'Repeat' statement def for AST.
+    eval - runtime function for Evaluator (body eval while condition).
+    """
     while True:
         body.eval(env)
         condition_value = condition.eval(env)
         if condition_value:
             break
 
-"""
-'Skip' statement def for AST.
-eval - runtime function for Evaluator (empty function).
-"""
-def skip_statement(env): pass
+
+def skip_statement(env):
+    """
+    'Skip' statement def for AST.
+    eval - runtime function for Evaluator (empty function).
+    """
+    pass

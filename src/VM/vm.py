@@ -2,21 +2,22 @@
 
 from pprint import pprint
 
-""" Команды виртуальной машины """
+
 class Commands:
+    """ Команды виртуальной машины """
     list = []       # Список команд
     current = 0     # Номер (индекс) текущей команды
 
     def __init__(self, commands_list):
         self.list = commands_list
 
-""" Область видимости """
 class Scope:
+    """ Область видимости """
     def __init__(self):
         self.stack = []     # Стековая память (static allocation data)
 
-""" Виртуальная машина """
 class VM:
+    """ Виртуальная машина """
     root_scope = 'root'     # Название корневой области видимости
 
     def __init__(self, commands, initial_scope):
@@ -28,29 +29,29 @@ class VM:
         self.commands = commands        # Список комманд
         self.stack_memory_sizes = {}    # Мапа с областями видимости и требуемыми для них размерами стековой памяти
 
-    """ Получние текущей или указанной области видимости """
     def scope(self, index=-1):
+        """ Получние текущей или указанной области видимости """
         return self.scopes[index]
 
-    """ Создание области видимости и выделение для неё стековой памяти (если указан идентификатор) """
     def create_scope(self, name=None):
+        """ Создание области видимости и выделение для неё стековой памяти (если указан идентификатор) """
         self.scopes.append(Scope())
         if name is not None:
             self.allocate_stack_memory(name)
         return self.scope()
 
-    """ Удаление текущей области видимости """
     def remove_scope(self):
+        """ Удаление текущей области видимости """
         self.scopes.pop()
 
-    """ Установление мапы с областями видимости и требуемыми для них размерами стековой памяти """
     def set_stack_memory_sizes(self, sizes):
+        """ Установление мапы с областями видимости и требуемыми для них размерами стековой памяти """
         self.stack_memory_sizes = sizes
 
-    """ Выделение стековой памяти под указанную область видимости """
     def allocate_stack_memory(self, scope_name):
+        """ Выделение стековой памяти под указанную область видимости """
         self.scope().stack = [None] * self.stack_memory_sizes[scope_name]
 
-    """ Выделение памяти под метки """
     def allocate_labels(self, size):
+        """ Выделение памяти под метки """
         self.labels = [None] * size

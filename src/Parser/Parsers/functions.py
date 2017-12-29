@@ -1,8 +1,9 @@
-from src.Parser.Parsers.boolean_exprs import bexp
-from src.Parser.Parsers.io import *
-from src.Parser.Parsers.arrays import *
+from ..AST.functions import *
 
-from src.Parser.AST.functions import *
+from .boolean_exprs import bexp
+from .io import *
+from .arrays import *
+
 
 statements = sys.modules[__package__ + '.statements']
 
@@ -12,11 +13,13 @@ predefined = {
     'arrays': array_predefined_functions
 }
 
+
 def is_predefined(name):
     for entity in predefined:
         if name in predefined[entity].keys():
             return True
     return False
+
 
 def get_predefined(name):
     for entity in predefined:
@@ -24,16 +27,18 @@ def get_predefined(name):
             return predefined[entity][name]
     return None
 
-"""
-Parsing function arguments statement (call point).
-"""
+
 def args_call():
+    """
+    Parsing function arguments statement (call point).
+    """
     return enumeration(alternative_args_parser=(aexp() | bexp() | str_exp() | char_exp() | arr_exp()))
 
-"""
-Parsing function statement.
-"""
+
 def fun():
+    """
+    Parsing function statement.
+    """
     def process(parsed):
         (((((((_, name), _), args), _), _), body), _) = parsed
         return Function(name, args, body)
@@ -42,19 +47,21 @@ def fun():
            keyword('begin') + Opt(Lazy(statements.stmt_list)) + \
         keyword('end') ^ process
 
-"""
-Parsing function call statement.
-"""
+
 def return_stmt():
+    """
+    Parsing function call statement.
+    """
     def process(parsed):
         (_, expr) = parsed
         return ReturnStatement(expr)
     return keyword('return') + Opt(aexp() | bexp() | str_exp() | char_exp() | arr_exp()) ^ process
 
-"""
-Parsing function call statement.
-"""
+
 def fun_call_stmt():
+    """
+    Parsing function call statement.
+    """
     def process(parsed):
         (((name, _), args), _) = parsed
         if is_predefined(name):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from base import *
+from .base import *
 from .types import *
 
 """ Генератор команд для организации циклов """

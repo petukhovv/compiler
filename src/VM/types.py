@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-""" Перечень типов виртуальной машины """
+
 class Types:
+    """ Перечень типов виртуальной машины """
     NONE = 0
     INT = 1
     CHAR = 2
@@ -10,6 +11,7 @@ class Types:
     BOXED_ARR = 5
     UNBOXED_ARR = 6
     DYNAMIC = 9
+
 
 """ Перечень примитивных типов """
 PRIMITIVE_TYPES = [

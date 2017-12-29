@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from conf import *
+from .conf import *
 from pprint import pprint
 
-# Парсинг программы в стековом коде (преобразование в список команд): простой split строк
+
 def parse(program):
+    """ Парсинг программы в стековом коде (преобразование в список команд): простой split строк """
     commands = program.split(COMMAND_SEPARATOR)
     command_classes = []
     for command in commands:

@@ -1,7 +1,8 @@
-from src.Compiler.VM import strings as compile_vm
-from src.Interpreter import strings as interpreter
+from Compiler.VM import strings as compile_vm
+from Interpreter import strings as interpreter
 
-from base import *
+from .base import *
+
 
 class Char(Stackable):
     def __init__(self, character):
@@ -13,6 +14,7 @@ class Char(Stackable):
     def compile_vm(self, commands, data):
         return compile_vm.char(commands, data, self.character)
 
+
 class String(Heapable):
     def __init__(self, characters):
         self.characters = characters
@@ -22,6 +24,7 @@ class String(Heapable):
 
     def compile_vm(self, commands, data):
         return compile_vm.string(commands, data, self.characters)
+
 
 class StrLen(Stackable):
     def __init__(self, args):
@@ -33,6 +36,7 @@ class StrLen(Stackable):
     def compile_vm(self, commands, data):
         return compile_vm.strlen(commands, data, self.args)
 
+
 class StrGet(Stackable):
     def __init__(self, args):
         self.args = args
@@ -42,6 +46,7 @@ class StrGet(Stackable):
 
     def compile_vm(self, commands, data):
         return compile_vm.strget(commands, data, self.args)
+
 
 class StrSub(Heapable):
     def __init__(self, args):
@@ -53,6 +58,7 @@ class StrSub(Heapable):
     def compile_vm(self, commands, data):
         return compile_vm.strsub(commands, data, self.args)
 
+
 class StrDup(Heapable):
     def __init__(self, args):
         self.args = args
@@ -62,6 +68,7 @@ class StrDup(Heapable):
 
     def compile_vm(self, commands, data):
         return compile_vm.strdup(commands, data, self.args)
+
 
 class StrSet:
     def __init__(self, args):
@@ -73,6 +80,7 @@ class StrSet:
     def compile_vm(self, commands, data):
         return compile_vm.strset(commands, data, self.args)
 
+
 class StrCat(Heapable):
     def __init__(self, args):
         self.args = args
@@ -83,6 +91,7 @@ class StrCat(Heapable):
     def compile_vm(self, commands, data):
         return compile_vm.strcat(commands, data, self.args)
 
+
 class StrCmp:
     def __init__(self, args):
         self.args = args
@@ -92,6 +101,7 @@ class StrCmp:
 
     def compile_vm(self, commands, data):
         return compile_vm.strcmp(commands, data, self.args)
+
 
 class StrMake:
     def __init__(self, args):

@@ -1,5 +1,5 @@
 import sys
-sys.path.append(len(sys.argv) == 4 and sys.argv[3] or 'src/..')
+import argparse
 
 from os import path, remove, system
 
@@ -8,8 +8,10 @@ from Parser.run import parse
 from Interpreter.Helpers.run import interpret
 from Compiler.VM.Helpers.run import compile_vm
 from Compiler.X86.Helpers.run import compile_x86
-from src.VM.parser import parse as vm_parse
+from VM.parser import parse as vm_parse
 from VM.run import run as vm_interpret
+
+sys.path.append(len(sys.argv) == 4 and sys.argv[3] or 'src/..')
 
 current_dir = path.dirname(path.abspath(__file__))
 

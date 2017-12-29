@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from Helpers.commands import *
-from Helpers.types import *
+from .Helpers.commands import *
+from .Helpers.types import *
 
 """ Мапа: оператор сравнения в языке программирования - оператор сравнения в коде стековой машины """
 relop_compare_map = {
@@ -13,8 +13,9 @@ relop_compare_map = {
     '>=':   5
 }
 
-""" Компиляция операторов сравнения """
+
 def relop_bexp(commands, data, op, left, right):
+    """ Компиляция операторов сравнения """
     left.compile_vm(commands, data)
     commands.extract_value()
     right.compile_vm(commands, data)
@@ -24,8 +25,9 @@ def relop_bexp(commands, data, op, left, right):
 
     return commands.set_and_return_type(Types.INT)
 
-""" Компиляция оператора логического "И" (and) """
+
 def and_bexp(commands, data, left, right):
+    """ Компиляция оператора логического "И" (and) """
     finish_label = data.label()
     finish_false_label = data.label()
 
@@ -57,8 +59,9 @@ def and_bexp(commands, data, left, right):
 
     return commands.set_and_return_type(Types.BOOL)
 
-""" Компиляция оператора логического "ИЛИ" (or) """
+
 def or_bexp(commands, data, left, right):
+    """ Компиляция оператора логического "ИЛИ" (or) """
     finish_label = data.label()
     finish_true_label = data.label()
 
@@ -90,8 +93,9 @@ def or_bexp(commands, data, left, right):
 
     return commands.set_and_return_type(Types.BOOL)
 
-""" Компиляция оператора логического "НЕ" (not) """
+
 def not_bexp(commands, data, exp):
+    """ Компиляция оператора логического "НЕ" (not) """
     finish_label = data.label()
     finish_false_label = data.label()
 

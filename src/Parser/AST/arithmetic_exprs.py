@@ -1,13 +1,14 @@
-from src.Compiler.X86 import arithmetic_exprs as compile_x86
-from src.Compiler.VM import arithmetic_exprs as compile_vm
-from src.Interpreter import arithmetic_exprs as interpreter
+from Compiler.X86 import arithmetic_exprs as compile_x86
+from Compiler.VM import arithmetic_exprs as compile_vm
+from Interpreter import arithmetic_exprs as interpreter
 
-"""
-Integer arithmetic expression class for AST.
-eval - runtime function for Evaluator (just return i).
-Example: 54
-"""
+
 class IntAexp:
+    """
+    Integer arithmetic expression class for AST.
+    eval - runtime function for Evaluator (just return i).
+    Example: 54
+    """
     def __init__(self, i):
         self.i = i
 
@@ -20,12 +21,13 @@ class IntAexp:
     def compile_x86(self, compiler):
         return compile_x86.int_aexp(compiler, self.i)
 
-"""
-Variable arithmetic expression class for AST.
-eval - runtime function for Evaluator (return variable from environment by name).
-Example: x
-"""
+
 class VarAexp:
+    """
+    Variable arithmetic expression class for AST.
+    eval - runtime function for Evaluator (return variable from environment by name).
+    Example: x
+    """
     def __init__(self, name):
         self.name = name
         self.context = 'get'
@@ -40,12 +42,13 @@ class VarAexp:
     def compile_x86(self, compiler):
         return compile_x86.var_aexp(compiler, self.name, self.context, self.type)
 
-"""
-Binary operation arithmetic expression class for AST.
-eval - runtime function for Evaluator (return result of applying the aoperation to left and right values).
-Example: x + 54
-"""
+
 class BinopAexp:
+    """
+    Binary operation arithmetic expression class for AST.
+    eval - runtime function for Evaluator (return result of applying the aoperation to left and right values).
+    Example: x + 54
+    """
     def __init__(self, op, left, right):
         self.op = op
         self.left = left

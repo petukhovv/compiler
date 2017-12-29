@@ -1,11 +1,12 @@
 from copy import deepcopy
 
-"""
-Integer arithmetic expression class for AST.
-eval - runtime function for Evaluator (just return i).
-Example: 54
-"""
+
 class Environment:
+    """
+    Integer arithmetic expression class for AST.
+    eval - runtime function for Evaluator (just return i).
+    Example: 54
+    """
     def __init__(self, env=None):
         self.env = env
 

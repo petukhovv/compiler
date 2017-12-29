@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 class TrueResult:
     label_name = '_set_true_result_'
     ret_label_name_prefix = '_ret_true_result_'

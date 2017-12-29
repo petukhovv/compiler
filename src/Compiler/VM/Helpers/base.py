@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from commands import *
+from .commands import *
 
 """ Хелпер для генерации инструкций для загрузки значения из heap memory по заданному адресу с заданным смещением """
 def dbload(address, offset, commands):

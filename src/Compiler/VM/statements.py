@@ -1,22 +1,25 @@
 # -*- coding: utf-8 -*-
 
-from src.Compiler.VM.Deep.arrays import *
+from .Deep.arrays import *
 
-""" Компиляция выражения присваивания """
+
 def assign_statement(commands, data, variable, aexp):
+    """ Компиляция выражения присваивания """
     value_type = aexp.compile_vm(commands, data)
     commands.extract_value()
     variable.context = 'assign'
     variable.type = value_type
     variable.compile_vm(commands, data)
 
-""" Компиляция составного выражения """
+
 def compound_statement(commands, data, first, second):
+    """ Компиляция составного выражения """
     first.compile_vm(commands, data)
     second.compile_vm(commands, data)
 
-""" Компиляция repeat-until цикла """
+
 def repeat_statement(commands, data, condition, body):
+    """ Компиляция repeat-until цикла """
     continue_label = data.label()
     commands.add(Label, continue_label)
     body.compile_vm(commands, data)
@@ -25,8 +28,9 @@ def repeat_statement(commands, data, condition, body):
     # Если после очередной итерации условие останова не выполнилось, делаем следующую итерацию
     commands.add(Jz, continue_label)
 
-""" Компиляция while цикла """
+
 def while_statement(commands, data, condition, body):
+    """ Компиляция while цикла """
     start_label = data.label()
     commands.add(Label, start_label)
     finish_label = data.label()
@@ -39,8 +43,9 @@ def while_statement(commands, data, condition, body):
     commands.add(Jump, start_label)\
         .add(Label, finish_label)
 
-""" Компиляция конструкции if с альтернативными ветками """
+
 def if_statement(commands, data, condition, true_stmt, alternatives_stmt, false_stmt, label_endif):
+    """ Компиляция конструкции if с альтернативными ветками """
     skip_true_stmt_label = data.label()
 
     condition.compile_vm(commands, data)
@@ -72,8 +77,9 @@ def if_statement(commands, data, condition, true_stmt, alternatives_stmt, false_
 
     commands.add(Label, label_endif)
 
-""" Компиляция цикла for """
+
 def for_statement(commands, data, stmt1, stmt2, stmt3, body):
+    """ Компиляция цикла for """
     start_label = data.label()
     finish_label = data.label()
 
@@ -88,6 +94,7 @@ def for_statement(commands, data, stmt1, stmt2, stmt3, body):
     commands.add(Jump, start_label)\
         .add(Label, finish_label)
 
-""" Компиляция оператора пропуска команды """
+
 def skip_statement(commands, data):
+    """ Компиляция оператора пропуска команды """
     commands.add(Nop)

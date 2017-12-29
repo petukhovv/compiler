@@ -1,12 +1,13 @@
-from src.Compiler.X86 import io as compile_x86
-from src.Compiler.VM import io as compile_vm
-from src.Interpreter import io as interpreter
+from Compiler.X86 import io as compile_x86
+from Compiler.VM import io as compile_vm
+from Interpreter import io as interpreter
 
-"""
-'Read' statement class for AST.
-eval - runtime function for Evaluator (get value from stdin).
-"""
+
 class ReadStatement:
+    """
+    'Read' statement class for AST.
+    eval - runtime function for Evaluator (get value from stdin).
+    """
     def __init__(self): pass
 
     def eval(self, env):
@@ -18,11 +19,12 @@ class ReadStatement:
     def compile_x86(self, compiler):
         return compile_x86.read_statement(compiler)
 
-"""
-'Write' statement class for AST.
-eval - runtime function for Evaluator (write value to stdout).
-"""
+
 class WriteStatement:
+    """
+    'Write' statement class for AST.
+    eval - runtime function for Evaluator (write value to stdout).
+    """
     def __init__(self, aexp):
         self.aexp = aexp
 

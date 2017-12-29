@@ -1,10 +1,13 @@
-from Helpers.environment import *
+from .Helpers.environment import *
+
 
 def char(env, character):
     return ord(character)
 
+
 def string(env, characters):
     return characters
+
 
 def str_len(env, args):
     args_node = args.eval()
@@ -12,6 +15,7 @@ def str_len(env, args):
         raise RuntimeError('strlen call without arguments')
     str = args_node[0].eval(env)
     return len(str)
+
 
 def str_get(env, args):
     args_node = args.eval()
@@ -22,6 +26,7 @@ def str_get(env, args):
     if char_index < 0 or char_index >= len(str):
         raise RuntimeError('StrGet: incorrect char index')
     return ord(str[char_index])
+
 
 def str_sub(env, args):
     args_node = args.eval()
@@ -36,12 +41,14 @@ def str_sub(env, args):
         raise RuntimeError('strsub: incorrect length substring')
     return str[char_index_start:char_index_start + substring_length]
 
+
 def str_dup(env, args):
     args_node = args.eval()
     if len(args_node) == 0:
         raise RuntimeError('strdup call without arguments')
     str = args_node[0].eval(env)
     return str
+
 
 def str_set(env, args):
     args_node = args.eval()
@@ -57,6 +64,7 @@ def str_set(env, args):
     new_str[char_index] = chr(new_char)
     Environment(env).set(var_name, "".join(new_str))
 
+
 def str_cat(env, args):
     args_node = args.eval()
     if len(args_node) == 0 or len(args_node) == 1:
@@ -64,6 +72,7 @@ def str_cat(env, args):
     str1 = args_node[0].eval(env)
     str2 = args_node[1].eval(env)
     return str1 + str2
+
 
 def str_cmp(env, args):
     args_node = args.eval()
@@ -84,6 +93,7 @@ def str_cmp(env, args):
         return 0
     else:
         return 1  # str1 is a substring of str2 (str2 is greater than str1)
+
 
 def str_make(env, args):
     args_node = args.eval()

@@ -1,11 +1,15 @@
 from pprint import pprint
-from Helpers.environment import *
+
+from .Helpers.environment import *
+
 
 def int_aexp(env, i):
     return i
 
+
 def var_aexp(env, name):
     return Environment(env).get(name)
+
 
 def binop_aexp(env, op, left, right):
     left_value = left.eval(env)

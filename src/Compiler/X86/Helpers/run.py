@@ -5,9 +5,11 @@ from pprint import pprint
 ASM_COMMANDS_SEPARATOR = '\n'
 ASM_ARGS_SEPARATOR = ','
 
+
 class Data(list):
     def add(self, label, command, data):
         self.append(label + ': ' + command + ' ' + data + '\n')
+
 
 class Vars:
     def __init__(self, bss):
@@ -24,6 +26,7 @@ class Vars:
     def get(self, name):
         return 'dword [_var_' + name + ']'
 
+
 class BSS(list):
     def __init__(self):
         self.vars = Vars(self)
@@ -31,9 +34,11 @@ class BSS(list):
     def add(self, name, type, bytes):
         self.append(name + ' ' + type + ' ' + str(bytes) + '\n')
 
+
 class Code(list):
     def add(self, command, args):
         self.append(command + ' ' + ASM_ARGS_SEPARATOR.join(str(x) for x in args))
+
 
 class Labels(list):
     def __init__(self, bss):
@@ -50,6 +55,7 @@ class Labels(list):
         code_lines = code.split('\n')
         for code_line in code_lines:
             self.append(code_line)
+
 
 class Compiler():
     def __init__(self):
@@ -80,8 +86,9 @@ class Compiler():
             ASM_COMMANDS_SEPARATOR.join(self.code) + '\n'
         )
 
-""" Запуск компилятора в код языка ассемблера NASM (x86) """
+
 def compile_x86(ast):
+    """ Запуск компилятора в код языка ассемблера NASM (x86) """
     compiler = Compiler()
 
     ast.compile_x86(compiler)

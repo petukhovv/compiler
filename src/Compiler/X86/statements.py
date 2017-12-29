@@ -2,21 +2,24 @@
 
 from pprint import pprint
 
-""" Компиляция выражения присваивания """
+
 def assign_statement(compiler, variable, aexp):
+    """ Компиляция выражения присваивания """
     value_type = aexp.compile_x86(compiler)
 
     variable.context = 'assign'
     variable.type = value_type
     variable.compile_x86(compiler)
 
-""" Компиляция составного выражения """
+
 def compound_statement(compiler, first, second):
+    """ Компиляция составного выражения """
     first.compile_x86(compiler)
     second.compile_x86(compiler)
 
-""" Компиляция repeat-until цикла """
+
 def repeat_statement(compiler, condition, body):
+    """ Компиляция repeat-until цикла """
     continue_label = compiler.labels.create()
     compiler.code.add(continue_label + ':', [])
     body.compile_x86(compiler)
@@ -24,8 +27,9 @@ def repeat_statement(compiler, condition, body):
     compiler.code.add('cmp', ['eax', 1])
     compiler.code.add('jnz near', [continue_label])
 
-""" Компиляция while цикла """
+
 def while_statement(compiler, condition, body):
+    """ Компиляция while цикла """
     start_label = compiler.labels.create()
     compiler.code.add(start_label + ':', [])
     finish_label = compiler.labels.create()
@@ -39,8 +43,9 @@ def while_statement(compiler, condition, body):
     compiler.code.add('jmp near', [start_label])
     compiler.code.add(finish_label + ':', [])
 
-""" Компиляция цикла for """
+
 def for_statement(compiler, stmt1, stmt2, stmt3, body):
+    """ Компиляция цикла for """
     start_label = compiler.labels.create()
     finish_label = compiler.labels.create()
 
@@ -55,8 +60,9 @@ def for_statement(compiler, stmt1, stmt2, stmt3, body):
     compiler.code.add('jmp near', [start_label])
     compiler.code.add(finish_label + ':', [])
 
-""" Компиляция конструкции if с альтернативными ветками """
+
 def if_statement(compiler, condition, true_stmt, alternatives_stmt, false_stmt, label_endif):
+    """ Компиляция конструкции if с альтернативными ветками """
     skip_true_stmt_label = compiler.labels.create()
 
     condition.compile_x86(compiler)
@@ -90,6 +96,7 @@ def if_statement(compiler, condition, true_stmt, alternatives_stmt, false_stmt, 
     if is_first_if:
         compiler.code.add(label_endif + ':', [])
 
-""" Компиляция оператора пропуска команды """
+
 def skip_statement(compiler):
+    """ Компиляция оператора пропуска команды """
     compiler.code.add('nop', [])

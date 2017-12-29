@@ -1,13 +1,14 @@
-from src.Interpreter.Helpers.environment import *
+from Interpreter.Helpers.environment import *
 
-from src.Compiler.VM import functions as compile_vm
-from src.Interpreter import functions as interpreter
+from Compiler.VM import functions as compile_vm
+from Interpreter import functions as interpreter
 
-"""
-'Function' statement class for AST.
-eval - runtime function for Evaluator (empty function).
-"""
+
 class Function:
+    """
+    'Function' statement class for AST.
+    eval - runtime function for Evaluator (empty function).
+    """
     def __init__(self, name, args, body):
         self.name = name
         self.args = args
@@ -19,11 +20,12 @@ class Function:
     def compile_vm(self, commands, data):
         return compile_vm.function(commands, data, self.name, self.args, self.body)
 
-"""
-'Return' statement class for AST.
-eval - runtime function for Evaluator (empty function).
-"""
+
 class ReturnStatement:
+    """
+    'Return' statement class for AST.
+    eval - runtime function for Evaluator (empty function).
+    """
     def __init__(self, expr):
         self.expr = expr
 
@@ -33,11 +35,12 @@ class ReturnStatement:
     def compile_vm(self, commands, data):
         return compile_vm.return_statement(commands, data, self.expr)
 
-"""
-'Function call' statement class for AST.
-eval - runtime function for Evaluator (empty function).
-"""
+
 class FunctionCallStatement:
+    """
+    'Function call' statement class for AST.
+    eval - runtime function for Evaluator (empty function).
+    """
     def __init__(self, name, args):
         self.name = name
         self.args = args

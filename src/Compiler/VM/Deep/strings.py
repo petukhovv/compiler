@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 
 from ..Helpers.types import *
-
 from ..Helpers.base import *
 from ..Helpers.loop import Loop
 
+
 class StringCompiler:
-    """
-    Генерация инструкций для записи строки из стека в heap memory.
-    """
     @staticmethod
     def store(commands, data):
+        """ Генерация инструкций для записи строки из стека в heap memory. """
         str_start_pointer = data.var(Types.INT)
         end_str_pointer = data.var(Types.INT)
 
@@ -39,11 +37,9 @@ class StringCompiler:
         # Отдаем на стек указатель на начало строки для дальнейшего использования
         commands.add(Load, str_start_pointer)
 
-    """
-    Генерация инструкций для получения длины строки, находящейся на стеке.
-    """
     @staticmethod
     def strlen(commands, data, type):
+        """ Генерация инструкций для получения длины строки, находящейся на стеке. """
         str_start_pointer = data.var(Types.INT)
         # Разыменовываем лежащий на стеке указатель и записываем его в переменную
         commands.add(Store, str_start_pointer)
@@ -51,31 +47,25 @@ class StringCompiler:
         # Считываем строку из памяти до конца (пока не встретим 0), подсчитывая кол-во символов (его кладем на стек)
         Loop.data(commands, data, str_start_pointer, memory_type='heap')
 
-    """
-    Генерация инструкций для получения определенного символа строки
-    """
     @staticmethod
     def strget(commands, data, type):
+        """ Генерация инструкций для получения определенного символа строки """
         # Прибавляем к номеру ячейки с началом строки номер требуемого символа (offset)
         commands.add(Add)
         # Загружаем на стек символ по номеру его ячейки в heap memory
         commands.add(DBLoad, 0)
 
-    """
-    Генерация инструкций для замены определенного символа строки
-    """
     @staticmethod
     def strset(commands, data, type):
+        """ Генерация инструкций для замены определенного символа строки """
         # Вычисляем ячейки heap memory, где находится заменяемый символ
         commands.add(Add)
         # Производим замену символа
         commands.add(DBStore, 0)
 
-    """
-    Генерация инструкций для получение подстроки строки
-    """
     @staticmethod
     def strsub(commands, data, type):
+        """ Генерация инструкций для получение подстроки строки """
         substr_length = data.var(Types.INT)
         substr_start_pointer = data.var(Types.INT)
 
@@ -107,11 +97,9 @@ class StringCompiler:
 
         StringCompiler.store(commands, data)
 
-    """
-    Генерация инструкций для дублирования строки
-    """
     @staticmethod
     def strdup(commands, data, type):
+        """ Генерация инструкций для дублирования строки """
         str_start_pointer = data.var(Types.INT)
 
         # Разыменовываем лежащий на стеке указатель и записываем его в переменную
@@ -128,11 +116,9 @@ class StringCompiler:
 
         StringCompiler.store(commands, data)
 
-    """
-    Генерация инструкций для дублирования первой из конкатенируемых строки
-    """
     @staticmethod
     def strcat_first(commands, data, type):
+        """ Генерация инструкций для дублирования первой из конкатенируемых строки """
         str_start_pointer = data.var(Types.INT)
 
         commands.add(Store, str_start_pointer)
@@ -144,11 +130,9 @@ class StringCompiler:
         # Читаем строку и кладем её на стек
         Loop.data(commands, data, str_start_pointer, cycle_body, memory_type='heap')
 
-    """
-    Генерация инструкций для дублирования второй из конкатенируемых строки и запись её в памяти за первой
-    """
     @staticmethod
     def strcat_second(commands, data, type):
+        """ Генерация инструкций для дублирования второй из конкатенируемых строки и запись её в памяти за первой """
         str_start_pointer = data.var(Types.INT)
         str_length = data.var(Types.INT)
 
@@ -166,11 +150,9 @@ class StringCompiler:
 
         StringCompiler.store(commands, data)
 
-    """
-    Генерация инструкций для создания строки заданной длины с повторяющимся символом
-    """
     @staticmethod
     def strmake(commands, data):
+        """ Генерация инструкций для создания строки заданной длины с повторяющимся символом """
         str_start_pointer = data.var(Types.INT)
         str_length = data.var(Types.INT)
         basis_symbol = data.var(Types.CHAR)
@@ -205,11 +187,9 @@ class StringCompiler:
         # Отдаем на стек указатель на начало созданной строки для дальнейшего использования
         commands.add(Load, str_start_pointer)
 
-    """
-    Генерация инструкций для посимвольного сравнивания двух строк
-    """
     @staticmethod
     def strcmp(commands, data, type1, type2):
+        """ Генерация инструкций для посимвольного сравнивания двух строк """
         str1_start_pointer = data.var(Types.INT)
         str2_start_pointer = data.var(Types.INT)
 

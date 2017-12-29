@@ -9,16 +9,18 @@ from pprint import pprint
 У каждой команды есть метод eval, который реализует её интерпретацию стековой машиной.
 """
 
-""" Взятие значения со стека. """
+
 class Push:
+    """ Взятие значения со стека. """
     def __init__(self, value):
         self.value = value
 
     def eval(self, vm):
         vm.stack.append(int(self.value))
 
-""" Помещение значения в стек. """
+
 class Pop:
+    """ Помещение значения в стек. """
     def __init__(self): pass
 
     def eval(self, vm):
@@ -26,8 +28,9 @@ class Pop:
             raise RuntimeError('Stack is empty')
         return vm.stack.pop()
 
-""" Помещение значения в стек. """
+
 class Dup:
+    """ Помещение значения в стек. """
     def __init__(self): pass
 
     def eval(self, vm):
@@ -35,15 +38,17 @@ class Dup:
             raise RuntimeError('Stack is empty')
         vm.stack.append(vm.stack[-1])
 
-""" Отсутствие операции, команда пропускается. """
+
 class Nop:
+    """ Отсутствие операции, команда пропускается. """
     def __init__(self): pass
 
     def eval(self, vm):
         pass
 
-""" Помещение в стек значения переменной с адресом address, взимаемой из стековой памяти данных. """
+
 class Load:
+    """ Помещение в стек значения переменной с адресом address, взимаемой из стековой памяти данных. """
     def __init__(self, address):
         self.address = address
 
@@ -53,11 +58,12 @@ class Load:
             raise RuntimeError('Unknown variable \'' + str(self.address) + '\'')
         vm.stack.append(value)
 
-"""
-Помещение в стек значение переменной с адресом address, взимаемой из стековой памяти данных,
-который расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
-"""
+
 class BLoad:
+    """
+    Помещение в стек значение переменной с адресом address, взимаемой из стековой памяти данных,
+    который расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
+    """
     def __init__(self, address):
         self.address = address
 
@@ -68,8 +74,9 @@ class BLoad:
             raise RuntimeError('Unknown variable \'' + str(self.address) + '\'')
         vm.stack.append(value)
 
-""" Помещение в стек значение переменной с адресом address, взимаемой из кучи. """
+
 class DLoad:
+    """ Помещение в стек значение переменной с адресом address, взимаемой из кучи. """
     def __init__(self, address):
         self.address = address
 
@@ -79,11 +86,12 @@ class DLoad:
             raise RuntimeError('Unknown variable \'' + str(self.address) + '\'')
         vm.stack.append(value)
 
-"""
-Помещение в стек значение переменной с адресом address, взимаемой из кучи,
-который расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
-"""
+
 class DBLoad:
+    """
+    Помещение в стек значение переменной с адресом address, взимаемой из кучи,
+    который расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
+    """
     def __init__(self, address):
         self.address = address
 
@@ -92,8 +100,9 @@ class DBLoad:
         value = vm.heap[address]
         vm.stack.append(value)
 
-""" Сохранение значения переменной с адресом address в стекуовую память данных. """
+
 class Store:
+    """ Сохранение значения переменной с адресом address в стекуовую память данных. """
     def __init__(self, address):
         self.address = address
 
@@ -102,11 +111,12 @@ class Store:
             raise RuntimeError('Stack is empty')
         vm.scope().stack[self.address] = vm.stack.pop()
 
-"""
-Сохранение значения переменной с адресом address в стековую памяти данных,
-который расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
-"""
+
 class BStore:
+    """
+    Сохранение значения переменной с адресом address в стековую памяти данных,
+    который расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
+    """
     def __init__(self, address):
         self.address = address
 
@@ -117,8 +127,9 @@ class BStore:
         address = self.address + vm.stack.pop()
         vm.scope().stack[address] = vm.stack.pop()
 
-""" Сохранение значения переменной с адресом address в кучу. """
+
 class DStore:
+    """ Сохранение значения переменной с адресом address в кучу. """
     def __init__(self, address):
         self.address = address
 
@@ -128,11 +139,12 @@ class DStore:
 
         vm.heap[self.address] = vm.stack.pop()
 
-"""
-Сохранение значения переменной с адресом address в кучу,
-который расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
-"""
+
 class DBStore:
+    """
+    Сохранение значения переменной с адресом address в кучу,
+    который расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
+    """
     def __init__(self, address):
         self.address = address
 
@@ -143,8 +155,9 @@ class DBStore:
         address = self.address + vm.stack.pop()
         vm.heap[address] = vm.stack.pop()
 
-""" Взятие со стека двух чисел, их сложение и помещение результата обратно в стек. """
+
 class Add:
+    """ Взятие со стека двух чисел, их сложение и помещение результата обратно в стек. """
     def __init__(self): pass
 
     def eval(self, vm):
@@ -154,8 +167,9 @@ class Add:
         num2 = vm.stack.pop()
         vm.stack.append(num1 + num2)
 
-""" Взятие со стека двух чисел, их умножение и помещение результата обратно в стек. """
+
 class Mul:
+    """ Взятие со стека двух чисел, их умножение и помещение результата обратно в стек. """
     def __init__(self): pass
 
     def eval(self, vm):
@@ -165,8 +179,9 @@ class Mul:
         num2 = vm.stack.pop()
         vm.stack.append(num1 * num2)
 
-""" Взятие со стека двух чисел, их вычитание и помещение результата обратно в стек. """
+
 class Sub:
+    """ Взятие со стека двух чисел, их вычитание и помещение результата обратно в стек. """
     def __init__(self): pass
 
     def eval(self, vm):
@@ -176,8 +191,9 @@ class Sub:
         num2 = vm.stack.pop()
         vm.stack.append(num2 - num1)
 
-""" Взятие со стека двух чисел, их деление и помещение результата обратно в стек. """
+
 class Div:
+    """ Взятие со стека двух чисел, их деление и помещение результата обратно в стек. """
     def __init__(self): pass
 
     def eval(self, vm):
@@ -187,11 +203,12 @@ class Div:
         num2 = vm.stack.pop()
         vm.stack.append(num2 / num1)
 
-"""
-Взятие со стека двух чисел, вычисление остатка от деления первого на второго
-и помещение результата обратно в стек.
-"""
+
 class Mod:
+    """
+    Взятие со стека двух чисел, вычисление остатка от деления первого на второго
+    и помещение результата обратно в стек.
+    """
     def __init__(self): pass
 
     def eval(self, vm):
@@ -201,8 +218,9 @@ class Mod:
         num2 = vm.stack.pop()
         vm.stack.append(num2 % num1)
 
-""" Смена знака числа на вершине стека на противоположный. """
+
 class Invert:
+    """ Смена знака числа на вершине стека на противоположный. """
     def __init__(self): pass
 
     def eval(self, vm):
@@ -211,8 +229,9 @@ class Invert:
         num = vm.stack.pop()
         vm.stack.append(-num)
 
-""" Взятие со стека двух чисел, их сравнение по коду сравнения и помещения результата сравнения обратно в стек. """
+
 class Compare:
+    """ Взятие со стека двух чисел, их сравнение по коду сравнения и помещения результата сравнения обратно в стек. """
     def __init__(self, compare_code):
         self.compare_code = compare_code
 
@@ -238,30 +257,35 @@ class Compare:
             result = 1
         vm.stack.append(result)
 
-""" Установка метки. """
+
 class Label:
+    """ Установка метки. """
     def __init__(self, name):
         self.name = name
 
     def eval(self, vm):
         vm.labels[self.name] = vm.commands.current
 
-"""
-Пометка начала функции.
-Тоже самое, что и метка. Отдельный класс используются для расчетов размера стековой памяти перед запуском.
-"""
-class Function(Label): pass
 
-""" Выполнение безусловного перехода к заданной метке. """
+class Function(Label):
+    """
+    Пометка начала функции.
+    Тоже самое, что и метка. Отдельный класс используются для расчетов размера стековой памяти перед запуском.
+    """
+    pass
+
+
 class Jump:
+    """ Выполнение безусловного перехода к заданной метке. """
     def __init__(self, label):
         self.label = label
 
     def eval(self, vm):
         vm.commands.current = vm.labels[self.label]
 
-""" Выполнение перехода к заданной метке, если значение на вершине стека - 0. """
+
 class Jz:
+    """ Выполнение перехода к заданной метке, если значение на вершине стека - 0. """
     def __init__(self, label):
         self.label = label
 
@@ -272,8 +296,9 @@ class Jz:
         if num == 0:
             vm.commands.current = vm.labels[self.label]
 
-""" Выполнение перехода к заданной метке, если значение на вершине стека - 1. """
+
 class Jnz:
+    """ Выполнение перехода к заданной метке, если значение на вершине стека - 1. """
     def __init__(self, label):
         self.label = label
 
@@ -284,8 +309,9 @@ class Jnz:
         if num == 1:
             vm.commands.current = vm.labels[self.label]
 
-""" Считывание значения из стандартного потока ввода (stdin) и помещение результата на вершину стека. """
+
 class Read:
+    """ Считывание значения из стандартного потока ввода (stdin) и помещение результата на вершину стека. """
     def __init__(self): pass
 
     def eval(self, vm):
@@ -293,8 +319,9 @@ class Read:
         sys.stdout.write('> ')
         vm.stack.append(int(value))
 
-""" Получение значения с вершина стека и его передача в стандартный поток вывода (stdout). """
+
 class Write:
+    """ Получение значения с вершина стека и его передача в стандартный поток вывода (stdout). """
     def __init__(self): pass
 
     def eval(self, vm):
@@ -303,8 +330,9 @@ class Write:
         value = vm.stack.pop()
         sys.stdout.write(str(value) + '\n')
 
-""" Создание и вход в новый scope с заданным набором переменных (variables). """
+
 class Enter:
+    """ Создание и вход в новый scope с заданным набором переменных (variables). """
     def __init__(self, name, variables):
         self.name = name
         self.variables = variables
@@ -312,8 +340,9 @@ class Enter:
     def eval(self, vm):
         vm.create_scope()
 
-""" Выход из текущего scope и переход в вышестоящий. """
+
 class Exit:
+    """ Выход из текущего scope и переход в вышестоящий. """
     def __init__(self, name, variables):
         self.name = name
         self.variables = variables
@@ -321,8 +350,9 @@ class Exit:
     def eval(self, vm):
         vm.remove_scope()
 
-""" Осуществление вызова. """
+
 class Call:
+    """ Осуществление вызова. """
     def __init__(self, name):
         self.name = name
 
@@ -333,8 +363,9 @@ class Call:
         vm.call_stack.append(vm.commands.current)
         vm.commands.current = vm.labels[self.name]
 
-""" Осуществление возврата к месту вызова. """
+
 class Return:
+    """ Осуществление возврата к месту вызова. """
     def __init__(self): pass
 
     def eval(self, vm):
@@ -344,8 +375,9 @@ class Return:
         vm.commands.current = vm.call_stack.pop()
         vm.remove_scope()
 
-""" Выделение в куче памяти заданного размера. """
+
 class Malloc:
+    """ Выделение в куче памяти заданного размера. """
     def __init__(self, size):
         self.size = size
 
@@ -357,11 +389,12 @@ class Malloc:
             i += 1
         vm.stack.append(start_data_pointer)
 
-"""
-Выделение памяти заданного размера,
-который расчитывается по следующему правилу: <размер> = <переданный размер> + <значение с вершины стека>.
-"""
+
 class DMalloc:
+    """
+    Выделение памяти заданного размера,
+    который расчитывается по следующему правилу: <размер> = <переданный размер> + <значение с вершины стека>.
+    """
     def __init__(self, size):
         self.size = size
 
@@ -374,8 +407,9 @@ class DMalloc:
             i += 1
         vm.stack.append(start_data_pointer)
 
-""" Служебная комманда для логирования (выводит содержимое стека или памяти на консоль). """
+
 class Log:
+    """ Служебная комманда для логирования (выводит содержимое стека или памяти на консоль). """
     def __init__(self, type):
         self.type = type
 
@@ -384,16 +418,16 @@ class Log:
         if self.type == 0:
             pprint(vm.stack)
         elif self.type == 1:
-            print '========== Log start (stack memory) ==========='
+            print('========== Log start (stack memory) ===========')
             i = 0
             for item in scope.stack:
-                print str(i) + ': ' + str(item)
+                print(str(i) + ': ' + str(item))
                 i += 1
-            print '==========  Log end (stack memory)  ==========='
+            print('==========  Log end (stack memory)  ===========')
         elif self.type == 2:
-            print '========== Log start (heap memory) ==========='
+            print('========== Log start (heap memory) ===========')
             i = 0
             for item in vm.heap:
-                print str(i) + ': ' + str(item)
+                print(str(i) + ': ' + str(item))
                 i += 1
-            print '==========  Log end (heap memory)  ==========='
+            print('==========  Log end (heap memory)  ===========')

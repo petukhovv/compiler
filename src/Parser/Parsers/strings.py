@@ -1,6 +1,7 @@
-from src.Parser.Parsers.basic import *
+from ..AST.strings import *
 
-from src.Parser.AST.strings import *
+from .basic import *
+
 
 string_predefined_functions = {
     'strlen': StrLen,
@@ -13,8 +14,10 @@ string_predefined_functions = {
     'strmake': StrMake
 }
 
+
 def str_exp():
     return Tag(STRING) ^ String
+
 
 def char_exp():
     return Tag(CHAR) ^ Char
