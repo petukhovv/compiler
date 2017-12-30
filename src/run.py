@@ -1,7 +1,6 @@
 import sys
 import argparse
-
-from os import path, remove, system
+from os import remove, system
 
 from Lexer.tokenizer import tokenize
 from Parser.run import parse
@@ -11,33 +10,17 @@ from Compiler.X86.Helpers.run import compile_x86
 from VM.parser import parse as vm_parse
 from VM.run import run as vm_interpret
 
-sys.path.append(len(sys.argv) == 4 and sys.argv[3] or 'src/..')
+parser = argparse.ArgumentParser()
+group = parser.add_mutually_exclusive_group(required=True)
+group.add_argument('--interpret', '-i', nargs=1, type=str, help='interpret and run')
+group.add_argument('--stack_machine', '-s', nargs=1, type=str, help='compile in virtual machine code and run')
+group.add_argument('--compile', '-o', nargs=1, type=str, help='compile in executable file and run')
 
-current_dir = path.dirname(path.abspath(__file__))
+args = parser.parse_args()
 
-help_commands = '-i - run, -s - compile in virtual machine code, -o - compile in executable file'
 
-if len(sys.argv) <= 1:
-    sys.stderr.write('Mode not specified (' + help_commands + ').\n')
-    exit()
-
-mode = sys.argv[1]
-
-if mode not in ['-i', '-s', '-o']:
-    sys.stderr.write('Mode is incorrect (' + help_commands + ').\n')
-    exit()
-
-if len(sys.argv) <= 2:
-    sys.stderr.write('Source code file not specified.\n')
-    exit()
-
-target_file = sys.argv[2]
-
-if not path.isfile(target_file):
-    sys.stderr.write('Source code file not found (incorrect path: "' + target_file + '").\n')
-    exit()
-
-def parse_program(program):
+def parse_program(target_file):
+    program = open(target_file).read()
     tokens = tokenize(program)
     parse_result = parse(tokens)
     if not parse_result:
@@ -45,20 +28,24 @@ def parse_program(program):
         exit()
     return parse_result.value
 
-program = open(target_file).read()
-ast = parse_program(program)
 
-if mode == '-i':
+if args.interpret:
+    target_file = args.interpret[0]
+    ast = parse_program(target_file)
     interpret(ast)
 
-if mode == '-s':
+if args.stack_machine:
+    target_file = args.stack_machine[0]
+    ast = parse_program(target_file)
     vm_program = compile_vm(ast)
     # f = open('src/test_vm2_out', 'w')
     # f.write(vm_program)
     commands = vm_parse(vm_program)
     vm_interpret(commands)
 
-if mode == '-o':
+if args.compile:
+    target_file = args.compile[0]
+    ast = parse_program(target_file)
     # test_name = path.splitext(path.basename(target_file))[0]
     # nasm_program = compile_x86(ast)
     # f = open(current_dir + '/../runtime/' + test_name + '.asm', 'w')
