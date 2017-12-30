@@ -1,3 +1,5 @@
+from functools import reduce
+
 from .arrays import *
 
 statements = sys.modules[__package__ + '.statements']
