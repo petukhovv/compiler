@@ -29,13 +29,14 @@ def array_element(env, array, index, other_indexes):
         if not isinstance(element, list):
             raise RuntimeError('Array element is not array')
         for other_index in other_indexes:
-            if other_index >= len(element):
+            other_index_number = other_index.eval(env)
+            if other_index_number >= len(element):
                 raise RuntimeError('Array index out of range')
             if isinstance(element, Pointer):
                 element = element.eval()
             if not isinstance(element, list):
                 raise RuntimeError('Array element is not array')
-            element = element[other_index.eval(env)]
+            element = element[other_index_number]
     if isinstance(element, Pointer):
         return element.eval()
     else:

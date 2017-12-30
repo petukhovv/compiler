@@ -1,5 +1,7 @@
 from pprint import pprint
 
+from math import floor
+
 from .Helpers.environment import *
 
 
@@ -21,7 +23,7 @@ def binop_aexp(env, op, left, right):
     elif op == '*':
         value = left_value * right_value
     elif op == '/':
-        value = left_value / right_value
+        value = floor(left_value / right_value)
     elif op == '%':
         value = left_value % right_value
     else:
