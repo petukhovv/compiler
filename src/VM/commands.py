@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+from math import floor
 
 from pprint import pprint
 
@@ -201,7 +202,7 @@ class Div:
             raise RuntimeError('Stack not contains two values')
         num1 = vm.stack.pop()
         num2 = vm.stack.pop()
-        vm.stack.append(num2 / num1)
+        vm.stack.append(floor(num2 / num1))
 
 
 class Mod:
