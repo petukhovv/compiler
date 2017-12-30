@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from pprint import pprint
-
 
 class Commands:
     """ Команды виртуальной машины """

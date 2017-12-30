@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from pprint import pprint
-
 from .Helpers.types import *
 
 """ Мапа: арифметический оператор в языке программирования - арифметический оператор в ASM-коде """

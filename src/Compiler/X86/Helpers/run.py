@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from pprint import pprint
-
 ASM_COMMANDS_SEPARATOR = '\n'
 ASM_ARGS_SEPARATOR = ','
 

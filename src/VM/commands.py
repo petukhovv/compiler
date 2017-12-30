@@ -3,8 +3,6 @@
 import sys
 from math import floor
 
-from pprint import pprint
-
 """
 Перечисление команд стековой машины.
 У каждой команды есть метод eval, который реализует её интерпретацию стековой машиной.
@@ -417,7 +415,7 @@ class Log:
     def eval(self, vm):
         scope = vm.scope()
         if self.type == 0:
-            pprint(vm.stack)
+            print(vm.stack)
         elif self.type == 1:
             print('========== Log start (stack memory) ===========')
             i = 0

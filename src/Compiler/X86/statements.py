@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from pprint import pprint
-
 
 def assign_statement(compiler, variable, aexp):
     """ Компиляция выражения присваивания """

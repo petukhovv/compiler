@@ -1,6 +1,5 @@
 from Compiler.VM import common as compile_vm
 from Interpreter import common as interpreter
-from pprint import pprint
 
 
 class Pointer:

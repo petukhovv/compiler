@@ -2,8 +2,6 @@ from Compiler.X86 import statements as compile_x86
 from Compiler.VM import statements as compile_vm
 from Interpreter import statements as interpreter
 
-from pprint import pprint
-
 
 class AssignStatement:
     """

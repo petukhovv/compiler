@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from .conf import *
-from pprint import pprint
 
 
 def parse(program):
