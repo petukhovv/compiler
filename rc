@@ -2,4 +2,4 @@
 
 HOME_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-python3 ${HOME_DIR}/src/run.py "$@"
+python3 ${HOME_DIR}/src/main.py "$@"
