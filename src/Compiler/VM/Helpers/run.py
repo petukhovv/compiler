@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from commands import Commands
-from environment import Environment
+from .commands import Commands
+from .environment import Environment
 
 VM_COMMANDS_SEPARATOR = '\n'
 
