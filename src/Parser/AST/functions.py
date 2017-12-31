@@ -1,6 +1,7 @@
 from Interpreter.Helpers.environment import *
 
 from Compiler.VM import functions as compile_vm
+from Compiler.X86 import functions as compile_x86
 from Interpreter import functions as interpreter
 
 
@@ -20,6 +21,9 @@ class Function:
     def compile_vm(self, commands, data):
         return compile_vm.function(commands, data, self.name, self.args, self.body)
 
+    def compile_x86(self, compiler):
+        return compile_x86.function(compiler, self.name, self.args, self.body)
+
 
 class ReturnStatement:
     """
@@ -34,6 +38,9 @@ class ReturnStatement:
 
     def compile_vm(self, commands, data):
         return compile_vm.return_statement(commands, data, self.expr)
+
+    def compile_x86(self, compiler):
+        return compile_x86.return_statement(compiler, self.expr)
 
 
 class FunctionCallStatement:
@@ -59,3 +66,6 @@ class FunctionCallStatement:
 
     def compile_vm(self, commands, data):
         return compile_vm.call_statement(commands, data, self.name, self.args)
+
+    def compile_x86(self, compiler):
+        return compile_x86.call_statement(compiler, self.name, self.args)

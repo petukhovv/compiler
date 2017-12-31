@@ -3,10 +3,12 @@
 from .commands import Commands
 from .environment import Environment
 
+
 VM_COMMANDS_SEPARATOR = '\n'
 
-""" Запуск компилятора в стековый код (точка входа) """
+
 def compile_vm(ast):
+    """ Запуск компилятора в стековый код (точка входа) """
     commands = Commands()
     ast.compile_vm(commands, Environment())
 

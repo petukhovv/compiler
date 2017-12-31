@@ -9,7 +9,7 @@ class Environment:
     label_counter = 0       # Счетчик меток
     labels = {}             # Метки
 
-    current_function = None  # Тип данных возвращаемого значения из подпрограммы
+    current_function = None  # Имя подпрограммы, в которой находимся в данный момент
 
     def set_return_type(self, type):
         if self.current_function is None:

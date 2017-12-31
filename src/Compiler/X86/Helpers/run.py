@@ -1,28 +1,44 @@
 # -*- coding: utf-8 -*-
 
+from .environment import Environment
+
 ASM_COMMANDS_SEPARATOR = '\n'
 ASM_ARGS_SEPARATOR = ','
 
 
 class Data(list):
     def add(self, label, command, data):
-        self.append(label + ': ' + command + ' ' + data + '\n')
+        self.append(label + ': ' + command + ' ' + data + ASM_COMMANDS_SEPARATOR)
 
 
 class Vars:
     def __init__(self, bss):
         self.bss = bss
         self.vars = {}
+        self.var_counter = 0
 
-    def add(self, name, type, bytes):
+    def add(self, name, asm_type, bytes, type=None):
         if name in self.vars:
             return
 
-        self.vars[name] = type
-        self.bss.add('_var_' + name, type, bytes)
+        if name is None:
+            name = self.var_counter
+            self.var_counter += 1
+
+        self.vars[name] = {
+            'type': type
+        }
+        self.bss.add('_var_' + str(name), asm_type, bytes)
+        if type:
+            self.bss.add('_var_type_' + str(name), asm_type, bytes)
+
+        return name
 
     def get(self, name):
-        return 'dword [_var_' + name + ']'
+        return 'dword [_var_' + str(name) + ']'
+
+    def get_type(self, name):
+        return 'dword [_var_type_' + str(name) + ']'
 
 
 class BSS(list):
@@ -30,7 +46,7 @@ class BSS(list):
         self.vars = Vars(self)
 
     def add(self, name, type, bytes):
-        self.append(name + ' ' + type + ' ' + str(bytes) + '\n')
+        self.append(name + ' ' + type + ' ' + str(bytes) + ASM_COMMANDS_SEPARATOR)
 
 
 class Code(list):
@@ -50,18 +66,19 @@ class Labels(list):
         return self.label_names_prefix + str(self.labels_counter)
 
     def add(self, code):
-        code_lines = code.split('\n')
+        code_lines = code.split(ASM_COMMANDS_SEPARATOR)
         for code_line in code_lines:
             self.append(code_line)
 
 
-class Compiler():
+class Compiler:
     def __init__(self):
         self.data = Data()
         self.bss = BSS()
         self.code = Code()
         self.labels = Labels(self.bss)
         self.target_register = None
+        self.environment = Environment()
 
     def exit(self):
         self.code.add('push', [0])
@@ -73,15 +90,15 @@ class Compiler():
         self.exit()
 
         return (
-            'SECTION .data\n' +
+            'SECTION .data' + ASM_COMMANDS_SEPARATOR +
             ASM_COMMANDS_SEPARATOR.join(self.data) +
-            'SECTION .bss\n' +
+            'SECTION .bss' + ASM_COMMANDS_SEPARATOR +
             ASM_COMMANDS_SEPARATOR.join(self.bss) +
-            'SECTION .text\n' +
-            'global start\n' +
-            ASM_COMMANDS_SEPARATOR.join(self.labels) + '\n'
-            'start:\n' +
-            ASM_COMMANDS_SEPARATOR.join(self.code) + '\n'
+            'SECTION .text' + ASM_COMMANDS_SEPARATOR +
+            'global start' + ASM_COMMANDS_SEPARATOR +
+            ASM_COMMANDS_SEPARATOR.join(self.labels) + ASM_COMMANDS_SEPARATOR +
+            'start:' + ASM_COMMANDS_SEPARATOR +
+            ASM_COMMANDS_SEPARATOR.join(self.code) + ASM_COMMANDS_SEPARATOR
         )
 
 
