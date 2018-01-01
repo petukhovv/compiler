@@ -12,8 +12,9 @@ class Data(list):
 
 
 class Vars:
-    def __init__(self, bss):
+    def __init__(self, bss, environment):
         self.bss = bss
+        self.environment = environment
         self.vars = {}
         self.var_counter = 0
 
@@ -35,15 +36,23 @@ class Vars:
         return name
 
     def get(self, name):
-        return 'dword [_var_' + str(name) + ']'
+        env = self.environment
+        if env.current_function and 'args' in env.labels[env.current_function]\
+                and name in env.labels[env.current_function]['args']:
+            args = env.labels[env.current_function]['args']
+            arg_number = args[name]
+            offset = (len(args) - arg_number - 1) * 4 + 8
+            return 'dword [ebp + ' + str(offset) + ']'
+        else:
+            return 'dword [_var_' + str(name) + ']'
 
     def get_type(self, name):
         return 'dword [_var_type_' + str(name) + ']'
 
 
 class BSS(list):
-    def __init__(self):
-        self.vars = Vars(self)
+    def __init__(self, environment):
+        self.vars = Vars(self, environment)
 
     def add(self, name, type, bytes):
         self.append(name + ' ' + type + ' ' + str(bytes) + ASM_COMMANDS_SEPARATOR)
@@ -74,11 +83,11 @@ class Labels(list):
 class Compiler:
     def __init__(self):
         self.data = Data()
-        self.bss = BSS()
+        self.environment = Environment()
+        self.bss = BSS(self.environment)
         self.code = Code()
         self.labels = Labels(self.bss)
         self.target_register = None
-        self.environment = Environment()
 
     def exit(self):
         self.code.add('push', [0])

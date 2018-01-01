@@ -20,6 +20,18 @@ class Environment:
     def get_return_type(self, name):
         return self.labels[name]['return_type']
 
+    def set_args(self, args):
+        if self.current_function is None:
+            return
+
+        self.labels[self.current_function]['args'] = args
+
+    def get_current_function(self):
+        return self.current_function
+
+    def get_current_function_number(self):
+        return self.labels[self.current_function]['number'] if self.current_function else None
+
     def start_function(self, name):
         self.var_counter_root = self.var_counter
         self.var_counter = 0

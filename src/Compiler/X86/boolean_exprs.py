@@ -39,6 +39,7 @@ def and_bexp(compiler, left, right):
     finish_false_label = compiler.labels.create()
 
     left.compile_x86(compiler)
+    compiler.code.add('pop', ['eax'])
 
     # Если первый операнд == 0, второй уже не проверяем,
     # а сразу переходим к метке ложного результата (ленивая проверка)
@@ -47,6 +48,7 @@ def and_bexp(compiler, left, right):
 
     # Иначе будем проверять и второй
     right.compile_x86(compiler)
+    compiler.code.add('pop', ['eax'])
 
     # Если второй операнд == 0, то переходим к метке ложного результата
     compiler.code.add('cmp', ['eax', 1])

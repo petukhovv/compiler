@@ -65,9 +65,11 @@ def if_statement(compiler, condition, true_stmt, alternatives_stmt, false_stmt, 
 
     condition.compile_x86(compiler)
     # Если условие не выполнилось, пропускаем ветку.
+    compiler.code.add('pop', ['eax'])
     compiler.code.add('cmp', ['eax', 1])
     compiler.code.add('jnz near', [skip_true_stmt_label])
     true_stmt.compile_x86(compiler)
+    compiler.code.add('pop', ['eax'])
 
     is_first_if = label_endif is None
     # Первая ветка условия, метки конца условия ещё нет - создаём её.

@@ -15,19 +15,24 @@ def function(compiler, name, args, body):
     # На эту метку переходим при вызове
     compiler.code.add('_fun_' + str(start_function) + ':', [])
 
-    function_call_address_var_name = '_fun_' + str(start_function) + '_call'
-    compiler.bss.vars.add(function_call_address_var_name, 'resb', 255)
-    compiler.code.add('pop', [compiler.bss.vars.get(function_call_address_var_name)])
+    compiler.code.add('push', ['ebp'])
+    compiler.code.add('mov', ['ebp', 'esp'])
 
     FunctionCompiler.args_write(compiler, args)
 
     # Компилируем код тела функции
     body.compile_x86(compiler)
 
-    compiler.code.add('push', [compiler.bss.vars.get(function_call_address_var_name)])
+    return_type = compiler.environment.get_return_type(name)
 
-    # Компилируем конструкцию возврата к месту вызова
-    compiler.code.add('ret', [])
+    if not return_type:
+        compiler.code.add('pop', ['eax'])
+        # Компилируем конструкцию возврата к месту вызова
+        compiler.code.add('mov', ['esp', 'ebp'])
+        compiler.code.add('pop', ['ebp'])
+        env = compiler.environment
+        args = env.labels[env.current_function]['args']
+        compiler.code.add('ret', [len(args) * 4])
 
     compiler.code.add(finish_function + ':', [])
 
@@ -39,6 +44,14 @@ def return_statement(compiler, expr):
     return_type = expr.compile_x86(compiler)
     compiler.environment.set_return_type(return_type)
 
+    compiler.code.add('pop', ['eax'])
+    # Компилируем конструкцию возврата к месту вызова
+    compiler.code.add('mov', ['esp', 'ebp'])
+    compiler.code.add('pop', ['ebp'])
+    env = compiler.environment
+    args = env.labels[env.current_function]['args']
+    compiler.code.add('ret', [len(args) * 4])
+
 
 def call_statement(compiler, name, args):
     """ Компиляция выражения вызова функции """
@@ -47,5 +60,6 @@ def call_statement(compiler, name, args):
 
     function_label = compiler.environment.get_label(name)
     compiler.code.add('call', ['_fun_' + str(function_label)])
+    compiler.code.add('push', ['eax'])
 
     return compiler.environment.get_return_type(name)

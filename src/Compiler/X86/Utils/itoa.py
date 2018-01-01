@@ -12,5 +12,5 @@ class Itoa(Base):
 
         self.load('itoa.asm')
         self.compiler.data.add('_itoa_radix', 'dd', '10')
-        self.compiler.bss.add('_char', 'resb', 1)
+        self.compiler.bss.add('_char', 'resb', 4)
         Itoa.is_loaded = True
