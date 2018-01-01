@@ -1,6 +1,7 @@
 import sys
+import os
 import argparse
-from os import remove, system
+from os import path, system
 
 from Lexer.tokenizer import tokenize
 from Parser.run import parse
@@ -38,35 +39,20 @@ if args.stack_machine:
     target_file = args.stack_machine[0]
     ast = parse_program(target_file)
     vm_program = compile_vm(ast)
-    # f = open('src/test_vm2_out', 'w')
-    # f.write(vm_program)
     commands = vm_parse(vm_program)
     vm_interpret(commands)
 
 if args.compile:
     target_file = args.compile[0]
     ast = parse_program(target_file)
-    # test_name = path.splitext(path.basename(target_file))[0]
-    # nasm_program = compile_x86(ast)
-    # f = open(current_dir + '/../runtime/' + test_name + '.asm', 'w')
-    # f.write(nasm_program)
-    # f.close()
-
     nasm_program = compile_x86(ast)
-    f = open('./program.asm', 'w')
-    f.write(nasm_program)
-    f.close()
-    system('nasm -f macho ./program.asm -l ./program.lst')
-    system('ld -o ./program ./program.o')
-    # remove('./program.o')
-    # remove('./program.asm')
-    system('./program')
-    remove('./program')
 
-    # system('nasm -f macho ' + current_dir + '/../runtime/' + test_name + '.asm -l ' + current_dir + '/../runtime/' + test_name + '.lst && ' +
-    #        'ld -o ' + test_name + ' ' + current_dir + '/../runtime/' + test_name + '.o && ' +
-    #        'rm ' + current_dir + '/../runtime/' + test_name + '.asm'
-    #        )
+    filename = path.splitext(path.basename(target_file))[0]
+    runtime = os.environ.get('RC_RUNTIME')
+    basepath = runtime + '/' + filename
 
-    # p = sub.Popen([current_dir + '/program'], stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE)
-    # output, errors = p.communicate()
+    with open(basepath + '.asm', 'w') as f:
+        f.write(nasm_program)
+
+    system('nasm -f macho ' + basepath + '.asm -l ' + basepath + '.lst')
+    system('ld -o ./' + filename + ' ' + basepath + '.o')

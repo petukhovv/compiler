@@ -92,8 +92,8 @@ class Compiler:
     def exit(self):
         self.code.add('push', [0])
         self.code.add('mov', ['eax', 1])
-        self.code.add('sub', ['esp', 12])
-        self.code.add('int', ['0x80'])
+        self.code.add('sub', ['esp', 1])
+        self.code.add('int', [0x80])
 
     def assemble(self):
         self.exit()

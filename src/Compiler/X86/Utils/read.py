@@ -14,6 +14,8 @@ class Read(Base):
 
         self.load('read.asm')
         self.compiler.bss.add('_read_buffer', 'resb', 255)
+        self.compiler.bss.add('_read_buffer_done', 'resb', 4)
+        self.compiler.bss.add('_read_buffer_all', 'resb', 4)
         self.compiler.data.add('_read_buffer_size', 'dd', '255')
         Read.is_loaded = True
 
@@ -21,6 +23,7 @@ class Read(Base):
 
     def call(self):
         self.compiler.code.add('call', ['_read'])
+        self.compiler.code.add('mov', ['[_read_buffer_all]', 'eax'])
 
         Atoi(self.compiler)
 

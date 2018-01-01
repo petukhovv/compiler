@@ -18,7 +18,9 @@ def function(compiler, name, args, body):
     compiler.code.add('push', ['ebp'])
     compiler.code.add('mov', ['ebp', 'esp'])
 
-    FunctionCompiler.args_write(compiler, args)
+    # Привязываем мапу аргументов с их порядковыми номерами к метке функции
+    args_map = {k: v for v, k in enumerate(args.elements)}
+    compiler.environment.set_args(args_map)
 
     # Компилируем код тела функции
     body.compile_x86(compiler)
