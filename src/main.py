@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser()
 group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument('--interpret', '-i', nargs=1, type=str, help='interpret and run')
 group.add_argument('--stack_machine', '-s', nargs=1, type=str, help='compile in virtual machine code and run')
-group.add_argument('--compile', '-o', nargs=1, type=str, help='compile in executable file and run')
+group.add_argument('--compile', '-o', nargs=1, type=str, help='compile in nasm code and then executable file')
 
 args = parser.parse_args()
 
