@@ -3,6 +3,7 @@ from ..Helpers.types import *
 from .base import Base
 from .itoa import Itoa
 
+
 class Write(Base):
     is_loaded = False
 

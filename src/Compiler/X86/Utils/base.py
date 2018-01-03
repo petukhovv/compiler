@@ -10,5 +10,5 @@ class Base:
     def load(self, file):
         dir = os.path.dirname(os.path.abspath(__file__))
         f = open(dir + self.path + file, 'r')
-        itoa_code = f.read()
-        self.compiler.labels.add(itoa_code)
+        asm_code = f.read()
+        self.compiler.labels.add(asm_code)

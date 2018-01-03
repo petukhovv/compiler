@@ -54,5 +54,5 @@ if args.compile:
     with open(basepath + '.asm', 'w') as f:
         f.write(nasm_program)
 
-    system('nasm -f macho ' + basepath + '.asm')
-    system('ld -o ./' + filename + ' ' + basepath + '.o')
+    system('nasm -g -f macho ' + basepath + '.asm')
+    system('gcc -m32 -Wl,-no_pie -o ./' + filename + ' ' + basepath + '.o')

@@ -8,7 +8,7 @@ ASM_ARGS_SEPARATOR = ','
 
 class Data(list):
     def add(self, label, command, data):
-        self.append(label + ': ' + command + ' ' + data + ASM_COMMANDS_SEPARATOR)
+        self.append(label + ': ' + command + ' ' + str(data) + ASM_COMMANDS_SEPARATOR)
 
 
 class Vars:
@@ -99,14 +99,15 @@ class Compiler:
         self.exit()
 
         return (
+            'EXTERN _malloc' + ASM_COMMANDS_SEPARATOR +
             'SECTION .data' + ASM_COMMANDS_SEPARATOR +
             ASM_COMMANDS_SEPARATOR.join(self.data) +
             'SECTION .bss' + ASM_COMMANDS_SEPARATOR +
             ASM_COMMANDS_SEPARATOR.join(self.bss) +
             'SECTION .text' + ASM_COMMANDS_SEPARATOR +
-            'global start' + ASM_COMMANDS_SEPARATOR +
+            'global _main' + ASM_COMMANDS_SEPARATOR +
             ASM_COMMANDS_SEPARATOR.join(self.labels) + ASM_COMMANDS_SEPARATOR +
-            'start:' + ASM_COMMANDS_SEPARATOR +
+            '_main:' + ASM_COMMANDS_SEPARATOR +
             ASM_COMMANDS_SEPARATOR.join(self.code) + ASM_COMMANDS_SEPARATOR
         )
 
