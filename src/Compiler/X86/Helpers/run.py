@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from .environment import Environment
+from .commands import Commands
 
 ASM_COMMANDS_SEPARATOR = '\n'
 ASM_ARGS_SEPARATOR = ','
@@ -12,8 +13,9 @@ class Data(list):
 
 
 class Vars:
-    def __init__(self, bss, environment):
+    def __init__(self, bss, compiler, environment):
         self.bss = bss
+        self.compiler = compiler
         self.environment = environment
         self.vars = {}
         self.var_counter = 0
@@ -33,7 +35,10 @@ class Vars:
         if type:
             self.bss.add('_var_type_' + str(name), asm_type, bytes)
 
-        return name
+        return '_var_' + str(name)
+
+    def pop(self, name):
+        self.compiler.code.add('pop', ['dword [%s]' % name])
 
     def get(self, name):
         env = self.environment
@@ -51,8 +56,8 @@ class Vars:
 
 
 class BSS(list):
-    def __init__(self, environment):
-        self.vars = Vars(self, environment)
+    def __init__(self, compiler, environment):
+        self.vars = Vars(self, compiler, environment)
 
     def add(self, name, type, bytes):
         self.append(name + ' ' + type + ' ' + str(bytes) + ASM_COMMANDS_SEPARATOR)
@@ -84,8 +89,9 @@ class Compiler:
     def __init__(self):
         self.data = Data()
         self.environment = Environment()
-        self.bss = BSS(self.environment)
+        self.bss = BSS(self, self.environment)
         self.code = Code()
+        self.commands = Commands(self)
         self.labels = Labels(self.bss)
         self.target_register = None
 

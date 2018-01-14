@@ -1,5 +1,6 @@
 from Compiler.VM import strings as compile_vm
 from Interpreter import strings as interpreter
+from Compiler.X86 import strings as compile_x86
 
 from .base import *
 
@@ -14,6 +15,9 @@ class Char(Stackable):
     def compile_vm(self, commands, data):
         return compile_vm.char(commands, data, self.character)
 
+    def compile_x86(self, compiler):
+        return compile_x86.char(compiler, self.character)
+
 
 class String(Heapable):
     def __init__(self, characters):
@@ -24,6 +28,9 @@ class String(Heapable):
 
     def compile_vm(self, commands, data):
         return compile_vm.string(commands, data, self.characters)
+
+    def compile_x86(self, compiler):
+        return compile_x86.string(compiler, self.characters)
 
 
 class StrLen(Stackable):
