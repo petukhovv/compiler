@@ -49,3 +49,26 @@ class StringCompiler:
 
         # Считываем строку из памяти до конца (пока не встретим 0), подсчитывая кол-во символов (его кладем на стек)
         Loop.data(compiler, str_start_pointer)
+
+    @staticmethod
+    def strget(compiler, type):
+        """ Генерация инструкций для получения определенного символа строки """
+        # Прибавляем к номеру ячейки с началом строки номер требуемого символа (offset)
+        compiler.code.add('pop', ['eax'])
+        compiler.code.add('pop', ['ebx'])
+        compiler.code.add('add', ['eax', 'ebx'])
+        # Загружаем на стек символ по номеру его ячейки в heap memory
+        compiler.code.add('movzx', ['ebx', 'byte [eax]'])
+        compiler.code.add('push', ['ebx'])
+
+    @staticmethod
+    def strset(compiler, type):
+        """ Генерация инструкций для замены определенного символа строки """
+        # Вычисляем ячейки heap memory, где находится заменяемый символ
+        compiler.code.add('pop', ['eax'])
+        compiler.code.add('pop', ['ebx'])
+        compiler.code.add('add', ['eax', 'ebx'])
+        compiler.code.add('pop', ['ebx'])
+
+        # Производим замену символа
+        compiler.code.add('mov', ['byte [eax]', 'bl'])

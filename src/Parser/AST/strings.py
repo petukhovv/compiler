@@ -57,6 +57,9 @@ class StrGet(Stackable):
     def compile_vm(self, commands, data):
         return compile_vm.strget(commands, data, self.args)
 
+    def compile_x86(self, compiler):
+        return compile_x86.strget(compiler, self.args)
+
 
 class StrSub(Heapable):
     def __init__(self, args):
@@ -89,6 +92,9 @@ class StrSet:
 
     def compile_vm(self, commands, data):
         return compile_vm.strset(commands, data, self.args)
+
+    def compile_x86(self, compiler):
+        return compile_x86.strset(compiler, self.args)
 
 
 class StrCat(Heapable):
