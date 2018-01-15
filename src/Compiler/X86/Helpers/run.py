@@ -33,7 +33,7 @@ class Vars:
         }
         self.bss.add('_var_' + str(name), asm_type, bytes)
         if type:
-            self.bss.add('_var_type_' + str(name), asm_type, bytes)
+            self.bss.add('_var_type_' + str(name), asm_type, 1)
 
         return '_var_' + str(name)
 

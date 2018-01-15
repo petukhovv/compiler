@@ -67,7 +67,7 @@ class Loop:
             compiler.code.add('pop', ['eax'])
             compiler.code.add('push', ['eax'])
             compiler.code.add('cmp', ['eax', 0])
-            compiler.code.add('jnz near', [finish_label])
+            compiler.code.add('jz near', [finish_label])
 
         result = Loop.base(compiler, check_break_condition, callback, load_counter, return_counter)
 
@@ -87,8 +87,8 @@ class Loop:
             compiler.code.add('mov', ['eax', 'dword [%s]' % start_pointer])
             compiler.code.add('mov', ['ebx', 'dword [%s]' % _counter])
             compiler.code.add('add', ['eax', 'ebx'])
-            compiler.code.add('mov', ['eax', 'dword [eax]'])
+            compiler.code.add('movzx', ['eax', 'byte [eax]'])
             compiler.code.add('cmp', ['eax', 0])
-            compiler.code.add('jnz near', [finish_label])
+            compiler.code.add('jz near', [finish_label])
 
         return Loop.base(compiler, check_break_condition, callback, load_counter, return_counter)

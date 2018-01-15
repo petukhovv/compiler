@@ -1,13 +1,19 @@
 from .base import Base
 
+from ..Utils.atoi import *
 
-def malloc(compiler):
-    compiler.code.add('pop', ['eax'])
-    compiler.code.add('push', ['ebp'])
-    compiler.code.add('mov', ['ebp', 'esp'])
-    compiler.code.add('sub', ['esp', 4])
-    compiler.code.add('push', ['eax'])
-    compiler.code.add('call', ['_malloc'])
-    compiler.code.add('add', ['esp', 8])
-    compiler.code.add('pop', ['ebp'])
 
+class Malloc(Base):
+    is_loaded = False
+
+    def __init__(self, compiler):
+        Base.__init__(self, compiler)
+
+        if Malloc.is_loaded:
+            return
+
+        self.load('malloc.asm')
+        Malloc.is_loaded = True
+
+    def call(self):
+        self.compiler.code.add('call', ['malloc'])

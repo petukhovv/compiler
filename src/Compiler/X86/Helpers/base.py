@@ -21,10 +21,11 @@ def dbstore(compiler, address, offset, invert=False, value=0):
         compiler.code.add('mov', ['ebx', 0])
     else:
         compiler.code.add('mov', ['ebx', 'dword [%s]' % offset])
-    compiler.code.add('add' if invert else 'sub', ['eax', 'ebx'])
+    compiler.code.add('sub' if invert else 'add', ['eax', 'ebx'])
 
     compiler.code.add('add', ['eax', value])
-    compiler.code.add('pop', ['dword [eax]'])
+    compiler.code.add('pop', ['ebx'])
+    compiler.code.add('mov', ['byte [eax]', 'bl'])
 
 
 def calc_arr_element_address(compiler, arr_pointer, counter):
