@@ -1,4 +1,3 @@
-from .lexer import lex
 from .types import *
 
 
@@ -10,11 +9,6 @@ def token(regexp, tag, right_context='', left_context=''):
 def keyword(name):
     """ Make keyword definition (token with RESERVED type) """
     return token(name, RESERVED, right_context='\W')
-
-
-def tokenize(code):
-    """ Wrapper to run the Lexer (with the token expressions listed here). """
-    return lex(code, token_expressions)
 
 
 token_expressions = [

@@ -120,3 +120,21 @@ class StringCompiler:
         compiler.code.add(str(finish_label) + ':', [])
         # Отдаем на стек указатель на начало подстроки для дальнейшего использования
         compiler.code.add('push', ['dword [%s]' % start_substr_pointer])
+
+    @staticmethod
+    def strdup(compiler, type):
+        """ Генерация инструкций для дублирования строки """
+        str_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+
+        # Разыменовываем лежащий на стеке указатель и записываем его в переменную
+        compiler.code.add('pop', ['dword [%s]' % str_start_pointer])
+
+        # Кладем на стек 0 - маркер конца строки
+        commands.add(Push, 0)
+
+        def cycle_body(_counter, a, b):
+            dbload(str_start_pointer, _counter, commands)
+            dbstore(compiler, start_substr_pointer, _counter)
+
+        # Читаем строку и кладем её на стек
+        Loop.data(compiler, str_start_pointer, cycle_body, memory_type='heap')

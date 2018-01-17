@@ -3,7 +3,7 @@ import os
 import argparse
 from os import path, system
 
-from Lexer.tokenizer import tokenize
+from Lexer.run import run as lex
 from Parser.run import parse
 from Interpreter.Helpers.run import interpret
 from Compiler.VM.Helpers.run import compile_vm
@@ -22,7 +22,7 @@ args = parser.parse_args()
 
 def parse_program(target_file):
     program = open(target_file).read()
-    tokens = tokenize(program)
+    tokens = lex(program)
     parse_result = parse(tokens)
     if not parse_result:
         sys.stderr.write('Parse error!\n')
