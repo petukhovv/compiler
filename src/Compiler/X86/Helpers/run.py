@@ -60,12 +60,12 @@ class BSS(list):
         self.vars = Vars(self, compiler, environment)
 
     def add(self, name, type, bytes):
-        self.append(name + ' ' + type + ' ' + str(bytes) + ASM_COMMANDS_SEPARATOR)
+        self.append(name + '\t\t' + type + ' ' + str(bytes) + ASM_COMMANDS_SEPARATOR)
 
 
 class Code(list):
     def add(self, command, args):
-        self.append(command + ' ' + ASM_ARGS_SEPARATOR.join(str(x) for x in args))
+        self.append(command + '\t\t' + ASM_ARGS_SEPARATOR.join(str(x) for x in args))
 
 
 class Labels(list):

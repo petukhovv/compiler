@@ -57,8 +57,8 @@ def var_aexp(compiler, name, context, value_type):
     """ Компиляция переменной """
     if context == 'assign':
         compiler.bss.vars.add(name, 'resb', 4, value_type)
-        if value_type == Types.STRING:
-            compiler.code.add('pop', [compiler.bss.vars.get_type(name)])
+        # if value_type == Types.STRING:
+        #     compiler.code.add('pop', [compiler.bss.vars.get_type(name)])
         compiler.code.add('pop', [compiler.bss.vars.get(name)])
     else:
         compiler.code.add('mov', ['eax', compiler.bss.vars.get(name)])

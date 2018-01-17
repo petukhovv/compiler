@@ -71,6 +71,9 @@ class StrSub(Heapable):
     def compile_vm(self, commands, data):
         return compile_vm.strsub(commands, data, self.args)
 
+    def compile_x86(self, compiler):
+        return compile_x86.strsub(compiler, self.args)
+
 
 class StrDup(Heapable):
     def __init__(self, args):

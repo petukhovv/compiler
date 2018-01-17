@@ -25,7 +25,8 @@ def string(compiler, characters):
     compiler.code.add('mov', ['byte [%s+%d]' % (str_pointer, str_length), 0])
     compiler.code.add('push', [str_pointer])
 
-    return compiler.commands.set_and_return_type(Types.STRING)
+    return Types.STRING
+    # return compiler.commands.set_and_return_type(Types.STRING)
 
 
 def strlen(compiler, args):
@@ -60,3 +61,17 @@ def strset(compiler, args):
     array_type = args.elements[0].compile_x86(compiler)
     # compiler.code.add('add', ['esp', 4])
     StringCompiler.strset(compiler, array_type)
+
+
+def strsub(compiler, args):
+    """ Компиляция built-in функции strsub (взятие подстроки строки) """
+    args.elements[1].compile_x86(compiler)
+    # compiler.code.add('add', ['esp', 4])
+    array_type = args.elements[0].compile_x86(compiler)
+    # compiler.code.add('add', ['esp', 4])
+    args.elements[2].compile_x86(compiler)
+    # compiler.code.add('add', ['esp', 4])
+    StringCompiler.strsub(compiler, array_type)
+
+    return Types.STRING
+    # return commands.set_and_return_type(Types.STRING)

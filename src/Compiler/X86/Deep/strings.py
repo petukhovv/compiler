@@ -18,7 +18,6 @@ class StringCompiler:
         compiler.code.add('push', ['eax'])
         # Выделяем память размером = числу на стеке (ранее мы записали туда длину строки)
         Malloc(compiler).call()
-
         compiler.code.add('mov', ['dword [%s]' % str_start_pointer, 'eax'])
 
         # Выносим инвариант цикла - указатель на конец строки - в переменную
@@ -72,3 +71,52 @@ class StringCompiler:
 
         # Производим замену символа
         compiler.code.add('mov', ['byte [eax]', 'bl'])
+
+    @staticmethod
+    def strsub(compiler, type):
+        """ Генерация инструкций для получение подстроки строки """
+        substr_length = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+        substr_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+        start_substr_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+        end_substr_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+
+        finish_label = compiler.labels.create()
+
+        # Сохраняем длину подстроки
+        compiler.code.add('pop', ['dword [%s]' % substr_length])
+
+        compiler.code.add('pop', ['eax'])
+        compiler.code.add('pop', ['ebx'])
+        compiler.code.add('add', ['eax', 'ebx'])
+        compiler.code.add('mov', ['dword [%s]' % substr_start_pointer, 'eax'])
+
+        # Выделяем память размером = длине подстроки + 1 (для escape нуля)
+        compiler.code.add('mov', ['eax', 'dword [%s]' % substr_length])
+        compiler.code.add('add', ['eax', 1])
+        Malloc(compiler).call()
+        compiler.code.add('mov', ['dword [%s]' % start_substr_pointer, 'eax'])
+
+        compiler.code.add('mov', ['eax', 'dword [%s]' % substr_length])
+        compiler.code.add('mov', ['ebx', 'dword [%s]' % start_substr_pointer])
+        compiler.code.add('add', ['eax', 'ebx'])
+        compiler.code.add('mov', ['dword [%s]' % end_substr_pointer, 'eax'])
+
+        # Кладем на стек 0 - маркер конца строки
+        compiler.code.add('push', [0])
+        dbstore(compiler, end_substr_pointer, None)
+
+        def cycle_body(_counter, a, b):
+            compiler.code.add('mov', ['eax', 'dword [%s]' % _counter])
+            compiler.code.add('mov', ['ebx', 'dword [%s]' % substr_length])
+            compiler.code.add('cmp', ['eax', 'ebx'])
+            # Если уже прочитали и записали подстркоу требуемой длины - выходим из цикла
+            compiler.code.add('jz near', [finish_label])
+            # Загружаем очередной символ подстроки из heap memory
+            dbload(compiler, substr_start_pointer, _counter)
+            dbstore(compiler, start_substr_pointer, _counter)
+
+        Loop.data(compiler, substr_start_pointer, cycle_body, load_counter=False)
+
+        compiler.code.add(str(finish_label) + ':', [])
+        # Отдаем на стек указатель на начало подстроки для дальнейшего использования
+        compiler.code.add('push', ['dword [%s]' % start_substr_pointer])
