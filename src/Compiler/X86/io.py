@@ -8,9 +8,10 @@ from .Utils.read import Read
 def read_statement(compiler):
     Read(compiler).call()
 
-    return Types.INT
+    return compiler.commands.set_and_return_type(Types.INT)
 
 
 def write_statement(compiler, aexp):
     value_type = aexp.compile_x86(compiler)
+    compiler.commands.clean_type()
     Write(compiler).call(value_type)

@@ -6,7 +6,7 @@ from .Deep.arrays import *
 def assign_statement(commands, data, variable, aexp):
     """ Компиляция выражения присваивания """
     value_type = aexp.compile_vm(commands, data)
-    commands.extract_value()
+    commands.clean_type()
     variable.context = 'assign'
     variable.type = value_type
     variable.compile_vm(commands, data)
@@ -24,7 +24,7 @@ def repeat_statement(commands, data, condition, body):
     commands.add(Label, continue_label)
     body.compile_vm(commands, data)
     condition.compile_vm(commands, data)
-    commands.extract_value()
+    commands.clean_type()
     # Если после очередной итерации условие останова не выполнилось, делаем следующую итерацию
     commands.add(Jz, continue_label)
 
@@ -35,11 +35,28 @@ def while_statement(commands, data, condition, body):
     commands.add(Label, start_label)
     finish_label = data.label()
     condition.compile_vm(commands, data)
+    commands.clean_type()
     # Если перед очередной итерации условие останова не выполнилось, завершаем цикл
-    commands.extract_value()
     commands.add(Jz, finish_label)
     body.compile_vm(commands, data)
     # Делаем следующую итерацию
+    commands.add(Jump, start_label)\
+        .add(Label, finish_label)
+
+
+def for_statement(commands, data, stmt1, stmt2, stmt3, body):
+    """ Компиляция цикла for """
+    start_label = data.label()
+    finish_label = data.label()
+
+    stmt1.compile_vm(commands, data)
+    commands.add(Label, start_label)
+    stmt2.compile_vm(commands, data)
+    commands.clean_type()
+    # Если условия цикла не выполнилось, завешаем цикл
+    commands.add(Jz, finish_label)
+    body.compile_vm(commands, data)
+    stmt3.compile_vm(commands, data)
     commands.add(Jump, start_label)\
         .add(Label, finish_label)
 
@@ -49,7 +66,7 @@ def if_statement(commands, data, condition, true_stmt, alternatives_stmt, false_
     skip_true_stmt_label = data.label()
 
     condition.compile_vm(commands, data)
-    commands.extract_value()
+    commands.clean_type()
     # Если условие не выполнилось, пропускаем ветку.
     commands.add(Jz, skip_true_stmt_label)
     true_stmt.compile_vm(commands, data)
@@ -76,23 +93,6 @@ def if_statement(commands, data, condition, true_stmt, alternatives_stmt, false_
         false_stmt.compile_vm(commands, data)
 
     commands.add(Label, label_endif)
-
-
-def for_statement(commands, data, stmt1, stmt2, stmt3, body):
-    """ Компиляция цикла for """
-    start_label = data.label()
-    finish_label = data.label()
-
-    stmt1.compile_vm(commands, data)
-    commands.add(Label, start_label)
-    stmt2.compile_vm(commands, data)
-    # Если условия цикла не выполнилось, завешаем цикл
-    commands.extract_value()
-    commands.add(Jz, finish_label)
-    body.compile_vm(commands, data)
-    stmt3.compile_vm(commands, data)
-    commands.add(Jump, start_label)\
-        .add(Label, finish_label)
 
 
 def skip_statement(commands, data):

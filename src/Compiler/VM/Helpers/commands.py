@@ -104,7 +104,7 @@ class Commands(list):
         self.add(Compare, compare_type)
         self.add(Pop)
 
-    def extract_value(self):
+    def clean_type(self):
         self.add(Pop)
 
     def set_and_return_type(self, value_type):

@@ -17,9 +17,9 @@ relop_compare_map = {
 def relop_bexp(commands, data, op, left, right):
     """ Компиляция операторов сравнения """
     left.compile_vm(commands, data)
-    commands.extract_value()
+    commands.clean_type()
     right.compile_vm(commands, data)
-    commands.extract_value()
+    commands.clean_type()
 
     commands.add(Compare, relop_compare_map[op])
 
@@ -32,7 +32,7 @@ def and_bexp(commands, data, left, right):
     finish_false_label = data.label()
 
     left.compile_vm(commands, data)
-    commands.extract_value()
+    commands.clean_type()
 
     # Если первый операнд == 0, второй уже не проверяем,
     # а сразу переходим к метке ложного результата (ленивая проверка)
@@ -40,7 +40,7 @@ def and_bexp(commands, data, left, right):
 
     # Иначе будем проверять и второй
     right.compile_vm(commands, data)
-    commands.extract_value()
+    commands.clean_type()
 
     # Если второй операнд == 0, то переходим к метке ложного результата
     commands.add(Jz, finish_false_label)
@@ -66,7 +66,7 @@ def or_bexp(commands, data, left, right):
     finish_true_label = data.label()
 
     left.compile_vm(commands, data)
-    commands.extract_value()
+    commands.clean_type()
 
     # Если первый операнд != 0, второй уже не проверяем,
     # а сразу переходим к метке истинного результата (ленивая проверка)
@@ -74,7 +74,7 @@ def or_bexp(commands, data, left, right):
 
     # Иначе будем проверять и второй
     right.compile_vm(commands, data)
-    commands.extract_value()
+    commands.clean_type()
 
     # Если второй операнд != 0, то переходим к метке истинного результата
     commands.add(Jnz, finish_true_label)
@@ -100,7 +100,7 @@ def not_bexp(commands, data, exp):
     finish_false_label = data.label()
 
     exp.compile_vm(commands, data)
-    commands.extract_value()
+    commands.clean_type()
 
     # Если операнд == 0, переходим в секцию ложного результата
     commands.add(Jnz, finish_false_label)

@@ -10,7 +10,7 @@ def arrmake(commands, data, args, type):
     # Если были переданы default values (2-м аргументом), смотрим, в каком именно формате
     if len(args.elements) == 2:
         default_value_type = args.elements[1].compile_vm(commands, data)
-        commands.extract_value()
+        commands.clean_type()
         # Если вторым аргументом был передан [] или {}, то дублируемым элементом будет 0
         # ( сигнатура: arrmake(n, []), Arrmake(n, {}) )
         if default_value_type == type and len(args.elements[1].elements.elements) == 0:
@@ -30,7 +30,7 @@ def arrmake(commands, data, args, type):
         default_values_variant = 'none'
 
     args.elements[0].compile_vm(commands, data)
-    commands.extract_value()
+    commands.clean_type()
 
     ArrayCompiler.arrmake(commands, data, default_values_variant)
 
@@ -68,16 +68,16 @@ def array_element(commands, data, array, index, other_indexes, context):
 
     # Компилируем получение указателя на начало массива
     commands.load_value(var_number)
-    commands.extract_value()
+    commands.clean_type()
 
     # Компилируем получение индекса
     index.compile_vm(commands, data)
-    commands.extract_value()
+    commands.clean_type()
 
     def other_index_compile(other_index):
-        commands.extract_value()
+        commands.clean_type()
         other_index.compile_vm(commands, data)
-        commands.extract_value()
+        commands.clean_type()
 
     if context == 'assign':
         # Если несколько последовательных индексов, разыменовываем каждый
@@ -100,7 +100,7 @@ def array_element(commands, data, array, index, other_indexes, context):
 def arrlen(commands, data, args):
     """ Компиляция built-in функции arrlen для получения длины массива """
     args.elements[0].compile_vm(commands, data)
-    commands.extract_value()
+    commands.clean_type()
 
     ArrayCompiler.arrlen(commands, data)
 

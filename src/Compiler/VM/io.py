@@ -10,5 +10,5 @@ def read_statement(commands, data):
 
 def write_statement(commands, data, aexp):
     aexp.compile_vm(commands, data)
-    commands.extract_value()
+    commands.clean_type()
     commands.add(Write)

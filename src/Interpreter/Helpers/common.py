@@ -6,7 +6,9 @@ def __fill_array(arr, count, default_value):
     return arr
 
 
-class UnboxedArrayWrap(list): pass
+class UnboxedArrayWrap(list):
+    pass
 
 
-class BoxedArrayWrap(list): pass
+class BoxedArrayWrap(list):
+    pass

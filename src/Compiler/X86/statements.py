@@ -4,7 +4,7 @@
 def assign_statement(compiler, variable, aexp):
     """ Компиляция выражения присваивания """
     value_type = aexp.compile_x86(compiler)
-
+    compiler.commands.clean_type()
     variable.context = 'assign'
     variable.type = value_type
     variable.compile_x86(compiler)
@@ -22,6 +22,7 @@ def repeat_statement(compiler, condition, body):
     compiler.code.add(continue_label + ':', [])
     body.compile_x86(compiler)
     condition.compile_x86(compiler)
+    compiler.commands.clean_type()
     compiler.code.add('cmp', ['eax', 1])
     compiler.code.add('jnz near', [continue_label])
 
@@ -33,6 +34,7 @@ def while_statement(compiler, condition, body):
     finish_label = compiler.labels.create()
 
     condition.compile_x86(compiler)
+    compiler.commands.clean_type()
     # Если перед очередной итерации условие останова не выполнилось, завершаем цикл
     compiler.code.add('cmp', ['eax', 1])
     compiler.code.add('jnz near', [finish_label])
@@ -50,6 +52,7 @@ def for_statement(compiler, stmt1, stmt2, stmt3, body):
     stmt1.compile_x86(compiler)
     compiler.code.add(start_label + ':', [])
     stmt2.compile_x86(compiler)
+    compiler.commands.clean_type()
     # Если условия цикла не выполнилось, завешаем цикл
     compiler.code.add('cmp', ['eax', 1])
     compiler.code.add('jnz near', [finish_label])
@@ -64,6 +67,7 @@ def if_statement(compiler, condition, true_stmt, alternatives_stmt, false_stmt, 
     skip_true_stmt_label = compiler.labels.create()
 
     condition.compile_x86(compiler)
+    compiler.commands.clean_type()
     # Если условие не выполнилось, пропускаем ветку.
     compiler.code.add('pop', ['eax'])
     compiler.code.add('cmp', ['eax', 1])

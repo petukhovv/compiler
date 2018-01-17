@@ -17,7 +17,9 @@ relop_compare_map = {
 def relop_bexp(compiler, op, left, right):
     """ Компиляция логического выражения """
     left.compile_x86(compiler)
+    compiler.commands.clean_type()
     right.compile_x86(compiler)
+    compiler.commands.clean_type()
     compiler.code.add('pop', ['ebx'])
     compiler.code.add('pop', ['eax'])
 
@@ -30,7 +32,7 @@ def relop_bexp(compiler, op, left, right):
     true_result_label.add_return()
     compiler.code.add('push', ['eax'])
 
-    return Types.INT
+    return compiler.commands.set_and_return_type(Types.INT)
 
 
 def and_bexp(compiler, left, right):
@@ -39,6 +41,7 @@ def and_bexp(compiler, left, right):
     finish_false_label = compiler.labels.create()
 
     left.compile_x86(compiler)
+    compiler.commands.clean_type()
     compiler.code.add('pop', ['eax'])
 
     # Если первый операнд == 0, второй уже не проверяем,
@@ -48,6 +51,7 @@ def and_bexp(compiler, left, right):
 
     # Иначе будем проверять и второй
     right.compile_x86(compiler)
+    compiler.commands.clean_type()
     compiler.code.add('pop', ['eax'])
 
     # Если второй операнд == 0, то переходим к метке ложного результата
@@ -68,4 +72,4 @@ def and_bexp(compiler, left, right):
 
     compiler.code.add('push', ['eax'])
 
-    return Types.BOOL
+    return compiler.commands.set_and_return_type(Types.BOOL)

@@ -31,13 +31,16 @@ def int_aexp(compiler, i):
     """ Компиляция числа """
     compiler.code.add('mov', ['eax', i])
     compiler.code.add('push', ['eax'])
-    return Types.INT
+
+    return compiler.commands.set_and_return_type(Types.INT)
 
 
 def binop_aexp(compiler, op, left, right):
     """ Компиляция арифметического выражения """
     left.compile_x86(compiler)
+    compiler.commands.clean_type()
     right.compile_x86(compiler)
+    compiler.commands.clean_type()
     compiler.code.add('pop', ['ebx'])
     compiler.code.add('pop', ['eax'])
 
@@ -50,17 +53,17 @@ def binop_aexp(compiler, op, left, right):
 
     compiler.code.add('push', ['eax'])
 
-    return Types.INT
+    return compiler.commands.set_and_return_type(Types.INT)
 
 
 def var_aexp(compiler, name, context, value_type):
     """ Компиляция переменной """
     if context == 'assign':
         compiler.bss.vars.add(name, 'resb', 4, value_type)
-        # if value_type == Types.STRING:
-        #     compiler.code.add('pop', [compiler.bss.vars.get_type(name)])
         compiler.code.add('pop', [compiler.bss.vars.get(name)])
     else:
         compiler.code.add('mov', ['eax', compiler.bss.vars.get(name)])
         compiler.code.add('push', ['eax'])
-        return value_type
+        compile_time_type = compiler.bss.vars.get_compile_time_type(name)
+
+        return compiler.commands.set_and_return_type(compile_time_type)

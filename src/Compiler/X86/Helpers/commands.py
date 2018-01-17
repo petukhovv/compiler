@@ -9,3 +9,6 @@ class Commands:
         self.compiler.code.add('push', [value_type])
 
         return value_type
+
+    def clean_type(self):
+        self.compiler.code.add('add', ['esp', 4])

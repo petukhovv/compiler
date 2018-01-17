@@ -44,7 +44,7 @@ def function(compiler, name, args, body):
 def return_statement(compiler, expr):
     """ Компиляция выражения возврата к месту вызова """
     return_type = expr.compile_x86(compiler)
-    compiler.environment.set_return_type(return_type)
+    compiler.commands.clean_type()
 
     compiler.code.add('pop', ['eax'])
     # Компилируем конструкцию возврата к месту вызова
@@ -52,6 +52,7 @@ def return_statement(compiler, expr):
     compiler.code.add('pop', ['ebp'])
     env = compiler.environment
     args = env.labels[env.current_function]['args']
+    compiler.environment.set_return_type(return_type)
     compiler.code.add('ret', [len(args) * 4])
 
 
@@ -59,9 +60,11 @@ def call_statement(compiler, name, args):
     """ Компиляция выражения вызова функции """
     for arg in args.elements:
         arg.compile_x86(compiler)
+        compiler.commands.clean_type()
 
     function_label = compiler.environment.get_label(name)
     compiler.code.add('call', ['_fun_' + str(function_label)])
     compiler.code.add('push', ['eax'])
+    compile_time_type = compiler.environment.get_return_type(name)
 
-    return compiler.environment.get_return_type(name)
+    return compiler.commands.set_and_return_type(compile_time_type)

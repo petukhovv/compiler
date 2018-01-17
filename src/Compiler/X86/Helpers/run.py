@@ -2,6 +2,7 @@
 
 from .environment import Environment
 from .commands import Commands
+from .types import *
 
 ASM_COMMANDS_SEPARATOR = '\n'
 ASM_ARGS_SEPARATOR = ','
@@ -13,8 +14,9 @@ class Data(list):
 
 
 class Vars:
-    def __init__(self, bss, compiler, environment):
+    def __init__(self, bss, code, compiler, environment):
         self.bss = bss
+        self.code = code
         self.compiler = compiler
         self.environment = environment
         self.vars = {}
@@ -34,6 +36,7 @@ class Vars:
         self.bss.add('_var_' + str(name), asm_type, bytes)
         if type:
             self.bss.add('_var_type_' + str(name), asm_type, 1)
+            self.code.add('mov', ['dword [%s]' % ('_var_type_' + str(name)), type])
 
         return '_var_' + str(name)
 
@@ -54,10 +57,13 @@ class Vars:
     def get_type(self, name):
         return 'dword [_var_type_' + str(name) + ']'
 
+    def get_compile_time_type(self, name):
+        return self.vars[name]['type'] if name in self.vars else Types.DYNAMIC
+
 
 class BSS(list):
-    def __init__(self, compiler, environment):
-        self.vars = Vars(self, compiler, environment)
+    def __init__(self, compiler, code, environment):
+        self.vars = Vars(self, code, compiler, environment)
 
     def add(self, name, type, bytes):
         self.append(name + '\t\t' + type + ' ' + str(bytes) + ASM_COMMANDS_SEPARATOR)
@@ -89,8 +95,8 @@ class Compiler:
     def __init__(self):
         self.data = Data()
         self.environment = Environment()
-        self.bss = BSS(self, self.environment)
         self.code = Code()
+        self.bss = BSS(self, self.code, self.environment)
         self.commands = Commands(self)
         self.labels = Labels(self.bss)
         self.target_register = None
