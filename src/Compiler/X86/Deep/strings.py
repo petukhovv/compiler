@@ -155,3 +155,42 @@ class StringCompiler:
 
         # Отдаем на стек указатель на начало подстроки для дальнейшего использования
         compiler.code.add('push', ['dword [%s]' % new_str_start_pointer])
+
+
+    @staticmethod
+    def strcat_first(compiler, type):
+        """ Генерация инструкций для дублирования первой из конкатенируемых строки """
+        str_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+        new_str_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+        new_end_str_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+
+        # Разыменовываем лежащий на стеке указатель и записываем его в переменную
+        compiler.code.add('pop', ['dword [%s]' % str_start_pointer])
+
+        commands.add(Push, 0)
+
+        def cycle_body(_counter, a, b):
+            dbload(str_start_pointer, _counter, commands)
+
+        # Читаем строку и кладем её на стек
+        Loop.data(compiler, str_start_pointer, cycle_body, memory_type='heap')
+
+    @staticmethod
+    def strcat_second(compiler, type):
+        """ Генерация инструкций для дублирования второй из конкатенируемых строки и запись её в памяти за первой """
+        str_start_pointer = data.var(Types.INT)
+        str_length = data.var(Types.INT)
+
+        commands.add(Store, str_start_pointer)
+        commands.add(Store, str_length)
+
+        def cycle_body(_counter, a, b):
+            dbload(str_start_pointer, _counter, commands)
+
+        # Читаем строку и кладем её на стек
+        Loop.data(compiler, str_start_pointer, cycle_body, memory_type='heap')
+
+        commands.add(Load, str_length)
+        commands.add(Add)
+
+        StringCompiler.store(commands, data)

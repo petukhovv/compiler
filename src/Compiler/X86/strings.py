@@ -80,3 +80,15 @@ def strdup(compiler, args):
     StringCompiler.strdup(compiler, array_type)
 
     return compiler.commands.set_and_return_type(Types.STRING)
+
+
+def strcat(compiler, args):
+    """ Компиляция built-in функции strcat (конкатенация двух строк) """
+    array_type1 = args.elements[0].compile_x86(compiler)
+    compiler.commands.clean_type()
+    StringCompiler.strcat_first(compiler, array_type1)
+    array_type2 = args.elements[1].compile_x86(compiler)
+    compiler.commands.clean_type()
+    StringCompiler.strcat_second(compiler, array_type2)
+
+    return compiler.commands.set_and_return_type(Types.STRING)
