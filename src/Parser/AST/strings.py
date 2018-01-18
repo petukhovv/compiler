@@ -85,6 +85,9 @@ class StrDup(Heapable):
     def compile_vm(self, commands, data):
         return compile_vm.strdup(commands, data, self.args)
 
+    def compile_x86(self, compiler):
+        return compile_x86.strdup(compiler, self.args)
+
 
 class StrSet:
     def __init__(self, args):

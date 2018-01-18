@@ -71,3 +71,12 @@ def strsub(compiler, args):
     StringCompiler.strsub(compiler, array_type)
 
     return compiler.commands.set_and_return_type(Types.STRING)
+
+
+def strdup(compiler, args):
+    """ Компиляция built-in функции strdup (дублирование строки) """
+    array_type = args.elements[0].compile_x86(compiler)
+    compiler.commands.clean_type()
+    StringCompiler.strdup(compiler, array_type)
+
+    return compiler.commands.set_and_return_type(Types.STRING)
