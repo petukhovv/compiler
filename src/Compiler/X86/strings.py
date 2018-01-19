@@ -104,3 +104,14 @@ def strmake(compiler, args):
     StringCompiler.strmake(compiler)
 
     return compiler.commands.set_and_return_type(Types.STRING)
+
+
+def strcmp(compiler, args):
+    """ Компиляция built-in функции strcmp (посимвольное сравнение двух строк) """
+    args.elements[0].compile_x86(compiler)
+    compiler.commands.clean_type()
+    args.elements[1].compile_x86(compiler)
+    compiler.commands.clean_type()
+    StringCompiler.strcmp(compiler)
+
+    return compiler.commands.set_and_return_type(Types.INT)

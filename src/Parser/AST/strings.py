@@ -127,6 +127,9 @@ class StrCmp:
     def compile_vm(self, commands, data):
         return compile_vm.strcmp(commands, data, self.args)
 
+    def compile_x86(self, compiler):
+        return compile_x86.strcmp(compiler, self.args)
+
 
 class StrMake:
     def __init__(self, args):

@@ -273,3 +273,68 @@ class StringCompiler:
 
         # Отдаем на стек указатель на начало созданной строки для дальнейшего использования
         compiler.code.add('push', ['dword [%s]' % str_start_pointer])
+
+    @staticmethod
+    def strcmp(compiler):
+        """ Генерация инструкций для посимвольного сравнивания двух строк """
+        str1_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+        str2_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+
+        eq_label = compiler.labels.create()
+        not_eq_label = compiler.labels.create()
+        larger_label = compiler.labels.create()
+        finish_label = compiler.labels.create()
+
+        compiler.code.add('pop', ['dword [%s]' % str1_start_pointer])
+        compiler.code.add('pop', ['dword [%s]' % str2_start_pointer])
+
+        def cycle_body(_counter, a, continue_label):
+            # Загружаем n-ный символ 1-й строки
+            dbload(compiler, str1_start_pointer, _counter, size='byte')
+            # Дублируем на стек для дальнейшей проверки (чтобы не загружать снова)
+            compiler.code.add('pop', ['eax'])
+            compiler.code.add('push', ['eax'])
+            compiler.code.add('push', ['eax'])
+            # Загружаем n-ный символ 2-й строки
+            dbload(compiler, str2_start_pointer, _counter, size='byte')
+            compiler.code.add('pop', ['eax'])
+            compiler.code.add('pop', ['ebx'])
+
+            compiler.code.add('cmp', ['eax', 'ebx'])
+            # Если символы не равны, сразу переходим в секцию not_eq_label и выясняем уже там - какой из них больше
+            # Это также работает, когда мы достиги конца одной из строк (какой-то символ и 0)
+            compiler.code.add('jnz near', [not_eq_label])
+
+            # Сравниваем с 0 ранее продублированный символ (1-й строки) - если он равен нулю, то равен и второй,
+            # т. к. в эту секцию мы попадаем только при равенстве обоих символов
+            compiler.code.add('pop', ['eax'])
+            compiler.code.add('cmp', ['eax', 0])
+            # 0 говорит о достижении конца строки - если это не 0, то продолжаем цикл
+            compiler.code.add('jnz near', [continue_label])
+            # Сюда попадаем, когда достигли конца одновременно двух строк - т. е. они полностью равны
+            compiler.code.add('jmp near', [eq_label])
+
+        counter = Loop.simple(compiler, cycle_body, return_counter=True)
+
+        # Секция полного равенства строк: пишем на стек 0
+        compiler.code.add(str(eq_label) + ':', [])
+        compiler.code.add('push', [0])
+        compiler.code.add('jmp near', [finish_label])
+
+        # Секция неравенства строк
+        compiler.code.add(str(not_eq_label) + ':', [])
+        # Загружаем только второй символ - первый у нас уже содержится на стеке (см. тело цикла)
+        dbload(compiler, str2_start_pointer, counter, size='byte')
+        # Сравниваем символы оператором <
+        compiler.code.add('pop', ['eax'])
+        compiler.code.add('pop', ['ebx'])
+        compiler.code.add('cmp', ['eax', 'ebx'])
+
+        compiler.code.add('jg near', [larger_label])
+        compiler.code.add('push', [-1])
+        compiler.code.add('jmp near', [finish_label])
+
+        compiler.code.add(str(larger_label) + ':', [])
+        compiler.code.add('push', [1])
+
+        compiler.code.add(str(finish_label) + ':', [])
