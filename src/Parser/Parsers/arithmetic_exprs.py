@@ -3,6 +3,7 @@ from functools import reduce
 from .arrays import *
 
 statements = sys.modules[__package__ + '.statements']
+boolean_exprs = sys.modules[__package__ + '.boolean_exprs']
 
 
 def any_operator_in_list(ops):

@@ -31,7 +31,7 @@ def and_bexp(env, left, right):
     """
     left_value = left.eval(env)
     right_value = right.eval(env)
-    return left_value and right_value
+    return 1 if left_value and right_value else 0
 
 
 def or_bexp(env, left, right):
@@ -42,7 +42,7 @@ def or_bexp(env, left, right):
     """
     left_value = left.eval(env)
     right_value = right.eval(env)
-    return left_value or right_value
+    return 1 if left_value or right_value else 0
 
 
 def not_bexp(env, exp):
@@ -52,4 +52,4 @@ def not_bexp(env, exp):
     Example: x not 11
     """
     value = exp.eval(env)
-    return not value
+    return 1 if not value else 0

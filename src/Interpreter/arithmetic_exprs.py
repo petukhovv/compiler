@@ -1,5 +1,3 @@
-from math import floor
-
 from .Helpers.environment import *
 
 
@@ -21,9 +19,13 @@ def binop_aexp(env, op, left, right):
     elif op == '*':
         value = left_value * right_value
     elif op == '/':
-        value = floor(left_value / right_value)
+        value = int(left_value / right_value)
     elif op == '%':
         value = left_value % right_value
+        if left_value < 0 and value != 0 and right_value > 0:
+            value -= right_value
+        elif right_value < 0 and value != 0 and left_value > 0:
+            value -= right_value
     else:
         raise RuntimeError('unknown operator: ' + op)
     return value

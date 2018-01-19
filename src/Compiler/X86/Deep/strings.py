@@ -39,7 +39,7 @@ class StringCompiler:
         compiler.code.add('push', ['dword [%s]' % str_start_pointer])
 
     @staticmethod
-    def strlen(compiler, type):
+    def strlen(compiler):
         """ Генерация инструкций для получения длины строки, находящейся на стеке. """
         str_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
         # Разыменовываем лежащий на стеке указатель и записываем его в переменную
@@ -151,46 +151,125 @@ class StringCompiler:
             dbstore(compiler, new_str_start_pointer, _counter)
 
         # Читаем строку и кладем её на стек
-        Loop.data(compiler, str_start_pointer, cycle_body)
+        Loop.data(compiler, str_start_pointer, cycle_body, load_counter=False)
 
         # Отдаем на стек указатель на начало подстроки для дальнейшего использования
         compiler.code.add('push', ['dword [%s]' % new_str_start_pointer])
 
+    @staticmethod
+    def strcat_calc_length(compiler):
+        # compiler.code.add('push', ['[esp + 4]'])
+        compiler.code.add('pop', ['eax'])
+        compiler.code.add('pop', ['ebx'])
+        compiler.code.add('push', ['eax'])
+        compiler.code.add('push', ['ebx'])
+        compiler.code.add('push', ['eax'])
+        compiler.code.add('push', ['ebx'])
+
+        StringCompiler.strlen(compiler)
+        compiler.code.add('pop', ['eax'])
+        compiler.code.add('pop', ['ebx'])
+        compiler.code.add('push', ['eax'])
+        compiler.code.add('push', ['ebx'])
+        StringCompiler.strlen(compiler)
+        compiler.code.add('pop', ['eax'])
+        compiler.code.add('pop', ['ebx'])
+        compiler.code.add('add', ['eax', 'ebx'])
+        compiler.code.add('push', ['eax'])
 
     @staticmethod
-    def strcat_first(compiler, type):
+    def strcat(compiler):
         """ Генерация инструкций для дублирования первой из конкатенируемых строки """
-        str_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+        str_length = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+
         new_str_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
         new_end_str_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
 
+        str1_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+        str2_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+
+        counter_with_offset = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+
+        compiler.code.add('pop', ['eax'])
+        compiler.code.add('add', ['eax', 1])
+        compiler.code.add('pop', ['dword [%s]' % str1_start_pointer])
+        compiler.code.add('pop', ['dword [%s]' % str2_start_pointer])
+        compiler.code.add('mov', ['dword [%s]' % str_length, 'eax'])
+        Malloc(compiler).call()
+
         # Разыменовываем лежащий на стеке указатель и записываем его в переменную
-        compiler.code.add('pop', ['dword [%s]' % str_start_pointer])
+        compiler.code.add('mov', ['dword [%s]' % new_str_start_pointer, 'eax'])
+        compiler.code.add('mov', ['ebx', 'dword [%s]' % str_length])
+        compiler.code.add('add', ['eax', 'ebx'])
+        compiler.code.add('mov', ['dword [%s]' % new_end_str_pointer, 'eax'])
 
-        commands.add(Push, 0)
+        compiler.code.add('push', [0])
+        dbstore(compiler, new_end_str_pointer, None)
 
-        def cycle_body(_counter, a, b):
-            dbload(str_start_pointer, _counter, commands)
+        def cycle_body(str_start_pointer, _counter, offset=None):
+            dbload(compiler, str_start_pointer, _counter)
+            if offset:
+                compiler.code.add('mov', ['eax', 'dword [%s]' % _counter])
+                compiler.code.add('mov', ['ebx', 'dword [%s]' % offset])
+                compiler.code.add('add', ['eax', 'ebx'])
+                compiler.code.add('mov', ['dword [%s]' % counter_with_offset, 'eax'])
+            dbstore(compiler, new_str_start_pointer, counter_with_offset if offset else _counter)
 
         # Читаем строку и кладем её на стек
-        Loop.data(compiler, str_start_pointer, cycle_body, memory_type='heap')
+        counter = Loop.data(
+            compiler,
+            str1_start_pointer,
+            lambda _counter, a, b: cycle_body(str1_start_pointer, _counter),
+            return_counter=True,
+            load_counter=False
+        )
+        Loop.data(
+            compiler,
+            str2_start_pointer,
+            lambda _counter, a, b: cycle_body(str2_start_pointer, _counter, counter),
+            load_counter=False
+        )
+
+        # Отдаем на стек указатель на начало подстроки для дальнейшего использования
+        compiler.code.add('push', ['dword [%s]' % new_str_start_pointer])
 
     @staticmethod
-    def strcat_second(compiler, type):
-        """ Генерация инструкций для дублирования второй из конкатенируемых строки и запись её в памяти за первой """
-        str_start_pointer = data.var(Types.INT)
-        str_length = data.var(Types.INT)
+    def strmake(compiler):
+        """ Генерация инструкций для создания строки заданной длины с повторяющимся символом """
+        str_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+        str_length = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+        basis_symbol = compiler.bss.vars.add(None, 'resb', 4, Types.CHAR)
 
-        commands.add(Store, str_start_pointer)
-        commands.add(Store, str_length)
+        finish_label = compiler.labels.create()
 
-        def cycle_body(_counter, a, b):
-            dbload(str_start_pointer, _counter, commands)
+        # Сохраняем длину строки в переменную
+        compiler.code.add('pop', ['dword [%s]' % str_length])
+        compiler.code.add('pop', ['dword [%s]' % basis_symbol])
 
-        # Читаем строку и кладем её на стек
-        Loop.data(compiler, str_start_pointer, cycle_body, memory_type='heap')
+        # Выделяем память = указанной длине строки +1 (плюс маркер конца строки - 0)
+        compiler.code.add('mov', ['eax', 'dword [%s]' % str_length])
+        Malloc(compiler).call()
+        compiler.code.add('mov', ['dword [%s]' % str_start_pointer, 'eax'])
 
-        commands.add(Load, str_length)
-        commands.add(Add)
+        def cycle_body(_counter, b, c):
+            compiler.code.add('mov', ['eax', 'dword [%s]' % _counter])
+            compiler.code.add('mov', ['ebx', 'dword [%s]' % str_length])
+            compiler.code.add('cmp', ['eax', 'ebx'])
 
-        StringCompiler.store(commands, data)
+            # Если уже прочитали и записали подстркоу требуемой длины - выходим из цикла
+            compiler.code.add('jz near', [finish_label])
+            # Загружаем очередной символ подстроки из heap memory
+            compiler.code.add('push', ['dword [%s]' % basis_symbol])
+            dbstore(compiler, str_start_pointer, _counter)
+
+        counter = Loop.simple(compiler, cycle_body, return_counter=True)
+
+        # Сюда переходим после того, как запишем нужное количество символов в создаваемую строку
+        compiler.code.add(str(finish_label) + ':', [])
+
+        # Дописываем 0 в последнюю ячейку памяти - это маркер конца строки
+        compiler.code.add('push', [0])
+        dbstore(compiler, str_start_pointer, counter)
+
+        # Отдаем на стек указатель на начало созданной строки для дальнейшего использования
+        compiler.code.add('push', ['dword [%s]' % str_start_pointer])

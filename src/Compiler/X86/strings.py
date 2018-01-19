@@ -29,10 +29,10 @@ def string(compiler, characters):
 
 def strlen(compiler, args):
     """ Компиляция built-in функции strlen (длина строки) """
-    array_type = args.elements[0].compile_x86(compiler)
+    args.elements[0].compile_x86(compiler)
     compiler.commands.clean_type()
 
-    StringCompiler.strlen(compiler, array_type)
+    StringCompiler.strlen(compiler)
 
     return compiler.commands.set_and_return_type(Types.INT)
 
@@ -84,11 +84,23 @@ def strdup(compiler, args):
 
 def strcat(compiler, args):
     """ Компиляция built-in функции strcat (конкатенация двух строк) """
-    array_type1 = args.elements[0].compile_x86(compiler)
+    args.elements[0].compile_x86(compiler)
     compiler.commands.clean_type()
-    StringCompiler.strcat_first(compiler, array_type1)
-    array_type2 = args.elements[1].compile_x86(compiler)
+    args.elements[1].compile_x86(compiler)
     compiler.commands.clean_type()
-    StringCompiler.strcat_second(compiler, array_type2)
+
+    StringCompiler.strcat_calc_length(compiler)
+    StringCompiler.strcat(compiler)
+
+    return compiler.commands.set_and_return_type(Types.STRING)
+
+
+def strmake(compiler, args):
+    """ Компиляция built-in функции strmake (создание строки из n одинаковых символов) """
+    args.elements[1].compile_x86(compiler)
+    compiler.commands.clean_type()
+    args.elements[0].compile_x86(compiler)
+    compiler.commands.clean_type()
+    StringCompiler.strmake(compiler)
 
     return compiler.commands.set_and_return_type(Types.STRING)

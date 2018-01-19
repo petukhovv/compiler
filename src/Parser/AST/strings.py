@@ -113,6 +113,9 @@ class StrCat(Heapable):
     def compile_vm(self, commands, data):
         return compile_vm.strcat(commands, data, self.args)
 
+    def compile_x86(self, compiler):
+        return compile_x86.strcat(compiler, self.args)
+
 
 class StrCmp:
     def __init__(self, args):
@@ -134,3 +137,6 @@ class StrMake:
 
     def compile_vm(self, commands, data):
         return compile_vm.strmake(commands, data, self.args)
+
+    def compile_x86(self, compiler):
+        return compile_x86.strmake(compiler, self.args)

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from math import floor
 
 """
 Перечисление команд стековой машины.
@@ -200,7 +199,7 @@ class Div:
             raise RuntimeError('Stack not contains two values')
         num1 = vm.stack.pop()
         num2 = vm.stack.pop()
-        vm.stack.append(floor(num2 / num1))
+        vm.stack.append(int(num2 / num1))
 
 
 class Mod:
@@ -215,7 +214,12 @@ class Mod:
             raise RuntimeError('Stack not contains two values')
         num1 = vm.stack.pop()
         num2 = vm.stack.pop()
-        vm.stack.append(num2 % num1)
+        value = num2 % num1
+        if num1 < 0:
+            value -= num1
+        elif num2 < 0:
+            value -= num2
+        vm.stack.append(value)
 
 
 class Invert:

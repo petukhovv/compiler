@@ -79,7 +79,7 @@ def process_logic(op):
         raise RuntimeError('unknown logic operator: ' + op)
 
 
-def bexp(allow_single = False):
+def bexp(allow_single=False):
     """
     Main binary expressions parser.
     """
