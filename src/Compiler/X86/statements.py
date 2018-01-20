@@ -13,6 +13,7 @@ def assign_statement(compiler, variable, aexp):
 def compound_statement(compiler, first, second):
     """ Компиляция составного выражения """
     first.compile_x86(compiler)
+    compiler.code.check_and_fix_stack_balance()
     second.compile_x86(compiler)
 
 

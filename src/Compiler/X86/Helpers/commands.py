@@ -11,4 +11,4 @@ class Commands:
         return value_type
 
     def clean_type(self):
-        self.compiler.code.add('add', ['esp', 4])
+        self.compiler.code.stack_pop()
