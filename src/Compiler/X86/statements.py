@@ -15,6 +15,7 @@ def compound_statement(compiler, first, second):
     first.compile_x86(compiler)
     compiler.code.check_and_fix_stack_balance()
     second.compile_x86(compiler)
+    compiler.code.check_and_fix_stack_balance()
 
 
 def repeat_statement(compiler, condition, body):
