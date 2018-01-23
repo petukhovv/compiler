@@ -82,7 +82,7 @@ def array_element(compiler, array, index, other_indexes, context):
 
     def other_index_compile(other_index):
         compiler.commands.clean_type()
-        other_index.compile_vm(compiler)
+        other_index.compile_x86(compiler)
         compiler.commands.clean_type()
 
     if context == 'assign':

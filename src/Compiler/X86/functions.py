@@ -28,7 +28,6 @@ def function(compiler, name, args, body):
     return_type = compiler.environment.get_return_type(name)
 
     if not return_type:
-        compiler.code.add('pop', ['eax'])
         # Компилируем конструкцию возврата к месту вызова
         compiler.code.add('mov', ['esp', 'ebp'])
         compiler.code.add('pop', ['ebp'])
