@@ -36,7 +36,7 @@ def bexp_boolop():
     Parsing single value expression (arithmetic expression).
     Convert single value to object of AST-class 'RelopBexp' with '!=' operator and '0' right value.
     """
-    return aexp() ^ (lambda parsed: RelopBexp('!=', parsed, IntAexp(0)))
+    return aexp() | aexp() ^ (lambda parsed: RelopBexp('!=', parsed, IntAexp(0)))
 
 
 def bexp_not():

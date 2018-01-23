@@ -61,7 +61,7 @@ def aexp_group():
     """
     Parse the arithmetic expression in parentheses.
     """
-    return keyword('(') + Lazy(aexp) + keyword(')') ^ process_group
+    return keyword('(') + (Lazy(boolean_exprs.bexp_relop) | Lazy(aexp)) + keyword(')') ^ process_group
 
 
 def aexp_term():
