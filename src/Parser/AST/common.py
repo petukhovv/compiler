@@ -1,4 +1,5 @@
 from Compiler.VM import common as compile_vm
+from Compiler.X86 import common as compile_x86
 from Interpreter import common as interpreter
 
 
@@ -24,3 +25,6 @@ class Enumeration:
 
     def compile_vm(self, commands, data):
         return compile_vm.enumeration(commands, data, self.elements)
+
+    def compile_x86(self, compiler):
+        return compile_x86.enumeration(compiler, self.elements)

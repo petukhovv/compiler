@@ -21,7 +21,7 @@ def arrmake(compiler, args, type):
             default_values_variant = 'zeros'
         # Если передано [n1, n2, ...] или {a1, a2, ...}, то массив уже создан, возвращаем тип и выходим
         elif default_value_type == type:
-            return type
+            return compiler.commands.set_and_return_type(type)
         # Если был передан не массив, а число (или указатель), то оно и будет дублируемым элементом
         else:
             default_values_variant = 'repeated'
@@ -42,21 +42,28 @@ def arrmake_inline(compiler, elements, type):
     type = Types.BOXED_ARR if type == 'boxed' else Types.UNBOXED_ARR
 
     arr_elements = elements.compile_x86(compiler)
+    arr_length = len(arr_elements)
+    arr_pointer = compiler.bss.vars.add(None, 'resb',
+                                        arr_length * 2 * 4 + 4, Types.INT if type == Types.BOXED_ARR else Types.DYNAMIC)
 
-    for element in reversed(arr_elements):
+    compiler.code.add('mov', ['dword [%s]' % arr_pointer, arr_length])
+    for i, element in enumerate(arr_elements):
+        element_place = i * 2 * 4 + 4
+
         if type == Types.BOXED_ARR:
-            element = compiler.bss.vars.get(element)
             element_type = compiler.bss.vars.get_type(element)
-            compiler.code.add('push', element)
+            element = compiler.bss.vars.get(element)
+            compiler.code.add('mov', ['eax', element_type])
+            compiler.code.add('mov', ['ebx', element])
+            element_type = 'eax'
+            element = 'ebx'
         else:
             element_type = Types.DYNAMIC
-            compiler.code.add('push', element)
-        compiler.code.add('push', element_type)
 
-    compiler.code.add('push', len(arr_elements))
+        compiler.code.add('mov', ['dword [%s+%d]' % (arr_pointer, element_place), element_type])
+        compiler.code.add('mov', ['dword [%s+%d]' % (arr_pointer, element_place + 4), element])
 
-    # Сохраняем записанные на стек элементы в память
-    ArrayCompiler.arrmake(compiler, 'preset')
+    compiler.code.add('push', [arr_pointer])
 
     return compiler.commands.set_and_return_type(type)
 

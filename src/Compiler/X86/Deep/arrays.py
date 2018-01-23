@@ -20,14 +20,16 @@ class ArrayCompiler:
 
         # Сохраняем длину массива в переменную
         compiler.code.add('mov', ['eax', 'dword [%s]' % arr_length])
-        compiler.code.add('mov', ['ebx', 2])
+        compiler.code.add('mov', ['ebx', 2 * 4])
         compiler.code.add('mul', ['ebx'])
-        compiler.code.add('add', ['eax', 1])
-        # Выделяем память = переданной длине массива * 2 + 1 (плюс тип под каждое значение и длина массива)
+        compiler.code.add('add', ['eax', 4])
+        # Выделяем память = переданной длине массива * 2 * 4 + 1 (плюс тип под каждое значение и длина массива)
         Malloc(compiler).call()
 
         # Если значения по умолчанию не заданы, оставляем элементы массива пустыми и выходим
         if default_values_variant == 'none':
+            compiler.code.add('mov', ['ebx', 'dword [%s]' % arr_length])
+            compiler.code.add('mov', ['dword [eax]', 'ebx'])
             compiler.code.add('push', ['eax'])
             return
 
@@ -50,11 +52,11 @@ class ArrayCompiler:
             # в противном случае (при полном задании default values) значения уже будут находиться на стеке
             if is_repeated_values:
                 compiler.code.add('mov', ['eax', 'dword [%s]' % element_address])
-                compiler.code.add('add', ['eax', 1])
-                compiler.code.add('mov', ['byte [eax]', Types.INT])
-                compiler.code.add('add', ['eax', 1])
+                compiler.code.add('add', ['eax', 4])
+                compiler.code.add('mov', ['dword [eax]', Types.INT])
+                compiler.code.add('add', ['eax', 4])
                 compiler.code.add('mov', ['ebx', 'dword [%s]' % basis_element])
-                compiler.code.add('mov', ['byte [eax]', 'bl'])
+                compiler.code.add('mov', ['dword [eax]', 'ebx'])
 
         Loop.simple(compiler, cycle_body)
 
@@ -63,7 +65,7 @@ class ArrayCompiler:
         # Сохраняем длину массива в первую ячейку памяти, где располагается массив
         compiler.code.add('mov', ['eax', 'dword [%s]' % arr_length])
         compiler.code.add('mov', ['ebx', 'dword [%s]' % arr_pointer])
-        compiler.code.add('mov', ['byte [ebx]', 'al'])
+        compiler.code.add('mov', ['dword [ebx]', 'eax'])
 
         # Загружаем на стек указатель на начало массива
         compiler.code.add('push', ['dword [%s]' % arr_pointer])
@@ -73,18 +75,19 @@ class ArrayCompiler:
         """ Генерация инструкций для оператора получения элемента массива: A[n] """
         # Расчитываем адрес элемента (с учетом хранения типов для каждого элемента - умножаем на 2)
         compiler.code.add('pop', ['eax'])
-        compiler.code.add('mov', ['ebx', 2])
+        compiler.code.add('mov', ['ebx', 2 * 4])
         compiler.code.add('mul', ['ebx'])
+        compiler.code.add('add', ['eax', 4])
         # Прибавляем к номеру ячейки с началом массива индекс требуемого значения (offset)
         compiler.code.add('pop', ['ebx'])
         compiler.code.add('add', ['ebx', 'eax'])
         # Загружаем на стек значение элемента по адресу его ячейки в heap memory
-        compiler.code.add('add', ['ebx', 2])
-        compiler.code.add('movzx', ['eax', 'byte [ebx]'])
+        compiler.code.add('add', ['ebx', 4])
+        compiler.code.add('mov', ['eax', 'dword [ebx]'])
         compiler.code.add('push', ['eax'])
         # Загружаем на стек тип элемента по адресу его ячейки в heap memory
-        compiler.code.add('sub', ['ebx', 1])
-        compiler.code.add('movzx', ['eax', 'byte [ebx]'])
+        compiler.code.add('sub', ['ebx', 4])
+        compiler.code.add('mov', ['eax', 'dword [ebx]'])
         compiler.code.add('push', ['eax'])
 
     @staticmethod
@@ -92,24 +95,25 @@ class ArrayCompiler:
         """ Генерация инструкций для присвоения значения элементу массива: A[n] := x """
         # Расчитываем адрес элемента (с учетом хранения типов для каждого элемента - умножаем на 2)
         compiler.code.add('pop', ['eax'])
-        compiler.code.add('mov', ['ebx', 2])
+        compiler.code.add('mov', ['ebx', 2 * 4])
         compiler.code.add('mul', ['ebx'])
+        compiler.code.add('add', ['eax', 4])
         # Прибавляем к номеру ячейки с началом массива индекс требуемого значения (offset)
         compiler.code.add('pop', ['ebx'])
         compiler.code.add('add', ['eax', 'ebx'])
 
         # Записываем в heap memory тип элемента по адресу его ячейки в heap memory
-        compiler.code.add('add', ['eax', 2])
+        compiler.code.add('add', ['eax', 4])
         compiler.code.add('pop', ['ebx'])
-        compiler.code.add('mov', ['byte [eax]', 'bl'])
+        compiler.code.add('mov', ['dword [eax]', 'ebx'])
         # Записываем в heap memory значение элемента по адресу его ячейки в heap memory
-        compiler.code.add('sub', ['eax', 1])
+        compiler.code.add('sub', ['eax', 4])
         compiler.code.add('pop', ['ebx'])
-        compiler.code.add('mov', ['byte [eax]', 'bl'])
+        compiler.code.add('mov', ['dword [eax]', 'ebx'])
 
     @staticmethod
     def arrlen(compiler):
         """ Генерация инструкций для получения длины массива """
         compiler.code.add('pop', ['eax'])
-        compiler.code.add('movzx', ['eax', 'byte [eax]'])
+        compiler.code.add('mov', ['eax', 'dword [eax]'])
         compiler.code.add('push', ['eax'])
