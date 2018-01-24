@@ -215,10 +215,10 @@ class Mod:
         num1 = vm.stack.pop()
         num2 = vm.stack.pop()
         value = num2 % num1
-        if num1 < 0:
+        if num2 < 0 and value != 0 and num1 > 0:
             value -= num1
-        elif num2 < 0:
-            value -= num2
+        elif num1 < 0 and value != 0 and num2 > 0:
+            value -= num1
         vm.stack.append(value)
 
 
@@ -309,7 +309,7 @@ class Jnz:
         if len(vm.stack) == 0:
             raise RuntimeError('Stack is empty')
         num = vm.stack.pop()
-        if num == 1:
+        if num != 0:
             vm.commands.current = vm.labels[self.label]
 
 
