@@ -48,8 +48,6 @@ def binop_aexp(compiler, op, left, right):
 
     if op == '%':
         compiler.code.add('movzx', ['eax', 'dx'])
-    elif op == '/':
-        compiler.code.add('movzx', ['eax', 'ax'])
 
     compiler.code.add('push', ['eax'])
 
