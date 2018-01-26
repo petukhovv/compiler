@@ -2,6 +2,7 @@
 
 from .Core.commands import Commands
 from .Core.registers import Registers
+from .Core.config import FUNCTIONS_LABEL_PREFIX
 
 
 def function(compiler, name, args, body):
@@ -14,7 +15,7 @@ def function(compiler, name, args, body):
     compiler.code.add(Commands.JMP, [finish_function])
 
     # На эту метку переходим при вызове
-    compiler.code.add('_fun_%d:' % function_number, [])
+    compiler.code.add('%s%d:' % (FUNCTIONS_LABEL_PREFIX, function_number), [])
 
     compiler.code.add(Commands.PUSH, [Registers.EBP])
     compiler.code.add(Commands.MOV, [Registers.EBP, Registers.ESP])
@@ -61,7 +62,7 @@ def call_statement(compiler, name, args):
         compiler.types.pop()
 
     function_number = compiler.environment.get_number(name)
-    compiler.code.add(Commands.CALL, ['_fun_%d' % function_number])
+    compiler.code.add(Commands.CALL, ['%s%d' % (FUNCTIONS_LABEL_PREFIX, function_number)])
     compiler.code.add(Commands.PUSH, [Registers.EAX])
     compile_time_type = compiler.environment.get_return_type(name)
 
