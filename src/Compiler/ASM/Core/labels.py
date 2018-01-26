@@ -1,4 +1,4 @@
-from ..Config.general import *
+from .config import *
 
 
 class Labels(list):

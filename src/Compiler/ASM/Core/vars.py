@@ -1,8 +1,7 @@
 from .commands import Commands
 from .registers import Registers
 from .types import Types
-
-from ..Config.general import *
+from .config import *
 
 
 class Vars:

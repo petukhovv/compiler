@@ -1,6 +1,4 @@
 from .Deep.arrays import *
-from .Helpers.commands import Commands
-from .Helpers.registers import Registers
 
 
 def arrmake(compiler, args, type):

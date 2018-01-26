@@ -1,5 +1,5 @@
-from ..Helpers.commands import Commands
-from ..Helpers.registers import Registers
+from ..Core.commands import Commands
+from ..Core.registers import Registers
 
 
 class TrueResult:

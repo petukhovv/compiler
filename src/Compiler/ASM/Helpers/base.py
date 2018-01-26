@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from .types import *
-from .commands import Commands
-from .registers import Registers
+from ..Core.registers import Registers
+from ..Core.types import *
 
 
 def dbload(compiler, address, offset, size='dword'):

@@ -1,7 +1,5 @@
-from .Helpers.types import *
+from .Core.types import *
 from .Utils.labels import *
-from .Helpers.commands import Commands
-from .Helpers.registers import Registers
 
 """ Map: logic operator in programming language = the corresponding jump instruction in ASM """
 relop_compare_map = {

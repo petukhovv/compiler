@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from .Helpers.commands import Commands
-from .Helpers.registers import Registers
+from .Core.commands import Commands
+from .Core.registers import Registers
 
 
 def function(compiler, name, args, body):

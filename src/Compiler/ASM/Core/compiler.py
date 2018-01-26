@@ -1,35 +1,11 @@
-# -*- coding: utf-8 -*-
-
-from ..Config.general import *
-
-from .environment import Environment
-from .types import Types
-from .labels import Labels
-from .vars import Vars
+from .code import Code
 from .commands import Commands
+from .environment import Environment
+from .labels import Labels
 from .registers import Registers
-
-
-class Code(list):
-    stack_balance = 0
-
-    def check_and_fix_stack_balance(self):
-        if self.stack_balance != 0:
-            for i in range(1, self.stack_balance):
-                self.add(Commands.ADD, [Registers.ESP, 4])
-                self.stack_balance -= 1
-
-    def stack_pop(self):
-        self.stack_balance -= 1
-        self.add(Commands.ADD, [Registers.ESP, 4])
-
-    def add(self, command, args):
-        if command == Commands.PUSH:
-            self.stack_balance += 1
-        elif command == Commands.POP:
-            self.stack_balance -= 1
-
-        self.append(command + '\t\t' + ASM_ARGS_SEPARATOR.join(str(x) for x in args))
+from .types import Types
+from .vars import Vars
+from .config import *
 
 
 class Compiler:
@@ -63,11 +39,3 @@ class Compiler:
             ASM_COMMANDS_SEPARATOR.join(self.code) + ASM_COMMANDS_SEPARATOR
         )
 
-
-def compile_asm(ast):
-    """ Запуск компилятора в код языка ассемблера NASM (x86) """
-    compiler = Compiler()
-
-    ast.compile_asm(compiler)
-
-    return compiler.get_result()

@@ -1,6 +1,5 @@
-from .Helpers.types import *
-from .Helpers.commands import Commands
-from .Helpers.registers import Registers
+from .Core.registers import Registers
+from .Core.types import *
 
 """ Map: arithmetic operator in programming language = arithmetic operator in ASM """
 binop_compare_map = {

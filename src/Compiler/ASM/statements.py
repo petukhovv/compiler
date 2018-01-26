@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from .Helpers.commands import Commands
-from .Helpers.registers import Registers
+from .Core.commands import Commands
+from .Core.registers import Registers
 
 
 def assign_statement(compiler, variable, aexp):
@@ -16,9 +16,9 @@ def assign_statement(compiler, variable, aexp):
 def compound_statement(compiler, first, second):
     """ Компиляция составного выражения """
     first.compile_asm(compiler)
-    compiler.code.check_and_fix_stack_balance()
+    compiler.code.fix_stack_balance()
     second.compile_asm(compiler)
-    compiler.code.check_and_fix_stack_balance()
+    compiler.code.fix_stack_balance()
 
 
 def repeat_statement(compiler, condition, body):

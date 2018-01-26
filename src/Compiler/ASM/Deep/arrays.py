@@ -2,9 +2,8 @@
 
 from ..Helpers.base import *
 from ..Helpers.loop import Loop
+from ..Core.registers import Registers
 from ..Utils.malloc import Malloc
-from ..Helpers.commands import Commands
-from ..Helpers.registers import Registers
 
 
 class ArrayCompiler:

@@ -1,12 +1,12 @@
-import sys
 import argparse
 import os
+import sys
 
+from Compiler.ASM.Core.run import compile_asm
+from Compiler.VM.Helpers.run import compile_vm
+from Interpreter.Helpers.run import interpret
 from Lexer.run import run as lex
 from Parser.run import parse
-from Interpreter.Helpers.run import interpret
-from Compiler.VM.Helpers.run import compile_vm
-from Compiler.ASM.Helpers.run import compile_asm
 from VM.parser import parse as vm_parse
 from VM.run import run as vm_interpret
 
