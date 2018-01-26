@@ -307,8 +307,8 @@ class StringCompiler:
 
             # Сравниваем с 0 ранее продублированный символ (1-й строки) - если он равен нулю, то равен и второй,
             # т. к. в эту секцию мы попадаем только при равенстве обоих символов
-            compiler.code.add(Commands.POP, Registers.EAX)
-            compiler.code.add(Commands.CMP, [Registers.EAX, 0])
+            compiler.code.add(Commands.POP, Registers.EAX)\
+                .add(Commands.CMP, [Registers.EAX, 0])
             # 0 говорит о достижении конца строки - если это не 0, то продолжаем цикл
             compiler.code.add(Commands.JNZ, continue_label)
             # Сюда попадаем, когда достигли конца одновременно двух строк - т. е. они полностью равны
@@ -317,24 +317,24 @@ class StringCompiler:
         counter = Loop.simple(compiler, cycle_body, return_counter=True)
 
         # Секция полного равенства строк: пишем на стек 0
-        compiler.code.add_label(eq_label)
-        compiler.code.add(Commands.PUSH, 0)
-        compiler.code.add(Commands.JMP, finish_label)
+        compiler.code.add_label(eq_label)\
+            .add(Commands.PUSH, 0)\
+            .add(Commands.JMP, finish_label)
 
         # Секция неравенства строк
         compiler.code.add_label(not_eq_label)
         # Загружаем только второй символ - первый у нас уже содержится на стеке (см. тело цикла)
         dbload(compiler, str2_start_pointer, counter, size='byte')
         # Сравниваем символы оператором <
-        compiler.code.add(Commands.POP, Registers.EAX)
-        compiler.code.add(Commands.POP, Registers.EBX)
-        compiler.code.add(Commands.CMP, [Registers.EAX, Registers.EBX])
+        compiler.code.add(Commands.POP, Registers.EAX)\
+            .add(Commands.POP, Registers.EBX)\
+            .add(Commands.CMP, [Registers.EAX, Registers.EBX])
 
-        compiler.code.add(Commands.JG, larger_label)
-        compiler.code.add(Commands.PUSH, -1)
-        compiler.code.add(Commands.JMP, finish_label)
+        compiler.code.add(Commands.JG, larger_label)\
+            .add(Commands.PUSH, -1)\
+            .add(Commands.JMP, finish_label)
 
-        compiler.code.add_label(larger_label)
-        compiler.code.add(Commands.PUSH, 1)
+        compiler.code.add_label(larger_label)\
+            .add(Commands.PUSH, 1)
 
         compiler.code.add_label(finish_label)
