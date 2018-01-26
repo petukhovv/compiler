@@ -1,7 +1,6 @@
 import sys
-import os
 import argparse
-from os import path, system
+import os
 
 from Lexer.run import run as lex
 from Parser.run import parse
@@ -47,12 +46,15 @@ if args.compile:
     ast = parse_program(target_file)
     nasm_program = compile_x86(ast)
 
-    filename = path.splitext(path.basename(target_file))[0]
+    filename = os.path.splitext(os.path.basename(target_file))[0]
     runtime = os.environ.get('RC_RUNTIME')
     basepath = runtime + '/' + filename
+
+    if not os.path.exists(runtime):
+        os.makedirs(runtime)
 
     with open(basepath + '.asm', 'w') as f:
         f.write(nasm_program)
 
-    system('nasm -g -f macho ' + basepath + '.asm')
-    system('gcc -m32 -Wl,-no_pie -o ./' + filename + ' ' + basepath + '.o')
+    os.system('nasm -g -f macho ' + basepath + '.asm')
+    os.system('gcc -m32 -Wl,-no_pie -o ./' + filename + ' ' + basepath + '.o')
