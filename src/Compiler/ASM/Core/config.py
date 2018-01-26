@@ -1,2 +1,4 @@
 ASM_COMMANDS_SEPARATOR = '\n'
 ASM_ARGS_SEPARATOR = ','
+
+EXTERNS = ['_malloc']
