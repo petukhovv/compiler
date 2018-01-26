@@ -8,13 +8,13 @@ from .Helpers.common import BoxedArrayWrap, UnboxedArrayWrap
 def assign_statement(env, variable, aexp):
     """
     Assign statement def for AST.
-    eval - runtime function for Evaluator (return variable by name from environment).
+    interpret - runtime function for Evaluator (return variable by name from environment).
     Example: x := 56
     """
-    value = aexp.eval(env)
+    value = aexp.interpret(env)
     if isinstance(variable, ArrayElement):
         arr_descr = variable
-        index = arr_descr.index.eval(env)
+        index = arr_descr.index.interpret(env)
         arr = Environment(env).get(arr_descr.array)
         value_is_array = isinstance(aexp, UnboxedArrayWrap) or isinstance(aexp, BoxedArrayWrap)
         array_is_unboxed = isinstance(arr, UnboxedArrayWrap)
@@ -31,61 +31,61 @@ def assign_statement(env, variable, aexp):
 def compound_statement(env, first, second):
     """
     Compound statement def for AST.
-    eval - runtime function for Evaluator (eval first and second statement operators).
+    interpret - runtime function for Evaluator (interpret first and second statement operators).
     """
-    first.eval(env)
-    second.eval(env)
+    first.interpret(env)
+    second.interpret(env)
 
 
 def if_statement(env, condition, true_stmt, alternatives_stmt, false_stmt):
     """
     'If' statement def for AST.
-    eval - runtime function for Evaluator (true of false statement depending on condition).
+    interpret - runtime function for Evaluator (true of false statement depending on condition).
     """
-    condition_value = condition.eval(env)
+    condition_value = condition.interpret(env)
     if condition_value:
-        true_stmt.eval(env)
+        true_stmt.interpret(env)
     else:
         if alternatives_stmt:
             for alternative_stmt in alternatives_stmt:
-                alternative_condition_value = alternative_stmt.eval(env)
+                alternative_condition_value = alternative_stmt.interpret(env)
                 if alternative_condition_value:
                     return True
         if false_stmt:
-            false_stmt.eval(env)
+            false_stmt.interpret(env)
     return condition_value
 
 
 def while_statement(env, condition, body):
     """
     'While' statement def for AST.
-    eval - runtime function for Evaluator (body eval while condition).
+    interpret - runtime function for Evaluator (body interpret while condition).
     """
-    while condition.eval(env):
-        body.eval(env)
+    while condition.interpret(env):
+        body.interpret(env)
 
 
 def for_statement(env, stmt1, stmt2, stmt3, body):
     """
     'For' statement def for AST.
-    eval - runtime function for Evaluator ('for' loop).
+    interpret - runtime function for Evaluator ('for' loop).
     """
-    stmt1.eval(env)
-    while stmt2.eval(env):
+    stmt1.interpret(env)
+    while stmt2.interpret(env):
         iteration_env = Environment(env).create()
-        body.eval(iteration_env)
-        stmt3.eval(env)
+        body.interpret(iteration_env)
+        stmt3.interpret(env)
     return
 
 
 def repeat_statement(env, condition, body):
     """
     'Repeat' statement def for AST.
-    eval - runtime function for Evaluator (body eval while condition).
+    interpret - runtime function for Evaluator (body interpret while condition).
     """
     while True:
-        body.eval(env)
-        condition_value = condition.eval(env)
+        body.interpret(env)
+        condition_value = condition.interpret(env)
         if condition_value:
             break
 
@@ -93,6 +93,6 @@ def repeat_statement(env, condition, body):
 def skip_statement(env):
     """
     'Skip' statement def for AST.
-    eval - runtime function for Evaluator (empty function).
+    interpret - runtime function for Evaluator (empty function).
     """
     pass

@@ -25,7 +25,7 @@ def run(commands_list):
     while commands.current < len(commands.list):
         command = commands.list[commands.current]
         if isinstance(command, Label):
-            command.eval(vm)
+            command.interpret(vm)
         if isinstance(command, Function):
             current_scope = command.name
             stack_memory_sizes[current_scope] = 0
@@ -44,6 +44,6 @@ def run(commands_list):
     while commands.current < len(commands.list):
         command = commands.list[commands.current]
         if not isinstance(command, Label):
-            command.eval(vm)
+            command.interpret(vm)
         commands.current += 1
     commands.current = 0

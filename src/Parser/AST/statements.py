@@ -6,14 +6,14 @@ from Interpreter import statements as interpreter
 class AssignStatement:
     """
     Assign statement class for AST.
-    eval - runtime function for Evaluator (return variable by name from environment).
+    interpret - runtime function for Evaluator (return variable by name from environment).
     Example: x := 56
     """
     def __init__(self, variable, aexp):
         self.variable = variable
         self.aexp = aexp
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.assign_statement(env, self.variable, self.aexp)
 
     def compile_vm(self, commands, data):
@@ -26,13 +26,13 @@ class AssignStatement:
 class CompoundStatement:
     """
     Compound statement class for AST.
-    eval - runtime function for Evaluator (eval first and second statement operators).
+    interpret - runtime function for Evaluator (interpret first and second statement operators).
     """
     def __init__(self, first, second):
         self.first = first
         self.second = second
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.compound_statement(env, self.first, self.second)
 
     def compile_vm(self, commands, data):
@@ -45,7 +45,7 @@ class CompoundStatement:
 class IfStatement:
     """
     'If' statement class for AST.
-    eval - runtime function for Evaluator (true of false statement depending on condition).
+    interpret - runtime function for Evaluator (true of false statement depending on condition).
     """
     def __init__(self, condition, true_stmt, alternatives_stmt=None, false_stmt=None):
         self.condition = condition
@@ -53,7 +53,7 @@ class IfStatement:
         self.alternatives_stmt = alternatives_stmt
         self.false_stmt = false_stmt
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.if_statement(env, self.condition, self.true_stmt, self.alternatives_stmt, self.false_stmt)
 
     def compile_vm(self, commands, data, label_endif=None):
@@ -66,13 +66,13 @@ class IfStatement:
 class WhileStatement:
     """
     'While' statement class for AST.
-    eval - runtime function for Evaluator (body eval while condition).
+    interpret - runtime function for Evaluator (body interpret while condition).
     """
     def __init__(self, condition, body):
         self.condition = condition
         self.body = body
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.while_statement(env, self.condition, self.body)
 
     def compile_vm(self, commands, data):
@@ -85,7 +85,7 @@ class WhileStatement:
 class ForStatement:
     """
     'For' statement class for AST.
-    eval - runtime function for Evaluator ('for' loop).
+    interpret - runtime function for Evaluator ('for' loop).
     """
     def __init__(self, stmt1, stmt2, stmt3, body):
         self.stmt1 = stmt1
@@ -93,7 +93,7 @@ class ForStatement:
         self.stmt3 = stmt3
         self.body = body
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.for_statement(env, self.stmt1, self.stmt2, self.stmt3, self.body)
 
     def compile_vm(self, commands, data):
@@ -106,13 +106,13 @@ class ForStatement:
 class RepeatStatement:
     """
     'Repeat' statement class for AST.
-    eval - runtime function for Evaluator (body eval while condition).
+    interpret - runtime function for Evaluator (body interpret while condition).
     """
     def __init__(self, condition, body):
         self.condition = condition
         self.body = body
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.repeat_statement(env, self.condition, self.body)
 
     def compile_vm(self, commands, data):
@@ -125,9 +125,9 @@ class RepeatStatement:
 class SkipStatement:
     """
     'Skip' statement class for AST.
-    eval - runtime function for Evaluator (empty function).
+    interpret - runtime function for Evaluator (empty function).
     """
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.skip_statement(env)
 
     def compile_vm(self, commands, data):

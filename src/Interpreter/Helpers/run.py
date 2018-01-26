@@ -2,4 +2,4 @@ from .environment import *
 
 
 def interpret(ast):
-    ast.eval(Environment().create())
+    ast.interpret(Environment().create())

@@ -4,7 +4,7 @@ import sys
 def read_statement(env):
     """
     'Read' statement def for AST.
-    eval - runtime function for Evaluator (get value from stdin).
+    interpret - runtime function for Evaluator (get value from stdin).
     """
     value = sys.stdin.readline()
     sys.stdout.write('> ')
@@ -17,9 +17,9 @@ def read_statement(env):
 def write_statement(env, aexp):
     """
     'Write' statement def for AST.
-    eval - runtime function for Evaluator (write value to stdout).
+    interpret - runtime function for Evaluator (write value to stdout).
     """
-    value = aexp.eval(env)
+    value = aexp.interpret(env)
     if type(value) is bool:
         value = int(value)
     sys.stdout.write(str(value) + '\n')

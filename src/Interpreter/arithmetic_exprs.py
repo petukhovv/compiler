@@ -10,8 +10,8 @@ def var_aexp(env, name):
 
 
 def binop_aexp(env, op, left, right):
-    left_value = left.eval(env)
-    right_value = right.eval(env)
+    left_value = left.interpret(env)
+    right_value = right.interpret(env)
     if op == '+':
         value = left_value + right_value
     elif op == '-':

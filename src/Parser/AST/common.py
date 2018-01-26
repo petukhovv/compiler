@@ -8,19 +8,19 @@ class Pointer:
         self.env = env
         self.element = element
 
-    def eval(self):
+    def interpret(self):
         return interpreter.pointer(self.env, self.element)
 
 
 class Enumeration:
     """
     'Enumeration' statement class for AST.
-    eval - runtime function for Evaluator (empty function).
+    interpret - runtime function for Evaluator (empty function).
     """
     def __init__(self, elements):
         self.elements = elements
 
-    def eval(self):
+    def interpret(self):
         return interpreter.enumeration(self.elements)
 
     def compile_vm(self, commands, data):

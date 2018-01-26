@@ -8,14 +8,14 @@ from Interpreter import functions as interpreter
 class Function:
     """
     'Function' statement class for AST.
-    eval - runtime function for Evaluator (empty function).
+    interpret - runtime function for Evaluator (empty function).
     """
     def __init__(self, name, args, body):
         self.name = name
         self.args = args
         self.body = body
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.function(env, self.name, self.args, self.body)
 
     def compile_vm(self, commands, data):
@@ -28,12 +28,12 @@ class Function:
 class ReturnStatement:
     """
     'Return' statement class for AST.
-    eval - runtime function for Evaluator (empty function).
+    interpret - runtime function for Evaluator (empty function).
     """
     def __init__(self, expr):
         self.expr = expr
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.return_statement(env, self.expr)
 
     def compile_vm(self, commands, data):
@@ -46,22 +46,22 @@ class ReturnStatement:
 class FunctionCallStatement:
     """
     'Function call' statement class for AST.
-    eval - runtime function for Evaluator (empty function).
+    interpret - runtime function for Evaluator (empty function).
     """
     def __init__(self, name, args):
         self.name = name
         self.args = args
 
-    def eval(self, env):
+    def interpret(self, env):
         fun = env['f'][self.name]
         func_env = Environment(env).create(env['f'])
-        args = fun['args'].eval()
-        call_args_evaluated = self.args.eval()
+        args = fun['args'].interpret()
+        call_args_interpretuated = self.args.interpret()
         args_counter = 0
         for arg in args:
-            func_env['v'][arg] = call_args_evaluated[args_counter].eval(env)
+            func_env['v'][arg] = call_args_interpretuated[args_counter].interpret(env)
             args_counter += 1
-        fun['body'].eval(func_env)
+        fun['body'].interpret(func_env)
         return func_env['r']
 
     def compile_vm(self, commands, data):

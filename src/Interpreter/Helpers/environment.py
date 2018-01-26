@@ -4,7 +4,7 @@ from copy import deepcopy
 class Environment:
     """
     Integer arithmetic expression class for AST.
-    eval - runtime function for Evaluator (just return i).
+    interpret - runtime function for Evaluator (just return i).
     Example: 54
     """
     def __init__(self, env=None):

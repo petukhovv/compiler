@@ -6,13 +6,13 @@ from Interpreter import arithmetic_exprs as interpreter
 class IntAexp:
     """
     Integer arithmetic expression class for AST.
-    eval - runtime function for Evaluator (just return i).
+    interpret - runtime function for Evaluator (just return i).
     Example: 54
     """
     def __init__(self, i):
         self.i = i
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.int_aexp(env, self.i)
 
     def compile_vm(self, commands, data):
@@ -25,7 +25,7 @@ class IntAexp:
 class VarAexp:
     """
     Variable arithmetic expression class for AST.
-    eval - runtime function for Evaluator (return variable from environment by name).
+    interpret - runtime function for Evaluator (return variable from environment by name).
     Example: x
     """
     def __init__(self, name):
@@ -33,7 +33,7 @@ class VarAexp:
         self.context = 'get'
         self.type = None
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.var_aexp(env, self.name)
 
     def compile_vm(self, commands, data):
@@ -46,7 +46,7 @@ class VarAexp:
 class BinopAexp:
     """
     Binary operation arithmetic expression class for AST.
-    eval - runtime function for Evaluator (return result of applying the aoperation to left and right values).
+    interpret - runtime function for Evaluator (return result of applying the aoperation to left and right values).
     Example: x + 54
     """
     def __init__(self, op, left, right):
@@ -54,7 +54,7 @@ class BinopAexp:
         self.left = left
         self.right = right
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.binop_aexp(env, self.op, self.left, self.right)
 
     def compile_vm(self, commands, data):

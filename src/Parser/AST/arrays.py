@@ -11,7 +11,7 @@ class UnboxedArray:
     def __init__(self, elements):
         self.elements = elements
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.unboxed_array(env, self.elements)
 
     def compile_vm(self, commands, data):
@@ -27,7 +27,7 @@ class BoxedArray:
     def __init__(self, elements):
         self.elements = elements
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.boxed_array(env, self.elements)
 
     def compile_vm(self, commands, data):
@@ -46,7 +46,7 @@ class ArrayElement:
         self.other_indexes = other_indexes
         self.context = 'get'
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.array_element(env, self.array, self.index, self.other_indexes)
 
     def compile_vm(self, commands, data):
@@ -60,7 +60,7 @@ class ArrLen:
     def __init__(self, args):
         self.args = args
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.arr_len(env, self.args)
 
     def compile_vm(self, commands, data):
@@ -74,7 +74,7 @@ class UnboxedArrMake:
     def __init__(self, args):
         self.args = args
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.unboxed_arr_make(env, self.args)
 
     def compile_vm(self, commands, data):
@@ -88,7 +88,7 @@ class BoxedArrMake:
     def __init__(self, args):
         self.args = args
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.boxed_arr_make(env, self.args)
 
     def compile_vm(self, commands, data):

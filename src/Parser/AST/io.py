@@ -6,11 +6,11 @@ from Interpreter import io as interpreter
 class ReadStatement:
     """
     'Read' statement class for AST.
-    eval - runtime function for Evaluator (get value from stdin).
+    interpret - runtime function for Evaluator (get value from stdin).
     """
     def __init__(self): pass
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.read_statement(env)
 
     def compile_vm(self, commands, data):
@@ -23,12 +23,12 @@ class ReadStatement:
 class WriteStatement:
     """
     'Write' statement class for AST.
-    eval - runtime function for Evaluator (write value to stdout).
+    interpret - runtime function for Evaluator (write value to stdout).
     """
     def __init__(self, aexp):
         self.aexp = aexp
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.write_statement(env, self.aexp)
 
     def compile_vm(self, commands, data):

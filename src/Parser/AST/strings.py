@@ -9,7 +9,7 @@ class Char(Stackable):
     def __init__(self, character):
         self.character = character
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.char(env, self.character)
 
     def compile_vm(self, commands, data):
@@ -23,7 +23,7 @@ class String(Heapable):
     def __init__(self, characters):
         self.characters = characters
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.string(env, self.characters)
 
     def compile_vm(self, commands, data):
@@ -37,7 +37,7 @@ class StrLen(Stackable):
     def __init__(self, args):
         self.args = args
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.str_len(env, self.args)
 
     def compile_vm(self, commands, data):
@@ -51,7 +51,7 @@ class StrGet(Stackable):
     def __init__(self, args):
         self.args = args
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.str_get(env, self.args)
 
     def compile_vm(self, commands, data):
@@ -65,7 +65,7 @@ class StrSub(Heapable):
     def __init__(self, args):
         self.args = args
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.str_sub(env, self.args)
 
     def compile_vm(self, commands, data):
@@ -79,7 +79,7 @@ class StrDup(Heapable):
     def __init__(self, args):
         self.args = args
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.str_dup(env, self.args)
 
     def compile_vm(self, commands, data):
@@ -93,7 +93,7 @@ class StrSet:
     def __init__(self, args):
         self.args = args
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.str_set(env, self.args)
 
     def compile_vm(self, commands, data):
@@ -107,7 +107,7 @@ class StrCat(Heapable):
     def __init__(self, args):
         self.args = args
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.str_cat(env, self.args)
 
     def compile_vm(self, commands, data):
@@ -121,7 +121,7 @@ class StrCmp:
     def __init__(self, args):
         self.args = args
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.str_cmp(env, self.args)
 
     def compile_vm(self, commands, data):
@@ -135,7 +135,7 @@ class StrMake:
     def __init__(self, args):
         self.args = args
 
-    def eval(self, env):
+    def interpret(self, env):
         return interpreter.str_make(env, self.args)
 
     def compile_vm(self, commands, data):
