@@ -37,9 +37,9 @@ def int_aexp(compiler, i):
 
 def binop_aexp(compiler, op, left, right):
     """ Arithmetic expression compilation """
-    left.compile_x86(compiler)
+    left.compile_asm(compiler)
     compiler.commands.clean_type()
-    right.compile_x86(compiler)
+    right.compile_asm(compiler)
     compiler.commands.clean_type()
     compiler.code.add(Commands.POP, [Registers.EBX])
     compiler.code.add(Commands.POP, [Registers.EAX])

@@ -1,6 +1,6 @@
 from Compiler.VM import strings as compile_vm
 from Interpreter import strings as interpreter
-from Compiler.X86 import strings as compile_x86
+from Compiler.ASM import strings as compile_asm
 
 from .base import *
 
@@ -15,8 +15,8 @@ class Char(Stackable):
     def compile_vm(self, commands, data):
         return compile_vm.char(commands, data, self.character)
 
-    def compile_x86(self, compiler):
-        return compile_x86.char(compiler, self.character)
+    def compile_asm(self, compiler):
+        return compile_asm.char(compiler, self.character)
 
 
 class String(Heapable):
@@ -29,8 +29,8 @@ class String(Heapable):
     def compile_vm(self, commands, data):
         return compile_vm.string(commands, data, self.characters)
 
-    def compile_x86(self, compiler):
-        return compile_x86.string(compiler, self.characters)
+    def compile_asm(self, compiler):
+        return compile_asm.string(compiler, self.characters)
 
 
 class StrLen(Stackable):
@@ -43,8 +43,8 @@ class StrLen(Stackable):
     def compile_vm(self, commands, data):
         return compile_vm.strlen(commands, data, self.args)
 
-    def compile_x86(self, compiler):
-        return compile_x86.strlen(compiler, self.args)
+    def compile_asm(self, compiler):
+        return compile_asm.strlen(compiler, self.args)
 
 
 class StrGet(Stackable):
@@ -57,8 +57,8 @@ class StrGet(Stackable):
     def compile_vm(self, commands, data):
         return compile_vm.strget(commands, data, self.args)
 
-    def compile_x86(self, compiler):
-        return compile_x86.strget(compiler, self.args)
+    def compile_asm(self, compiler):
+        return compile_asm.strget(compiler, self.args)
 
 
 class StrSub(Heapable):
@@ -71,8 +71,8 @@ class StrSub(Heapable):
     def compile_vm(self, commands, data):
         return compile_vm.strsub(commands, data, self.args)
 
-    def compile_x86(self, compiler):
-        return compile_x86.strsub(compiler, self.args)
+    def compile_asm(self, compiler):
+        return compile_asm.strsub(compiler, self.args)
 
 
 class StrDup(Heapable):
@@ -85,8 +85,8 @@ class StrDup(Heapable):
     def compile_vm(self, commands, data):
         return compile_vm.strdup(commands, data, self.args)
 
-    def compile_x86(self, compiler):
-        return compile_x86.strdup(compiler, self.args)
+    def compile_asm(self, compiler):
+        return compile_asm.strdup(compiler, self.args)
 
 
 class StrSet:
@@ -99,8 +99,8 @@ class StrSet:
     def compile_vm(self, commands, data):
         return compile_vm.strset(commands, data, self.args)
 
-    def compile_x86(self, compiler):
-        return compile_x86.strset(compiler, self.args)
+    def compile_asm(self, compiler):
+        return compile_asm.strset(compiler, self.args)
 
 
 class StrCat(Heapable):
@@ -113,8 +113,8 @@ class StrCat(Heapable):
     def compile_vm(self, commands, data):
         return compile_vm.strcat(commands, data, self.args)
 
-    def compile_x86(self, compiler):
-        return compile_x86.strcat(compiler, self.args)
+    def compile_asm(self, compiler):
+        return compile_asm.strcat(compiler, self.args)
 
 
 class StrCmp:
@@ -127,8 +127,8 @@ class StrCmp:
     def compile_vm(self, commands, data):
         return compile_vm.strcmp(commands, data, self.args)
 
-    def compile_x86(self, compiler):
-        return compile_x86.strcmp(compiler, self.args)
+    def compile_asm(self, compiler):
+        return compile_asm.strcmp(compiler, self.args)
 
 
 class StrMake:
@@ -141,5 +141,5 @@ class StrMake:
     def compile_vm(self, commands, data):
         return compile_vm.strmake(commands, data, self.args)
 
-    def compile_x86(self, compiler):
-        return compile_x86.strmake(compiler, self.args)
+    def compile_asm(self, compiler):
+        return compile_asm.strmake(compiler, self.args)

@@ -1,7 +1,7 @@
 from Parser.AST.arithmetic_exprs import *
 
 from Compiler.VM import arrays as compile_vm
-from Compiler.X86 import arrays as compile_x86
+from Compiler.ASM import arrays as compile_asm
 from Interpreter import arrays as interpreter
 
 
@@ -17,8 +17,8 @@ class UnboxedArray:
     def compile_vm(self, commands, data):
         return compile_vm.arrmake_inline(commands, data, self.elements, 'unboxed')
 
-    def compile_x86(self, compiler):
-        return compile_x86.arrmake_inline(compiler, self.elements, 'unboxed')
+    def compile_asm(self, compiler):
+        return compile_asm.arrmake_inline(compiler, self.elements, 'unboxed')
 
 
 class BoxedArray:
@@ -33,8 +33,8 @@ class BoxedArray:
     def compile_vm(self, commands, data):
         return compile_vm.arrmake_inline(commands, data, self.elements, 'boxed')
 
-    def compile_x86(self, compiler):
-        return compile_x86.arrmake_inline(compiler, self.elements, 'boxed')
+    def compile_asm(self, compiler):
+        return compile_asm.arrmake_inline(compiler, self.elements, 'boxed')
 
 
 class ArrayElement:
@@ -52,8 +52,8 @@ class ArrayElement:
     def compile_vm(self, commands, data):
         return compile_vm.array_element(commands, data, self.array, self.index, self.other_indexes, self.context)
 
-    def compile_x86(self, compiler):
-        return compile_x86.array_element(compiler, self.array, self.index, self.other_indexes, self.context)
+    def compile_asm(self, compiler):
+        return compile_asm.array_element(compiler, self.array, self.index, self.other_indexes, self.context)
 
 
 class ArrLen:
@@ -66,8 +66,8 @@ class ArrLen:
     def compile_vm(self, commands, data):
         return compile_vm.arrlen(commands, data, self.args)
 
-    def compile_x86(self, compiler):
-        return compile_x86.arrlen(compiler, self.args)
+    def compile_asm(self, compiler):
+        return compile_asm.arrlen(compiler, self.args)
 
 
 class UnboxedArrMake:
@@ -80,8 +80,8 @@ class UnboxedArrMake:
     def compile_vm(self, commands, data):
         return compile_vm.arrmake(commands, data, self.args, 'unboxed')
 
-    def compile_x86(self, compiler):
-        return compile_x86.arrmake(compiler, self.args, 'unboxed')
+    def compile_asm(self, compiler):
+        return compile_asm.arrmake(compiler, self.args, 'unboxed')
 
 
 class BoxedArrMake:
@@ -94,5 +94,5 @@ class BoxedArrMake:
     def compile_vm(self, commands, data):
         return compile_vm.arrmake(commands, data, self.args, 'boxed')
 
-    def compile_x86(self, compiler):
-        return compile_x86.arrmake(compiler, self.args, 'boxed')
+    def compile_asm(self, compiler):
+        return compile_asm.arrmake(compiler, self.args, 'boxed')

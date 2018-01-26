@@ -9,7 +9,7 @@ def arrmake(compiler, args, type):
 
     # When they passed default values (in second argument), we look, in what particular format
     if len(args.elements) == 2:
-        default_value_type = args.elements[1].compile_x86(compiler)
+        default_value_type = args.elements[1].compile_asm(compiler)
         compiler.commands.clean_type()
         # If the second argument was passed [] or {}, then the duplicated element will be 0
         # ( signature: arrmake(n, []), Arrmake(n, {}) )
@@ -30,7 +30,7 @@ def arrmake(compiler, args, type):
     else:
         default_values_variant = 'none'
 
-    args.elements[0].compile_x86(compiler)
+    args.elements[0].compile_asm(compiler)
     compiler.commands.clean_type()
 
     ArrayCompiler.arrmake(compiler, default_values_variant)
@@ -42,7 +42,7 @@ def arrmake_inline(compiler, elements, type):
     """ Compilation the inline construction to create boxed and unboxed arrays: [n1, n2, ...] / {a1, a2, ...} """
     type = Types.BOXED_ARR if type == 'boxed' else Types.UNBOXED_ARR
 
-    arr_elements = elements.compile_x86(compiler)
+    arr_elements = elements.compile_asm(compiler)
     arr_length = len(arr_elements)
     arr_pointer = compiler.bss.vars.add(
         None,
@@ -82,12 +82,12 @@ def array_element(compiler, array, index, other_indexes, context):
     compiler.code.add(Commands.PUSH, [var_name])
 
     # Compilation obtain an index construction
-    index.compile_x86(compiler)
+    index.compile_asm(compiler)
     compiler.commands.clean_type()
 
     def other_index_compile(other_index):
         compiler.commands.clean_type()
-        other_index.compile_x86(compiler)
+        other_index.compile_asm(compiler)
         compiler.commands.clean_type()
 
     if context == 'assign':
@@ -110,7 +110,7 @@ def array_element(compiler, array, index, other_indexes, context):
 
 def arrlen(compiler, args):
     """ Built-in arrlen function compilation to get array length """
-    args.elements[0].compile_x86(compiler)
+    args.elements[0].compile_asm(compiler)
     compiler.commands.clean_type()
 
     ArrayCompiler.arrlen(compiler)

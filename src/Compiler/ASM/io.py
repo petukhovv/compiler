@@ -10,6 +10,6 @@ def read_statement(compiler):
 
 
 def write_statement(compiler, aexp):
-    value_type = aexp.compile_x86(compiler)
+    value_type = aexp.compile_asm(compiler)
     compiler.commands.clean_type()
     Write(compiler).call(value_type)

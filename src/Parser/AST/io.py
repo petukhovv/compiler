@@ -1,4 +1,4 @@
-from Compiler.X86 import io as compile_x86
+from Compiler.ASM import io as compile_asm
 from Compiler.VM import io as compile_vm
 from Interpreter import io as interpreter
 
@@ -16,8 +16,8 @@ class ReadStatement:
     def compile_vm(self, commands, data):
         return compile_vm.read_statement(commands, data)
 
-    def compile_x86(self, compiler):
-        return compile_x86.read_statement(compiler)
+    def compile_asm(self, compiler):
+        return compile_asm.read_statement(compiler)
 
 
 class WriteStatement:
@@ -34,5 +34,5 @@ class WriteStatement:
     def compile_vm(self, commands, data):
         return compile_vm.write_statement(commands, data, self.aexp)
 
-    def compile_x86(self, compiler):
-        return compile_x86.write_statement(compiler, self.aexp)
+    def compile_asm(self, compiler):
+        return compile_asm.write_statement(compiler, self.aexp)

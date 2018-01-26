@@ -29,7 +29,7 @@ def string(compiler, characters):
 
 def strlen(compiler, args):
     """ Компиляция built-in функции strlen (длина строки) """
-    args.elements[0].compile_x86(compiler)
+    args.elements[0].compile_asm(compiler)
     compiler.commands.clean_type()
 
     StringCompiler.strlen(compiler)
@@ -40,9 +40,9 @@ def strlen(compiler, args):
 def strget(compiler, args):
     """ Компиляция built-in функции strget (получение символа строки) """
     # Порядок компиляции аргументов здесь и ниже задаём удобным для дальнейшей работы образом
-    args.elements[1].compile_x86(compiler)
+    args.elements[1].compile_asm(compiler)
     compiler.commands.clean_type()
-    array_type = args.elements[0].compile_x86(compiler)
+    array_type = args.elements[0].compile_asm(compiler)
     compiler.commands.clean_type()
     StringCompiler.strget(compiler, array_type)
 
@@ -51,22 +51,22 @@ def strget(compiler, args):
 
 def strset(compiler, args):
     """ Компиляция built-in функции strset (задание символа строки) """
-    args.elements[2].compile_x86(compiler)
+    args.elements[2].compile_asm(compiler)
     compiler.commands.clean_type()
-    args.elements[1].compile_x86(compiler)
+    args.elements[1].compile_asm(compiler)
     compiler.commands.clean_type()
-    array_type = args.elements[0].compile_x86(compiler)
+    array_type = args.elements[0].compile_asm(compiler)
     compiler.commands.clean_type()
     StringCompiler.strset(compiler, array_type)
 
 
 def strsub(compiler, args):
     """ Компиляция built-in функции strsub (взятие подстроки строки) """
-    args.elements[1].compile_x86(compiler)
+    args.elements[1].compile_asm(compiler)
     compiler.commands.clean_type()
-    array_type = args.elements[0].compile_x86(compiler)
+    array_type = args.elements[0].compile_asm(compiler)
     compiler.commands.clean_type()
-    args.elements[2].compile_x86(compiler)
+    args.elements[2].compile_asm(compiler)
     compiler.commands.clean_type()
     StringCompiler.strsub(compiler, array_type)
 
@@ -75,7 +75,7 @@ def strsub(compiler, args):
 
 def strdup(compiler, args):
     """ Компиляция built-in функции strdup (дублирование строки) """
-    array_type = args.elements[0].compile_x86(compiler)
+    array_type = args.elements[0].compile_asm(compiler)
     compiler.commands.clean_type()
     StringCompiler.strdup(compiler, array_type)
 
@@ -84,9 +84,9 @@ def strdup(compiler, args):
 
 def strcat(compiler, args):
     """ Компиляция built-in функции strcat (конкатенация двух строк) """
-    args.elements[0].compile_x86(compiler)
+    args.elements[0].compile_asm(compiler)
     compiler.commands.clean_type()
-    args.elements[1].compile_x86(compiler)
+    args.elements[1].compile_asm(compiler)
     compiler.commands.clean_type()
 
     StringCompiler.strcat_calc_length(compiler)
@@ -97,9 +97,9 @@ def strcat(compiler, args):
 
 def strmake(compiler, args):
     """ Компиляция built-in функции strmake (создание строки из n одинаковых символов) """
-    args.elements[1].compile_x86(compiler)
+    args.elements[1].compile_asm(compiler)
     compiler.commands.clean_type()
-    args.elements[0].compile_x86(compiler)
+    args.elements[0].compile_asm(compiler)
     compiler.commands.clean_type()
     StringCompiler.strmake(compiler)
 
@@ -108,9 +108,9 @@ def strmake(compiler, args):
 
 def strcmp(compiler, args):
     """ Компиляция built-in функции strcmp (посимвольное сравнение двух строк) """
-    args.elements[0].compile_x86(compiler)
+    args.elements[0].compile_asm(compiler)
     compiler.commands.clean_type()
-    args.elements[1].compile_x86(compiler)
+    args.elements[1].compile_asm(compiler)
     compiler.commands.clean_type()
     StringCompiler.strcmp(compiler)
 

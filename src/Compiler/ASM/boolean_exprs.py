@@ -16,9 +16,9 @@ relop_compare_map = {
 
 def relop_bexp(compiler, op, left, right):
     """ Logic expression compilation """
-    left.compile_x86(compiler)
+    left.compile_asm(compiler)
     compiler.commands.clean_type()
-    right.compile_x86(compiler)
+    right.compile_asm(compiler)
     compiler.commands.clean_type()
     compiler.code.add(Commands.POP, [Registers.EBX])
     compiler.code.add(Commands.POP, [Registers.EAX])
@@ -40,7 +40,7 @@ def and_bexp(compiler, left, right):
     finish_label = compiler.labels.create()
     finish_false_label = compiler.labels.create()
 
-    left.compile_x86(compiler)
+    left.compile_asm(compiler)
     compiler.commands.clean_type()
     compiler.code.add(Commands.POP, [Registers.EAX])
 
@@ -50,7 +50,7 @@ def and_bexp(compiler, left, right):
     compiler.code.add(Commands.JNZ, [finish_false_label])
 
     # Otherwise, we will check the second operand
-    right.compile_x86(compiler)
+    right.compile_asm(compiler)
     compiler.commands.clean_type()
     compiler.code.add(Commands.POP, [Registers.EAX])
 

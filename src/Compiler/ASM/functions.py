@@ -24,7 +24,7 @@ def function(compiler, name, args, body):
     compiler.environment.set_args(args_map)
 
     # Компилируем код тела функции
-    body.compile_x86(compiler)
+    body.compile_asm(compiler)
 
     return_type = compiler.environment.get_return_type(name)
 
@@ -43,7 +43,7 @@ def function(compiler, name, args, body):
 
 def return_statement(compiler, expr):
     """ Компиляция выражения возврата к месту вызова """
-    return_type = expr.compile_x86(compiler)
+    return_type = expr.compile_asm(compiler)
     compiler.commands.clean_type()
 
     compiler.code.add(Commands.POP, [Registers.EAX])
@@ -59,7 +59,7 @@ def return_statement(compiler, expr):
 def call_statement(compiler, name, args):
     """ Компиляция выражения вызова функции """
     for arg in args.elements:
-        arg.compile_x86(compiler)
+        arg.compile_asm(compiler)
         compiler.commands.clean_type()
 
     function_label = compiler.environment.get_label(name)

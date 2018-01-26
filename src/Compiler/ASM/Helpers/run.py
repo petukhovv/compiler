@@ -138,7 +138,7 @@ class Compiler:
         self.code.add(Commands.SUB, [Registers.ESP, 1])
         self.code.add(Commands.INT, [0x80])
 
-    def assemble(self):
+    def get_result(self):
         self.exit()
 
         return (
@@ -155,10 +155,10 @@ class Compiler:
         )
 
 
-def compile_x86(ast):
+def compile_asm(ast):
     """ Запуск компилятора в код языка ассемблера NASM (x86) """
     compiler = Compiler()
 
-    ast.compile_x86(compiler)
+    ast.compile_asm(compiler)
 
-    return compiler.assemble()
+    return compiler.get_result()

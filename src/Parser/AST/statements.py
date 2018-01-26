@@ -1,4 +1,4 @@
-from Compiler.X86 import statements as compile_x86
+from Compiler.ASM import statements as compile_asm
 from Compiler.VM import statements as compile_vm
 from Interpreter import statements as interpreter
 
@@ -19,8 +19,8 @@ class AssignStatement:
     def compile_vm(self, commands, data):
         return compile_vm.assign_statement(commands, data, self.variable, self.aexp)
 
-    def compile_x86(self, compiler):
-        return compile_x86.assign_statement(compiler, self.variable, self.aexp)
+    def compile_asm(self, compiler):
+        return compile_asm.assign_statement(compiler, self.variable, self.aexp)
 
 
 class CompoundStatement:
@@ -38,8 +38,8 @@ class CompoundStatement:
     def compile_vm(self, commands, data):
         return compile_vm.compound_statement(commands, data, self.first, self.second)
 
-    def compile_x86(self, compiler):
-        return compile_x86.compound_statement(compiler, self.first, self.second)
+    def compile_asm(self, compiler):
+        return compile_asm.compound_statement(compiler, self.first, self.second)
 
 
 class IfStatement:
@@ -59,8 +59,8 @@ class IfStatement:
     def compile_vm(self, commands, data, label_endif=None):
         return compile_vm.if_statement(commands, data, self.condition, self.true_stmt, self.alternatives_stmt, self.false_stmt, label_endif)
 
-    def compile_x86(self, compiler, label_endif=None):
-        return compile_x86.if_statement(compiler, self.condition, self.true_stmt, self.alternatives_stmt, self.false_stmt, label_endif)
+    def compile_asm(self, compiler, label_endif=None):
+        return compile_asm.if_statement(compiler, self.condition, self.true_stmt, self.alternatives_stmt, self.false_stmt, label_endif)
 
 
 class WhileStatement:
@@ -78,8 +78,8 @@ class WhileStatement:
     def compile_vm(self, commands, data):
         return compile_vm.while_statement(commands, data, self.condition, self.body)
 
-    def compile_x86(self, compiler):
-        return compile_x86.while_statement(compiler, self.condition, self.body)
+    def compile_asm(self, compiler):
+        return compile_asm.while_statement(compiler, self.condition, self.body)
 
 
 class ForStatement:
@@ -99,8 +99,8 @@ class ForStatement:
     def compile_vm(self, commands, data):
         return compile_vm.for_statement(commands, data, self.stmt1, self.stmt2, self.stmt3, self.body)
 
-    def compile_x86(self, compiler):
-        return compile_x86.for_statement(compiler, self.stmt1, self.stmt2, self.stmt3, self.body)
+    def compile_asm(self, compiler):
+        return compile_asm.for_statement(compiler, self.stmt1, self.stmt2, self.stmt3, self.body)
 
 
 class RepeatStatement:
@@ -118,8 +118,8 @@ class RepeatStatement:
     def compile_vm(self, commands, data):
         return compile_vm.repeat_statement(commands, data, self.condition, self.body)
 
-    def compile_x86(self, compiler):
-        return compile_x86.repeat_statement(compiler, self.condition, self.body)
+    def compile_asm(self, compiler):
+        return compile_asm.repeat_statement(compiler, self.condition, self.body)
 
 
 class SkipStatement:
@@ -133,5 +133,5 @@ class SkipStatement:
     def compile_vm(self, commands, data):
         return compile_vm.skip_statement(commands, data)
 
-    def compile_x86(self, compiler):
-        return compile_x86.skip_statement(compiler)
+    def compile_asm(self, compiler):
+        return compile_asm.skip_statement(compiler)

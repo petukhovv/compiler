@@ -6,7 +6,7 @@ from Lexer.run import run as lex
 from Parser.run import parse
 from Interpreter.Helpers.run import interpret
 from Compiler.VM.Helpers.run import compile_vm
-from Compiler.X86.Helpers.run import compile_x86
+from Compiler.ASM.Helpers.run import compile_asm
 from VM.parser import parse as vm_parse
 from VM.run import run as vm_interpret
 
@@ -44,7 +44,7 @@ if args.stack_machine:
 if args.compile:
     target_file = args.compile[0]
     ast = parse_program(target_file)
-    nasm_program = compile_x86(ast)
+    nasm_program = compile_asm(ast)
 
     filename = os.path.splitext(os.path.basename(target_file))[0]
     runtime = os.environ.get('RC_RUNTIME')
