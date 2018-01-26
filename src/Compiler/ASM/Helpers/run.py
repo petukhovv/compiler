@@ -10,11 +10,6 @@ from .commands import Commands
 from .registers import Registers
 
 
-class Data(list):
-    def add(self, label, command, data):
-        self.append(label + ': ' + command + ' ' + str(data) + ASM_COMMANDS_SEPARATOR)
-
-
 class Code(list):
     stack_balance = 0
 
@@ -39,7 +34,6 @@ class Code(list):
 
 class Compiler:
     def __init__(self):
-        self.data = Data()
         self.environment = Environment()
         self.code = Code()
         self.labels = Labels()
@@ -59,7 +53,7 @@ class Compiler:
         return (
             'EXTERN _malloc' + ASM_COMMANDS_SEPARATOR +
             'SECTION .data' + ASM_COMMANDS_SEPARATOR +
-            ASM_COMMANDS_SEPARATOR.join(self.data) +
+            ASM_COMMANDS_SEPARATOR.join(self.vars.data) +
             'SECTION .bss' + ASM_COMMANDS_SEPARATOR +
             ASM_COMMANDS_SEPARATOR.join(self.vars.bss) +
             'SECTION .text' + ASM_COMMANDS_SEPARATOR +

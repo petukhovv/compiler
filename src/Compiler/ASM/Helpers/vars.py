@@ -13,6 +13,10 @@ class Vars:
         self.vars = {}
         self.var_counter = 0
         self.bss = []
+        self.data = []
+
+    def add_in_data(self, label, command, data):
+        self.data.append(label + ': ' + command + ' ' + str(data) + ASM_COMMANDS_SEPARATOR)
 
     def add_in_bss(self, name, type, bytes):
         self.bss.append(name + '\t\t' + type + ' ' + str(bytes) + ASM_COMMANDS_SEPARATOR)
