@@ -60,6 +60,9 @@ class OrBexp:
     def compile_vm(self, commands, data):
         return compile_vm.or_bexp(commands, data, self.left, self.right)
 
+    def compile_asm(self, compiler):
+        return compile_asm.or_bexp(compiler, self.left, self.right)
+
 
 class NotBexp:
     """
@@ -75,3 +78,6 @@ class NotBexp:
 
     def compile_vm(self, commands, data):
         return compile_vm.not_bexp(commands, data, self.exp)
+
+    def compile_asm(self, compiler):
+        return compile_asm.not_bexp(compiler, self.exp)

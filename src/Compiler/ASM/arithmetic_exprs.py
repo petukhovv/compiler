@@ -20,7 +20,7 @@ binop_compare_map = {
         'operands': [Registers.EBX]
     },
     '%': {
-        'operator': Commands.DIV,
+        'operator': Commands.IDIV,
         'operands': [Registers.EBX]
     }
 }
@@ -43,10 +43,13 @@ def binop_aexp(compiler, op, left, right):
     compiler.code.add(Commands.POP, [Registers.EBX])
     compiler.code.add(Commands.POP, [Registers.EAX])
 
+    if op == '/' or op == '%':
+        compiler.code.add(Commands.CDQ, [])
+
     compiler.code.add(binop_compare_map[op]['operator'], binop_compare_map[op]['operands'])
 
     if op == '%':
-        compiler.code.add(Commands.MOVZX, [Registers.EAX, Registers.DX])
+        compiler.code.add(Commands.MOV, [Registers.EAX, Registers.EDX])
 
     compiler.code.add(Commands.PUSH, [Registers.EAX])
 

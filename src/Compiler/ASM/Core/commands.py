@@ -8,6 +8,8 @@ class Commands:
     DIV = 'div'
     IDIV = 'idiv'
 
+    CDQ = 'cdq'
+
     CALL = 'call'
     RET = 'ret'
 
