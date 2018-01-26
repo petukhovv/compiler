@@ -10,8 +10,8 @@ class StringCompiler:
     @staticmethod
     def store(compiler):
         """ Генерация инструкций для записи строки из стека в heap memory. """
-        str_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
-        end_str_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+        str_start_pointer = compiler.vars.add(None, 'resb', 4, Types.INT)
+        end_str_pointer = compiler.vars.add(None, 'resb', 4, Types.INT)
 
         # Добавляем к требуемому размеру памяти 1 - для escape-нуля (маркера конца строки)
         compiler.code.add(Commands.POP, [Registers.EAX])
@@ -43,7 +43,7 @@ class StringCompiler:
     @staticmethod
     def strlen(compiler):
         """ Генерация инструкций для получения длины строки, находящейся на стеке. """
-        str_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+        str_start_pointer = compiler.vars.add(None, 'resb', 4, Types.INT)
         # Разыменовываем лежащий на стеке указатель и записываем его в переменную
         compiler.code.add(Commands.POP, ['dword [%s]' % str_start_pointer])
 
@@ -76,10 +76,10 @@ class StringCompiler:
     @staticmethod
     def strsub(compiler, type):
         """ Генерация инструкций для получение подстроки строки """
-        substr_length = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
-        substr_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
-        start_substr_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
-        end_substr_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+        substr_length = compiler.vars.add(None, 'resb', 4, Types.INT)
+        substr_start_pointer = compiler.vars.add(None, 'resb', 4, Types.INT)
+        start_substr_pointer = compiler.vars.add(None, 'resb', 4, Types.INT)
+        end_substr_pointer = compiler.vars.add(None, 'resb', 4, Types.INT)
 
         finish_label = compiler.labels.create()
 
@@ -125,10 +125,10 @@ class StringCompiler:
     @staticmethod
     def strdup(compiler, type):
         """ Генерация инструкций для дублирования строки """
-        substr_length = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
-        str_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
-        new_str_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
-        new_end_str_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+        substr_length = compiler.vars.add(None, 'resb', 4, Types.INT)
+        str_start_pointer = compiler.vars.add(None, 'resb', 4, Types.INT)
+        new_str_start_pointer = compiler.vars.add(None, 'resb', 4, Types.INT)
+        new_end_str_pointer = compiler.vars.add(None, 'resb', 4, Types.INT)
         # Разыменовываем лежащий на стеке указатель и записываем его в переменную
         compiler.code.add(Commands.POP, ['dword [%s]' % str_start_pointer])
 
@@ -182,15 +182,15 @@ class StringCompiler:
     @staticmethod
     def strcat(compiler):
         """ Генерация инструкций для дублирования первой из конкатенируемых строки """
-        str_length = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+        str_length = compiler.vars.add(None, 'resb', 4, Types.INT)
 
-        new_str_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
-        new_end_str_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+        new_str_start_pointer = compiler.vars.add(None, 'resb', 4, Types.INT)
+        new_end_str_pointer = compiler.vars.add(None, 'resb', 4, Types.INT)
 
-        str1_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
-        str2_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+        str1_start_pointer = compiler.vars.add(None, 'resb', 4, Types.INT)
+        str2_start_pointer = compiler.vars.add(None, 'resb', 4, Types.INT)
 
-        counter_with_offset = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+        counter_with_offset = compiler.vars.add(None, 'resb', 4, Types.INT)
 
         compiler.code.add(Commands.POP, [Registers.EAX])
         compiler.code.add(Commands.ADD, [Registers.EAX, 1])
@@ -238,9 +238,9 @@ class StringCompiler:
     @staticmethod
     def strmake(compiler):
         """ Генерация инструкций для создания строки заданной длины с повторяющимся символом """
-        str_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
-        str_length = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
-        basis_symbol = compiler.bss.vars.add(None, 'resb', 4, Types.CHAR)
+        str_start_pointer = compiler.vars.add(None, 'resb', 4, Types.INT)
+        str_length = compiler.vars.add(None, 'resb', 4, Types.INT)
+        basis_symbol = compiler.vars.add(None, 'resb', 4, Types.CHAR)
 
         finish_label = compiler.labels.create()
 
@@ -279,8 +279,8 @@ class StringCompiler:
     @staticmethod
     def strcmp(compiler):
         """ Генерация инструкций для посимвольного сравнивания двух строк """
-        str1_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
-        str2_start_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+        str1_start_pointer = compiler.vars.add(None, 'resb', 4, Types.INT)
+        str2_start_pointer = compiler.vars.add(None, 'resb', 4, Types.INT)
 
         eq_label = compiler.labels.create()
         not_eq_label = compiler.labels.create()

@@ -44,7 +44,7 @@ def arrmake_inline(compiler, elements, type):
 
     arr_elements = elements.compile_asm(compiler)
     arr_length = len(arr_elements)
-    arr_pointer = compiler.bss.vars.add(
+    arr_pointer = compiler.vars.add(
         None,
         'resb',
         arr_length * 2 * 4 + 4,
@@ -56,8 +56,8 @@ def arrmake_inline(compiler, elements, type):
         element_place = i * 2 * 4 + 4
 
         if type == Types.BOXED_ARR:
-            element_type = compiler.bss.vars.get_type(element)
-            element = compiler.bss.vars.get(element)
+            element_type = compiler.vars.get_type(element)
+            element = compiler.vars.get(element)
             compiler.code.add(Commands.MOV, [Registers.EAX, element_type])
             compiler.code.add(Commands.MOV, [Registers.EBX, element])
             element_type = Registers.EAX
@@ -75,8 +75,8 @@ def arrmake_inline(compiler, elements, type):
 
 def array_element(compiler, array, index, other_indexes, context):
     """ Compilation the get array element operator: A[n] """
-    var_name = compiler.bss.vars.get(array)
-    var_type = compiler.bss.vars.get_type(array)
+    var_name = compiler.vars.get(array)
+    var_type = compiler.vars.get_type(array)
 
     # Compilation obtain a pointer construction to the beginning of an array
     compiler.code.add(Commands.PUSH, [var_name])

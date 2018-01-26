@@ -15,9 +15,9 @@ class Read(Base):
             return
 
         self.load('read.asm')
-        self.compiler.bss.add('_read_buffer', 'resb', 255)
-        self.compiler.bss.add('_read_buffer_done', 'resb', 4)
-        self.compiler.bss.add('_read_buffer_all', 'resb', 4)
+        self.compiler.vars.add_in_bss('_read_buffer', 'resb', 255)
+        self.compiler.vars.add_in_bss('_read_buffer_done', 'resb', 4)
+        self.compiler.vars.add_in_bss('_read_buffer_all', 'resb', 4)
         self.compiler.data.add('_read_buffer_size', 'dd', '255')
         Read.is_loaded = True
 

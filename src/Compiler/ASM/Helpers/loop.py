@@ -13,7 +13,7 @@ class Loop:
         Условие останова - динамическое, передается извне.
         """
         # Создаем метки и переменные, необходимые для прохождения цикла.
-        counter = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+        counter = compiler.vars.add(None, 'resb', 4, Types.INT)
 
         start_label = compiler.labels.create()
         finish_label = compiler.labels.create()

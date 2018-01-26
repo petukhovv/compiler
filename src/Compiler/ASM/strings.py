@@ -16,7 +16,7 @@ def char(compiler, character, need_typify=True, address=None):
 def string(compiler, characters):
     """ Компиляция выражения "строка" """
     str_length = len(characters)
-    str_pointer = compiler.bss.vars.add(None, 'resb', str_length + 2, Types.INT)
+    str_pointer = compiler.vars.add(None, 'resb', str_length + 2, Types.INT)
 
     for i, character in enumerate(characters):
         char(compiler, character, need_typify=False, address="%s+%d" % (str_pointer, i))

@@ -36,7 +36,7 @@ def dbstore(compiler, address, offset, invert=False, value=0):
 
 def calc_arr_element_address(compiler, arr_pointer, counter):
     """ Хелпер для генерации инструкций для сохранения значения в heap memory по заданному адресу с заданным смещением """
-    element_place = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+    element_place = compiler.vars.add(None, 'resb', 4, Types.INT)
     compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % counter])
     compiler.code.add(Commands.MOV, [Registers.EBX, 2 * 4])
     compiler.code.add(Commands.MUL, [Registers.EBX])

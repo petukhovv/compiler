@@ -13,13 +13,13 @@ class ArrayCompiler:
         """
         Генерация инструкций для выделения памяти под boxed и unboxed массивы и записи в него значений по умолчанию
         """
-        arr_length = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+        arr_length = compiler.vars.add(None, 'resb', 4, Types.INT)
 
         compiler.code.add(Commands.POP, ['dword [%s]' % arr_length])
 
         is_repeated_values = default_values_variant == 'zeros' or default_values_variant == 'repeated'
         if is_repeated_values:
-            basis_element = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+            basis_element = compiler.vars.add(None, 'resb', 4, Types.INT)
             compiler.code.add(Commands.POP, ['dword [%s]' % basis_element])
 
         # Сохраняем длину массива в переменную
@@ -37,7 +37,7 @@ class ArrayCompiler:
             compiler.code.add(Commands.PUSH, [Registers.EAX])
             return
 
-        arr_pointer = compiler.bss.vars.add(None, 'resb', 4, Types.INT)
+        arr_pointer = compiler.vars.add(None, 'resb', 4, Types.INT)
         finish_label = compiler.labels.create()
 
         # Сохраняем указатель на начало массива
