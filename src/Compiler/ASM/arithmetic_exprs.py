@@ -32,15 +32,15 @@ def int_aexp(compiler, i):
     compiler.code.add(Commands.MOV, [Registers.EAX, i])
     compiler.code.add(Commands.PUSH, [Registers.EAX])
 
-    return compiler.commands.set_and_return_type(Types.INT)
+    return compiler.types.set(Types.INT)
 
 
 def binop_aexp(compiler, op, left, right):
     """ Arithmetic expression compilation """
     left.compile_asm(compiler)
-    compiler.commands.clean_type()
+    compiler.types.pop()
     right.compile_asm(compiler)
-    compiler.commands.clean_type()
+    compiler.types.pop()
     compiler.code.add(Commands.POP, [Registers.EBX])
     compiler.code.add(Commands.POP, [Registers.EAX])
 
@@ -51,7 +51,7 @@ def binop_aexp(compiler, op, left, right):
 
     compiler.code.add(Commands.PUSH, [Registers.EAX])
 
-    return compiler.commands.set_and_return_type(Types.INT)
+    return compiler.types.set(Types.INT)
 
 
 def var_aexp(compiler, name, context, value_type):
@@ -64,4 +64,4 @@ def var_aexp(compiler, name, context, value_type):
         compiler.code.add(Commands.PUSH, [Registers.EAX])
         compile_time_type = compiler.bss.vars.get_compile_time_type(name)
 
-        return compiler.commands.set_and_return_type(compile_time_type)
+        return compiler.types.set(compile_time_type)

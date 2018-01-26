@@ -17,9 +17,9 @@ relop_compare_map = {
 def relop_bexp(compiler, op, left, right):
     """ Logic expression compilation """
     left.compile_asm(compiler)
-    compiler.commands.clean_type()
+    compiler.types.pop()
     right.compile_asm(compiler)
-    compiler.commands.clean_type()
+    compiler.types.pop()
     compiler.code.add(Commands.POP, [Registers.EBX])
     compiler.code.add(Commands.POP, [Registers.EAX])
 
@@ -32,7 +32,7 @@ def relop_bexp(compiler, op, left, right):
     true_result_label.add_return()
     compiler.code.add(Commands.PUSH, [Registers.EAX])
 
-    return compiler.commands.set_and_return_type(Types.INT)
+    return compiler.types.set(Types.INT)
 
 
 def and_bexp(compiler, left, right):
@@ -41,7 +41,7 @@ def and_bexp(compiler, left, right):
     finish_false_label = compiler.labels.create()
 
     left.compile_asm(compiler)
-    compiler.commands.clean_type()
+    compiler.types.pop()
     compiler.code.add(Commands.POP, [Registers.EAX])
 
     # If the first operand is 0, the second operand is not checked,
@@ -51,7 +51,7 @@ def and_bexp(compiler, left, right):
 
     # Otherwise, we will check the second operand
     right.compile_asm(compiler)
-    compiler.commands.clean_type()
+    compiler.types.pop()
     compiler.code.add(Commands.POP, [Registers.EAX])
 
     # If the second operand is 0, then go to the false result label
@@ -72,4 +72,4 @@ def and_bexp(compiler, left, right):
 
     compiler.code.add(Commands.PUSH, [Registers.EAX])
 
-    return compiler.commands.set_and_return_type(Types.BOOL)
+    return compiler.types.set(Types.BOOL)

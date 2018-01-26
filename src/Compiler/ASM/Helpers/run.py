@@ -1,30 +1,16 @@
 # -*- coding: utf-8 -*-
 
+from ..Config.general import *
+
 from .environment import Environment
-from .types import *
+from .types import Types
 from .commands import Commands
 from .registers import Registers
-
-ASM_COMMANDS_SEPARATOR = '\n'
-ASM_ARGS_SEPARATOR = ','
 
 
 class Data(list):
     def add(self, label, command, data):
         self.append(label + ': ' + command + ' ' + str(data) + ASM_COMMANDS_SEPARATOR)
-
-
-class CommandsHelper:
-    def __init__(self, compiler):
-        self.compiler = compiler
-
-    def set_and_return_type(self, value_type):
-        self.compiler.code.add(Commands.PUSH, [value_type])
-
-        return value_type
-
-    def clean_type(self):
-        self.compiler.code.stack_pop()
 
 
 class Vars:
@@ -128,7 +114,7 @@ class Compiler:
         self.environment = Environment()
         self.code = Code()
         self.bss = BSS(self, self.code, self.environment)
-        self.commands = CommandsHelper(self)
+        self.types = Types(self)
         self.labels = Labels(self.bss)
         self.target_register = None
 

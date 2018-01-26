@@ -10,7 +10,7 @@ def arrmake(compiler, args, type):
     # When they passed default values (in second argument), we look, in what particular format
     if len(args.elements) == 2:
         default_value_type = args.elements[1].compile_asm(compiler)
-        compiler.commands.clean_type()
+        compiler.types.pop()
         # If the second argument was passed [] or {}, then the duplicated element will be 0
         # ( signature: arrmake(n, []), Arrmake(n, {}) )
         if default_value_type == type and len(args.elements[1].elements.elements) == 0:
@@ -22,7 +22,7 @@ def arrmake(compiler, args, type):
         # If the second argument was passed [n1, n2, ...] or {a1, a2, ...},
         # then the array is already created, just return the type and exit
         elif default_value_type == type:
-            return compiler.commands.set_and_return_type(type)
+            return compiler.types.set(type)
         # If no array has been passed, but the number (or pointer), then it will be a duplicate element
         else:
             default_values_variant = 'repeated'
@@ -31,11 +31,11 @@ def arrmake(compiler, args, type):
         default_values_variant = 'none'
 
     args.elements[0].compile_asm(compiler)
-    compiler.commands.clean_type()
+    compiler.types.pop()
 
     ArrayCompiler.arrmake(compiler, default_values_variant)
 
-    return compiler.commands.set_and_return_type(type)
+    return compiler.types.set(type)
 
 
 def arrmake_inline(compiler, elements, type):
@@ -70,7 +70,7 @@ def arrmake_inline(compiler, elements, type):
 
     compiler.code.add(Commands.PUSH, [arr_pointer])
 
-    return compiler.commands.set_and_return_type(type)
+    return compiler.types.set(type)
 
 
 def array_element(compiler, array, index, other_indexes, context):
@@ -83,12 +83,12 @@ def array_element(compiler, array, index, other_indexes, context):
 
     # Compilation obtain an index construction
     index.compile_asm(compiler)
-    compiler.commands.clean_type()
+    compiler.types.pop()
 
     def other_index_compile(other_index):
-        compiler.commands.clean_type()
+        compiler.types.pop()
         other_index.compile_asm(compiler)
-        compiler.commands.clean_type()
+        compiler.types.pop()
 
     if context == 'assign':
         # If several consecutive indices, compile each
@@ -111,8 +111,8 @@ def array_element(compiler, array, index, other_indexes, context):
 def arrlen(compiler, args):
     """ Built-in arrlen function compilation to get array length """
     args.elements[0].compile_asm(compiler)
-    compiler.commands.clean_type()
+    compiler.types.pop()
 
     ArrayCompiler.arrlen(compiler)
 
-    return compiler.commands.set_and_return_type(Types.INT)
+    return compiler.types.set(Types.INT)

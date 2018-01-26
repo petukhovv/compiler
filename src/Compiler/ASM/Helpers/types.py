@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
+from .commands import Commands
 
 
 class Types:
-    """ Перечень compile-time типов """
     NONE = 0
     INT = 1
     CHAR = 2
@@ -11,3 +10,14 @@ class Types:
     BOXED_ARR = 5
     UNBOXED_ARR = 6
     DYNAMIC = 9
+
+    def __init__(self, compiler):
+        self.compiler = compiler
+
+    def set(self, value_type):
+        self.compiler.code.add(Commands.PUSH, [value_type])
+
+        return value_type
+
+    def pop(self):
+        self.compiler.code.stack_pop()

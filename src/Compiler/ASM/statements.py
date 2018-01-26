@@ -7,7 +7,7 @@ from .Helpers.registers import Registers
 def assign_statement(compiler, variable, aexp):
     """ Компиляция выражения присваивания """
     value_type = aexp.compile_asm(compiler)
-    compiler.commands.clean_type()
+    compiler.types.pop()
     variable.context = 'assign'
     variable.type = value_type
     variable.compile_asm(compiler)
@@ -27,7 +27,7 @@ def repeat_statement(compiler, condition, body):
     compiler.code.add(continue_label + ':', [])
     body.compile_asm(compiler)
     condition.compile_asm(compiler)
-    compiler.commands.clean_type()
+    compiler.types.pop()
     compiler.code.add(Commands.CMP, [Registers.EAX, 1])
     compiler.code.add(Commands.JNZ, [continue_label])
 
@@ -39,7 +39,7 @@ def while_statement(compiler, condition, body):
     finish_label = compiler.labels.create()
 
     condition.compile_asm(compiler)
-    compiler.commands.clean_type()
+    compiler.types.pop()
     # Если перед очередной итерации условие останова не выполнилось, завершаем цикл
     compiler.code.add(Commands.CMP, [Registers.EAX, 1])
     compiler.code.add(Commands.JNZ, [finish_label])
@@ -57,7 +57,7 @@ def for_statement(compiler, stmt1, stmt2, stmt3, body):
     stmt1.compile_asm(compiler)
     compiler.code.add(start_label + ':', [])
     stmt2.compile_asm(compiler)
-    compiler.commands.clean_type()
+    compiler.types.pop()
     # Если условия цикла не выполнилось, завешаем цикл
     compiler.code.add(Commands.CMP, [Registers.EAX, 1])
     compiler.code.add(Commands.JNZ, [finish_label])
@@ -72,7 +72,7 @@ def if_statement(compiler, condition, true_stmt, alternatives_stmt, false_stmt, 
     skip_true_stmt_label = compiler.labels.create()
 
     condition.compile_asm(compiler)
-    compiler.commands.clean_type()
+    compiler.types.pop()
     # Если условие не выполнилось, пропускаем ветку.
     compiler.code.add(Commands.POP, [Registers.EAX])
     compiler.code.add(Commands.CMP, [Registers.EAX, 1])

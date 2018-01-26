@@ -44,7 +44,7 @@ def function(compiler, name, args, body):
 def return_statement(compiler, expr):
     """ Компиляция выражения возврата к месту вызова """
     return_type = expr.compile_asm(compiler)
-    compiler.commands.clean_type()
+    compiler.types.pop()
 
     compiler.code.add(Commands.POP, [Registers.EAX])
     # Компилируем конструкцию возврата к месту вызова
@@ -60,11 +60,11 @@ def call_statement(compiler, name, args):
     """ Компиляция выражения вызова функции """
     for arg in args.elements:
         arg.compile_asm(compiler)
-        compiler.commands.clean_type()
+        compiler.types.pop()
 
     function_label = compiler.environment.get_label(name)
     compiler.code.add(Commands.CALL, ['_fun_' + str(function_label)])
     compiler.code.add(Commands.PUSH, [Registers.EAX])
     compile_time_type = compiler.environment.get_return_type(name)
 
-    return compiler.commands.set_and_return_type(compile_time_type)
+    return compiler.types.set(compile_time_type)
