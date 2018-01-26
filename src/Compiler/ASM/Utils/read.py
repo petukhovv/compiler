@@ -36,4 +36,4 @@ class Read(Base):
         self.compiler.code.add(Commands.MOV, [Registers.ESI, 'read_buffer'])
         self.compiler.code.add(Commands.MOV, [Registers.EAX, 0])
         self.compiler.code.add(Commands.CALL, ['atoi'])
-        self.compiler.code.add(Commands.PUSH, [Registers.EAX])
+        self.compiler.code.add(Commands.PUSH, Registers.EAX)

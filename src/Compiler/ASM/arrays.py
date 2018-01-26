@@ -15,7 +15,7 @@ def arrmake(compiler, args, type):
             # We clear the pointer to an empty array
             # TODO: after the implementation of the GC do here delete the array
             compiler.code.stack_pop()
-            compiler.code.add(Commands.PUSH, [0])
+            compiler.code.add(Commands.PUSH, 0)
             default_values_variant = 'zeros'
         # If the second argument was passed [n1, n2, ...] or {a1, a2, ...},
         # then the array is already created, just return the type and exit
@@ -66,7 +66,7 @@ def arrmake_inline(compiler, elements, type):
         compiler.code.add(Commands.MOV, ['dword [%s+%d]' % (arr_pointer, element_place), element_type])
         compiler.code.add(Commands.MOV, ['dword [%s+%d]' % (arr_pointer, element_place + 4), element])
 
-    compiler.code.add(Commands.PUSH, [arr_pointer])
+    compiler.code.add(Commands.PUSH, arr_pointer)
 
     return compiler.types.set(type)
 
@@ -77,7 +77,7 @@ def array_element(compiler, array, index, other_indexes, context):
     var_type = compiler.vars.get_type(array)
 
     # Compilation obtain a pointer construction to the beginning of an array
-    compiler.code.add(Commands.PUSH, [var_name])
+    compiler.code.add(Commands.PUSH, var_name)
 
     # Compilation obtain an index construction
     index.compile_asm(compiler)

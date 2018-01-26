@@ -19,5 +19,5 @@ class Malloc(Base):
         if self.compiler.environment.current is None:
             self.compiler.code.add(Commands.CALL, ['malloc'])
         else:
-            self.compiler.code.add(Commands.PUSH, [Registers.EAX])
+            self.compiler.code.add(Commands.PUSH, Registers.EAX)
             self.compiler.code.add(Commands.CALL, ['_malloc'])

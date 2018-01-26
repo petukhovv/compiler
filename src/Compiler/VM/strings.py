@@ -3,18 +3,18 @@
 from .Deep.strings import *
 
 
-def char(commands, data, character, need_typify=True):
+def char(commands, data, character):
     """ Компиляция выражения "символ" """
     commands.add(Push, ord(character))
-    if need_typify:
-        return commands.set_and_return_type(Types.CHAR)
+
+    return commands.set_and_return_type(Types.CHAR)
 
 
 def string(commands, data, characters):
     """ Компиляция выражения "строка" """
     commands.add(Push, 0)
     for character in characters:
-        char(commands, data, character, need_typify=False)
+        commands.add(Push, ord(character))
 
     commands.add(Push, len(characters))
     StringCompiler.store(commands, data)

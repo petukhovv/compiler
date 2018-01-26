@@ -7,46 +7,48 @@ from ..Utils.malloc import Malloc
 
 
 class ArrayCompiler:
+    ELEMENT_SIZE = 4
+
     @staticmethod
     def arrmake(compiler, default_values_variant):
         """
         Генерация инструкций для выделения памяти под boxed и unboxed массивы и записи в него значений по умолчанию
         """
-        arr_length = compiler.vars.add(None, 'resb', 4, Types.INT)
+        arr_length = compiler.vars.add(None, 'resb', ArrayCompiler.ELEMENT_SIZE, Types.INT)
 
-        compiler.code.add(Commands.POP, ['dword [%s]' % arr_length])
+        compiler.code.add(Commands.POP, 'dword [%s]' % arr_length)
 
         is_repeated_values = default_values_variant == 'zeros' or default_values_variant == 'repeated'
         if is_repeated_values:
-            basis_element = compiler.vars.add(None, 'resb', 4, Types.INT)
-            compiler.code.add(Commands.POP, ['dword [%s]' % basis_element])
+            basis_element = compiler.vars.add(None, 'resb', ArrayCompiler.ELEMENT_SIZE, Types.INT)
+            compiler.code.add(Commands.POP, 'dword [%s]' % basis_element)
 
         # Сохраняем длину массива в переменную
-        compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % arr_length])
-        compiler.code.add(Commands.MOV, [Registers.EBX, 2 * 4])
-        compiler.code.add(Commands.MUL, [Registers.EBX])
-        compiler.code.add(Commands.ADD, [Registers.EAX, 4])
-        # Выделяем память = переданной длине массива * 2 * 4 + 1 (плюс тип под каждое значение и длина массива)
+        compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % arr_length])\
+            .add(Commands.MOV, [Registers.EBX, 2 * ArrayCompiler.ELEMENT_SIZE])\
+            .add(Commands.MUL, Registers.EBX)\
+            .add(Commands.ADD, [Registers.EAX, ArrayCompiler.ELEMENT_SIZE])
+        # Выделяем память = переданной длине массива * 2 * ArrayCompiler.ELEMENT_SIZE + 1 (плюс тип под каждое значение и длина массива)
         Malloc(compiler).call()
 
         # Если значения по умолчанию не заданы, оставляем элементы массива пустыми и выходим
         if default_values_variant == 'none':
-            compiler.code.add(Commands.MOV, [Registers.EBX, 'dword [%s]' % arr_length])
-            compiler.code.add(Commands.MOV, ['dword [%s]' % Registers.EAX, Registers.EBX])
-            compiler.code.add(Commands.PUSH, [Registers.EAX])
+            compiler.code.add(Commands.MOV, [Registers.EBX, 'dword [%s]' % arr_length])\
+                .add(Commands.MOV, ['dword [%s]' % Registers.EAX, Registers.EBX])\
+                .add(Commands.PUSH, Registers.EAX)
             return
 
-        arr_pointer = compiler.vars.add(None, 'resb', 4, Types.INT)
+        arr_pointer = compiler.vars.add(None, 'resb', ArrayCompiler.ELEMENT_SIZE, Types.INT)
         finish_label = compiler.labels.create()
 
         # Сохраняем указатель на начало массива
         compiler.code.add(Commands.MOV, ['dword [%s]' % arr_pointer, Registers.EAX])
 
         def cycle_body(_counter, b, c):
-            compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % _counter])
-            compiler.code.add(Commands.MOV, [Registers.EBX, 'dword [%s]' % arr_length])
-            compiler.code.add(Commands.CMP, [Registers.EAX, Registers.EBX])
-            compiler.code.add(Commands.JZ, [finish_label])
+            compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % _counter])\
+                .add(Commands.MOV, [Registers.EBX, 'dword [%s]' % arr_length])\
+                .add(Commands.CMP, [Registers.EAX, Registers.EBX])\
+                .add(Commands.JZ, finish_label)
 
             # Расчитываем адрес, по которому располагается текущий элемент
             element_address = calc_arr_element_address(compiler, arr_pointer, _counter)
@@ -54,69 +56,69 @@ class ArrayCompiler:
             # В случае если элементы должны быть одинаковыми, загружаем базисное значение,
             # в противном случае (при полном задании default values) значения уже будут находиться на стеке
             if is_repeated_values:
-                compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % element_address])
-                compiler.code.add(Commands.ADD, [Registers.EAX, 4])
-                compiler.code.add(Commands.MOV, ['dword [%s]' % Registers.EAX, Types.INT])
-                compiler.code.add(Commands.ADD, [Registers.EAX, 4])
-                compiler.code.add(Commands.MOV, [Registers.EBX, 'dword [%s]' % basis_element])
-                compiler.code.add(Commands.MOV, ['dword [%s]' % Registers.EAX, Registers.EBX])
+                compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % element_address])\
+                    .add(Commands.ADD, [Registers.EAX, ArrayCompiler.ELEMENT_SIZE])\
+                    .add(Commands.MOV, ['dword [%s]' % Registers.EAX, Types.INT])\
+                    .add(Commands.ADD, [Registers.EAX, ArrayCompiler.ELEMENT_SIZE])\
+                    .add(Commands.MOV, [Registers.EBX, 'dword [%s]' % basis_element])\
+                    .add(Commands.MOV, ['dword [%s]' % Registers.EAX, Registers.EBX])
 
         Loop.simple(compiler, cycle_body)
 
-        compiler.code.add(str(finish_label) + ':', [])
+        compiler.code.add_label(finish_label)
 
         # Сохраняем длину массива в первую ячейку памяти, где располагается массив
-        compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % arr_length])
-        compiler.code.add(Commands.MOV, [Registers.EBX, 'dword [%s]' % arr_pointer])
-        compiler.code.add(Commands.MOV, ['dword [%s]' % Registers.EBX, Registers.EAX])
+        compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % arr_length])\
+            .add(Commands.MOV, [Registers.EBX, 'dword [%s]' % arr_pointer])\
+            .add(Commands.MOV, ['dword [%s]' % Registers.EBX, Registers.EAX])
 
         # Загружаем на стек указатель на начало массива
-        compiler.code.add(Commands.PUSH, ['dword [%s]' % arr_pointer])
+        compiler.code.add(Commands.PUSH, 'dword [%s]' % arr_pointer)
 
     @staticmethod
     def get_element(compiler, type):
         """ Генерация инструкций для оператора получения элемента массива: A[n] """
         # Расчитываем адрес элемента (с учетом хранения типов для каждого элемента - умножаем на 2)
-        compiler.code.add(Commands.POP, [Registers.EAX])
-        compiler.code.add(Commands.MOV, [Registers.EBX, 2 * 4])
-        compiler.code.add(Commands.MUL, [Registers.EBX])
-        compiler.code.add(Commands.ADD, [Registers.EAX, 4])
+        compiler.code.add(Commands.POP, Registers.EAX)\
+            .add(Commands.MOV, [Registers.EBX, 2 * ArrayCompiler.ELEMENT_SIZE])\
+            .add(Commands.MUL, Registers.EBX)\
+            .add(Commands.ADD, [Registers.EAX, ArrayCompiler.ELEMENT_SIZE])
         # Прибавляем к номеру ячейки с началом массива индекс требуемого значения (offset)
-        compiler.code.add(Commands.POP, [Registers.EBX])
-        compiler.code.add(Commands.ADD, [Registers.EBX, Registers.EAX])
+        compiler.code.add(Commands.POP, Registers.EBX)\
+            .add(Commands.ADD, [Registers.EBX, Registers.EAX])
         # Загружаем на стек значение элемента по адресу его ячейки в heap memory
-        compiler.code.add(Commands.ADD, [Registers.EBX, 4])
-        compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % Registers.EBX])
-        compiler.code.add(Commands.PUSH, [Registers.EAX])
+        compiler.code.add(Commands.ADD, [Registers.EBX, ArrayCompiler.ELEMENT_SIZE])\
+            .add(Commands.MOV, [Registers.EAX, 'dword [%s]' % Registers.EBX])\
+            .add(Commands.PUSH, Registers.EAX)
         # Загружаем на стек тип элемента по адресу его ячейки в heap memory
-        compiler.code.add(Commands.SUB, [Registers.EBX, 4])
-        compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % Registers.EBX])
-        compiler.code.add(Commands.PUSH, [Registers.EAX])
+        compiler.code.add(Commands.SUB, [Registers.EBX, ArrayCompiler.ELEMENT_SIZE])\
+            .add(Commands.MOV, [Registers.EAX, 'dword [%s]' % Registers.EBX])\
+            .add(Commands.PUSH, Registers.EAX)
 
     @staticmethod
     def set_element(compiler, type):
         """ Генерация инструкций для присвоения значения элементу массива: A[n] := x """
         # Расчитываем адрес элемента (с учетом хранения типов для каждого элемента - умножаем на 2)
-        compiler.code.add(Commands.POP, [Registers.EAX])
-        compiler.code.add(Commands.MOV, [Registers.EBX, 2 * 4])
-        compiler.code.add(Commands.MUL, [Registers.EBX])
-        compiler.code.add(Commands.ADD, [Registers.EAX, 4])
+        compiler.code.add(Commands.POP, Registers.EAX)\
+            .add(Commands.MOV, [Registers.EBX, 2 * ArrayCompiler.ELEMENT_SIZE])\
+            .add(Commands.MUL, Registers.EBX)\
+            .add(Commands.ADD, [Registers.EAX, ArrayCompiler.ELEMENT_SIZE])
         # Прибавляем к номеру ячейки с началом массива индекс требуемого значения (offset)
-        compiler.code.add(Commands.POP, [Registers.EBX])
-        compiler.code.add(Commands.ADD, [Registers.EAX, Registers.EBX])
+        compiler.code.add(Commands.POP, Registers.EBX)\
+            .add(Commands.ADD, [Registers.EAX, Registers.EBX])
 
         # Записываем в heap memory тип элемента по адресу его ячейки в heap memory
-        compiler.code.add(Commands.ADD, [Registers.EAX, 4])
-        compiler.code.add(Commands.POP, [Registers.EBX])
-        compiler.code.add(Commands.MOV, ['dword [%s]' % Registers.EAX, Registers.EBX])
+        compiler.code.add(Commands.ADD, [Registers.EAX, ArrayCompiler.ELEMENT_SIZE])\
+            .add(Commands.POP, Registers.EBX)\
+            .add(Commands.MOV, ['dword [%s]' % Registers.EAX, Registers.EBX])
         # Записываем в heap memory значение элемента по адресу его ячейки в heap memory
-        compiler.code.add(Commands.SUB, [Registers.EAX, 4])
-        compiler.code.add(Commands.POP, [Registers.EBX])
-        compiler.code.add(Commands.MOV, ['dword [%s]' % Registers.EAX, Registers.EBX])
+        compiler.code.add(Commands.SUB, [Registers.EAX, ArrayCompiler.ELEMENT_SIZE])\
+            .add(Commands.POP, Registers.EBX)\
+            .add(Commands.MOV, ['dword [%s]' % Registers.EAX, Registers.EBX])
 
     @staticmethod
     def arrlen(compiler):
         """ Генерация инструкций для получения длины массива """
-        compiler.code.add(Commands.POP, [Registers.EAX])
-        compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % Registers.EAX])
-        compiler.code.add(Commands.PUSH, [Registers.EAX])
+        compiler.code.add(Commands.POP, Registers.EAX)\
+            .add(Commands.MOV, [Registers.EAX, 'dword [%s]' % Registers.EAX])\
+            .add(Commands.PUSH, Registers.EAX)

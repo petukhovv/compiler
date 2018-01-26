@@ -5,7 +5,6 @@ from .Utils.write import Write
 
 def read_statement(compiler):
     Read(compiler).call()
-
     return compiler.types.set(Types.INT)
 
 

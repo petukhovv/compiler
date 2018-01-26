@@ -5,7 +5,7 @@ from .Deep.functions import *
 
 def function(commands, data, name, args, body):
     """ Компиляция функций (объявление, вызов, исполнение, возврат к месту вызова) """
-    start_function = data.start(name)
+    start_function = data.start_function(name)
     finish_function = data.label()
 
     # При последовательном выполнении пропускаем выполнение тела функции,
@@ -24,7 +24,7 @@ def function(commands, data, name, args, body):
     commands.add(Return)\
         .add(Label, finish_function)
 
-    data.finish()
+    data.finish_function()
 
 
 def return_statement(commands, data, expr):
