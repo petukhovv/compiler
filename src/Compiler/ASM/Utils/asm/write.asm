@@ -1,7 +1,7 @@
-_write:
-    mov     [_char], eax
+write:
+    mov     [write_buffer], eax
     push    1
-    push    _char
+    push    write_buffer
     push    1
     mov     ebx, eax
     mov     eax, 4

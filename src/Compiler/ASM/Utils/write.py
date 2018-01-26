@@ -21,8 +21,8 @@ class Write(Base):
         if value_type == Types.INT or True:
             Itoa(self.compiler)
             self.compiler.code.add(Commands.POP, [Registers.EAX])
-            self.compiler.code.add(Commands.CALL, ['_itoa'])
+            self.compiler.code.add(Commands.CALL, ['itoa'])
             self.compiler.code.add(Commands.MOV, [Registers.EAX, 10])
-            self.compiler.code.add(Commands.CALL, ['_write'])
+            self.compiler.code.add(Commands.CALL, ['write'])
         else:
             pass

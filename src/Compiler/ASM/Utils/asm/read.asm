@@ -1,7 +1,7 @@
-_read:
+read:
     mov     eax, 3
-    push    dword [_read_buffer_size]
-    push    _read_buffer
+    push    255             ; read buffer size
+    push    read_buffer     ; read buffer pointer
     push    0
     push    eax
     int     0x80

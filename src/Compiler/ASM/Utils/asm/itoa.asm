@@ -1,24 +1,25 @@
-_itoa:
-    ._itoa_start:
+itoa:
+    .itoa_start:
         test    eax, eax
-        js      ._itoa_print_minus
+        js      .itoa_print_minus
         push    eax
         push    edx
         xor     edx,edx
-        div     dword [_itoa_radix]
+        mov     ebx, 10
+        div     ebx
         test    eax,eax
-        je      ._itoa_next
-        call    _itoa
-    ._itoa_next:
+        je      .itoa_next
+        call    itoa
+    .itoa_next:
         lea     eax,[edx+48]       ; 48 - ASCII code of 0
-        call    _write
+        call    write
         pop     edx
         pop     eax
         ret
-    ._itoa_print_minus:
+    .itoa_print_minus:
         push    eax
         mov     eax, 45
-        call    _write
+        call    write
         pop     eax
         neg     eax
-        jmp     ._itoa_start
+        jmp     .itoa_start
