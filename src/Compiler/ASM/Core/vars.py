@@ -42,12 +42,10 @@ class Vars:
         self.compiler.code.add(Commands.POP, ['dword [%s]' % name])
 
     def get(self, name):
-        env = self.environment
-        if env.current_function and 'args' in env.labels[env.current_function]\
-                and name in env.labels[env.current_function]['args']:
-            args = env.labels[env.current_function]['args']
-            arg_number = args[name]
-            offset = (len(args) - arg_number - 1) * 4 + 8
+        environment_args = self.environment.get_args()
+        if environment_args and name in environment_args:
+            arg_number = environment_args[name]
+            offset = (len(environment_args) - arg_number - 1) * 4 + 8
             return 'dword [%s + %d]' % (Registers.EBP, offset)
         else:
             return 'dword [_var_%s]' % str(name)

@@ -16,7 +16,7 @@ class Malloc(Base):
         Malloc.is_loaded = True
 
     def call(self):
-        if self.compiler.environment.current_function is None:
+        if self.compiler.environment.current is None:
             self.compiler.code.add(Commands.CALL, ['malloc'])
         else:
             self.compiler.code.add(Commands.PUSH, [Registers.EAX])
