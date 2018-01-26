@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from .Helpers.types import *
 from .Utils.write import Write
 from .Utils.read import Read

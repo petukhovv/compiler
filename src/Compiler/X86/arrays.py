@@ -1,31 +1,31 @@
-# -*- coding: utf-8 -*-
-
 from .Deep.arrays import *
+from .Helpers.commands import Commands
 
 
 def arrmake(compiler, args, type):
-    """ Компиляция built-in функции arrmake / Arrmake для создания boxed и unboxed массивов """
+    """ Built-in arrmake (create unboxed arrays) / Arrmake (create boxed arrays) functions compilation """
     type = Types.BOXED_ARR if type == 'boxed' else Types.UNBOXED_ARR
 
-    # Если были переданы default values (2-м аргументом), смотрим, в каком именно формате
+    # When they passed default values (in second argument), we look, in what particular format
     if len(args.elements) == 2:
         default_value_type = args.elements[1].compile_x86(compiler)
         compiler.commands.clean_type()
-        # Если вторым аргументом был передан [] или {}, то дублируемым элементом будет 0
-        # ( сигнатура: arrmake(n, []), Arrmake(n, {}) )
+        # If the second argument was passed [] or {}, then the duplicated element will be 0
+        # ( signature: arrmake(n, []), Arrmake(n, {}) )
         if default_value_type == type and len(args.elements[1].elements.elements) == 0:
-            # Очищаем указатель на пустой массив
-            # TODO: после реализации GC сделать здесь delete массива
+            # We clear the pointer to an empty array
+            # TODO: after the implementation of the GC do here delete the array
             compiler.code.stack_pop()
             compiler.code.add('push', [0])
             default_values_variant = 'zeros'
-        # Если передано [n1, n2, ...] или {a1, a2, ...}, то массив уже создан, возвращаем тип и выходим
+        # If the second argument was passed [n1, n2, ...] or {a1, a2, ...},
+        # then the array is already created, just return the type and exit
         elif default_value_type == type:
             return compiler.commands.set_and_return_type(type)
-        # Если был передан не массив, а число (или указатель), то оно и будет дублируемым элементом
+        # If no array has been passed, but the number (or pointer), then it will be a duplicate element
         else:
             default_values_variant = 'repeated'
-    # Если ничего не было передано, то элементы массива будет пустыми (None)
+    # If nothing has been passed, then the elements of the array will be 0
     else:
         default_values_variant = 'none'
 
@@ -38,45 +38,49 @@ def arrmake(compiler, args, type):
 
 
 def arrmake_inline(compiler, elements, type):
-    """ Компиляция конструкции inline задания boxed и unboxed массивов: [n1, n2, ...] / {a1, a2, ...}  """
+    """ Compilation the inline construction to create boxed and unboxed arrays: [n1, n2, ...] / {a1, a2, ...} """
     type = Types.BOXED_ARR if type == 'boxed' else Types.UNBOXED_ARR
 
     arr_elements = elements.compile_x86(compiler)
     arr_length = len(arr_elements)
-    arr_pointer = compiler.bss.vars.add(None, 'resb',
-                                        arr_length * 2 * 4 + 4, Types.INT if type == Types.BOXED_ARR else Types.DYNAMIC)
+    arr_pointer = compiler.bss.vars.add(
+        None,
+        'resb',
+        arr_length * 2 * 4 + 4,
+        Types.INT if type == Types.BOXED_ARR else Types.DYNAMIC
+    )
 
-    compiler.code.add('mov', ['dword [%s]' % arr_pointer, arr_length])
+    compiler.code.add(Commands.MOV, ['dword [%s]' % arr_pointer, arr_length])
     for i, element in enumerate(arr_elements):
         element_place = i * 2 * 4 + 4
 
         if type == Types.BOXED_ARR:
             element_type = compiler.bss.vars.get_type(element)
             element = compiler.bss.vars.get(element)
-            compiler.code.add('mov', ['eax', element_type])
-            compiler.code.add('mov', ['ebx', element])
+            compiler.code.add(Commands.MOV, ['eax', element_type])
+            compiler.code.add(Commands.MOV, ['ebx', element])
             element_type = 'eax'
             element = 'ebx'
         else:
             element_type = Types.DYNAMIC
 
-        compiler.code.add('mov', ['dword [%s+%d]' % (arr_pointer, element_place), element_type])
-        compiler.code.add('mov', ['dword [%s+%d]' % (arr_pointer, element_place + 4), element])
+        compiler.code.add(Commands.MOV, ['dword [%s+%d]' % (arr_pointer, element_place), element_type])
+        compiler.code.add(Commands.MOV, ['dword [%s+%d]' % (arr_pointer, element_place + 4), element])
 
-    compiler.code.add('push', [arr_pointer])
+    compiler.code.add(Commands.PUSH, [arr_pointer])
 
     return compiler.commands.set_and_return_type(type)
 
 
 def array_element(compiler, array, index, other_indexes, context):
-    """ Компиляция оператора получения элемента массива: A[n] """
+    """ Compilation the get array element operator: A[n] """
     var_name = compiler.bss.vars.get(array)
     var_type = compiler.bss.vars.get_type(array)
 
-    # Компилируем получение указателя на начало массива
-    compiler.code.add('push', [var_name])
+    # Compilation obtain a pointer construction to the beginning of an array
+    compiler.code.add(Commands.PUSH, [var_name])
 
-    # Компилируем получение индекса
+    # Compilation obtain an index construction
     index.compile_x86(compiler)
     compiler.commands.clean_type()
 
@@ -86,7 +90,7 @@ def array_element(compiler, array, index, other_indexes, context):
         compiler.commands.clean_type()
 
     if context == 'assign':
-        # Если несколько последовательных индексов, разыменовываем каждый
+        # If several consecutive indices, compile each
         if other_indexes is not None:
             for other_index in other_indexes:
                 ArrayCompiler.get_element(compiler, var_type)
@@ -94,7 +98,7 @@ def array_element(compiler, array, index, other_indexes, context):
         ArrayCompiler.set_element(compiler, var_type)
     else:
         ArrayCompiler.get_element(compiler, var_type)
-        # Если несколько последовательных индексов, разыменовываем каждый
+        # If several consecutive indices, compile each
         if other_indexes is not None:
             for other_index in other_indexes:
                 other_index_compile(other_index)
@@ -104,7 +108,7 @@ def array_element(compiler, array, index, other_indexes, context):
 
 
 def arrlen(compiler, args):
-    """ Компиляция built-in функции arrlen для получения длины массива """
+    """ Built-in arrlen function compilation to get array length """
     args.elements[0].compile_x86(compiler)
     compiler.commands.clean_type()
 

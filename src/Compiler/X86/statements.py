@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from .Helpers.commands import Commands
+
 
 def assign_statement(compiler, variable, aexp):
     """ Компиляция выражения присваивания """
@@ -25,8 +27,8 @@ def repeat_statement(compiler, condition, body):
     body.compile_x86(compiler)
     condition.compile_x86(compiler)
     compiler.commands.clean_type()
-    compiler.code.add('cmp', ['eax', 1])
-    compiler.code.add('jnz near', [continue_label])
+    compiler.code.add(Commands.CMP, ['eax', 1])
+    compiler.code.add(Commands.JNZ, [continue_label])
 
 
 def while_statement(compiler, condition, body):
@@ -38,11 +40,11 @@ def while_statement(compiler, condition, body):
     condition.compile_x86(compiler)
     compiler.commands.clean_type()
     # Если перед очередной итерации условие останова не выполнилось, завершаем цикл
-    compiler.code.add('cmp', ['eax', 1])
-    compiler.code.add('jnz near', [finish_label])
+    compiler.code.add(Commands.CMP, ['eax', 1])
+    compiler.code.add(Commands.JNZ, [finish_label])
     body.compile_x86(compiler)
     # Делаем следующую итерацию
-    compiler.code.add('jmp near', [start_label])
+    compiler.code.add(Commands.JMP, [start_label])
     compiler.code.add(finish_label + ':', [])
 
 
@@ -56,11 +58,11 @@ def for_statement(compiler, stmt1, stmt2, stmt3, body):
     stmt2.compile_x86(compiler)
     compiler.commands.clean_type()
     # Если условия цикла не выполнилось, завешаем цикл
-    compiler.code.add('cmp', ['eax', 1])
-    compiler.code.add('jnz near', [finish_label])
+    compiler.code.add(Commands.CMP, ['eax', 1])
+    compiler.code.add(Commands.JNZ, [finish_label])
     body.compile_x86(compiler)
     stmt3.compile_x86(compiler)
-    compiler.code.add('jmp near', [start_label])
+    compiler.code.add(Commands.JMP, [start_label])
     compiler.code.add(finish_label + ':', [])
 
 
@@ -71,11 +73,11 @@ def if_statement(compiler, condition, true_stmt, alternatives_stmt, false_stmt, 
     condition.compile_x86(compiler)
     compiler.commands.clean_type()
     # Если условие не выполнилось, пропускаем ветку.
-    compiler.code.add('pop', ['eax'])
-    compiler.code.add('cmp', ['eax', 1])
-    compiler.code.add('jnz near', [skip_true_stmt_label])
+    compiler.code.add(Commands.POP, ['eax'])
+    compiler.code.add(Commands.CMP, ['eax', 1])
+    compiler.code.add(Commands.JNZ, [skip_true_stmt_label])
     true_stmt.compile_x86(compiler)
-    compiler.code.add('pop', ['eax'])
+    compiler.code.add(Commands.POP, ['eax'])
 
     is_first_if = label_endif is None
     # Первая ветка условия, метки конца условия ещё нет - создаём её.
@@ -83,7 +85,7 @@ def if_statement(compiler, condition, true_stmt, alternatives_stmt, false_stmt, 
         label_endif = compiler.labels.create()
 
     # Если условие выполнилось, пропускаем все альтернативные ветки и переходим сразу к концу условия.
-    compiler.code.add('jmp near', [label_endif])
+    compiler.code.add(Commands.JMP, [label_endif])
     compiler.code.add(skip_true_stmt_label + ':', [])
 
     # Компиляция составных альтернативных веток (elif)
@@ -105,4 +107,4 @@ def if_statement(compiler, condition, true_stmt, alternatives_stmt, false_stmt, 
 
 def skip_statement(compiler):
     """ Компиляция оператора пропуска команды """
-    compiler.code.add('nop', [])
+    compiler.code.add(Commands.NOP, [])

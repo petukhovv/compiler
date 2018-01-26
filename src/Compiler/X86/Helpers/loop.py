@@ -19,7 +19,7 @@ class Loop:
         continue_label = compiler.labels.create()
 
         # Инициализируем счетчик цикла
-        compiler.code.add('mov', ['dword [%s]' % counter, 0])
+        compiler.code.add(Commands.MOV, ['dword [%s]' % counter, 0])
         compiler.code.add(str(start_label) + ':', [])
 
         # Выполняем тело цикла
@@ -29,20 +29,20 @@ class Loop:
         compiler.code.add(str(continue_label) + ':', [])
 
         # Инкрементируем счетчик цикла
-        compiler.code.add('mov', ['eax', 'dword [%s]' % counter])
-        compiler.code.add('add', ['eax', 1])
-        compiler.code.add('mov', ['dword [%s]' % counter, 'eax'])
+        compiler.code.add(Commands.MOV, ['eax', 'dword [%s]' % counter])
+        compiler.code.add(Commands.ADD, ['eax', 1])
+        compiler.code.add(Commands.MOV, ['dword [%s]' % counter, 'eax'])
 
         # Выполняем переданное условие останова
         if check_break_condition is not None:
             check_break_condition(start_label, finish_label, counter)
 
-        compiler.code.add('jmp', [start_label])
+        compiler.code.add(Commands.JMP, [start_label])
         compiler.code.add(str(finish_label) + ':', [])
 
         # Если требуется, загружаем на стек количество совершенных итераций
         if load_counter:
-            compiler.code.add('push', ['dword [%s]' % counter])
+            compiler.code.add(Commands.PUSH, ['dword [%s]' % counter])
 
         # Если требуется, возвращаем переменную, в которой содержится кол-во совершенных итераций
         if return_counter:
@@ -64,15 +64,15 @@ class Loop:
         """
         def check_break_condition(a, finish_label, b):
             # Если после выполнения callback на стеке 0 - завершаем цикл.
-            compiler.code.add('pop', ['eax'])
-            compiler.code.add('push', ['eax'])
-            compiler.code.add('cmp', ['eax', 0])
-            compiler.code.add('jz near', [finish_label])
+            compiler.code.add(Commands.POP, ['eax'])
+            compiler.code.add(Commands.PUSH, ['eax'])
+            compiler.code.add(Commands.CMP, ['eax', 0])
+            compiler.code.add(Commands.JZ, [finish_label])
 
         result = Loop.base(compiler, check_break_condition, callback, load_counter, return_counter)
 
         # Очищаем оставшийся на стеке 0 (поскольку перед Jz использовали Dup).
-        compiler.code.add('pop', ['eax'])
+        compiler.code.add(Commands.POP, ['eax'])
 
         return result
 
@@ -84,11 +84,11 @@ class Loop:
         """
         def check_break_condition(a, finish_label, _counter):
             # Если после выполнения callback в ячейке памяти 0 - завершаем цикл.
-            compiler.code.add('mov', ['eax', 'dword [%s]' % start_pointer])
-            compiler.code.add('mov', ['ebx', 'dword [%s]' % _counter])
-            compiler.code.add('add', ['eax', 'ebx'])
-            compiler.code.add('movzx', ['eax', 'byte [eax]'])
-            compiler.code.add('cmp', ['eax', 0])
-            compiler.code.add('jz near', [finish_label])
+            compiler.code.add(Commands.MOV, ['eax', 'dword [%s]' % start_pointer])
+            compiler.code.add(Commands.MOV, ['ebx', 'dword [%s]' % _counter])
+            compiler.code.add(Commands.ADD, ['eax', 'ebx'])
+            compiler.code.add(Commands.MOVZX, ['eax', 'byte [eax]'])
+            compiler.code.add(Commands.CMP, ['eax', 0])
+            compiler.code.add(Commands.JZ, [finish_label])
 
         return Loop.base(compiler, check_break_condition, callback, load_counter, return_counter)

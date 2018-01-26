@@ -1,14 +1,31 @@
-# -*- coding: utf-8 -*-
-
-
 class Commands:
-    def __init__(self, compiler):
-        self.compiler = compiler
+    PUSH = 'push'
+    POP = 'pop'
 
-    def set_and_return_type(self, value_type):
-        self.compiler.code.add('push', [value_type])
+    ADD = 'add'
+    SUB = 'sub'
+    MUL = 'mul'
+    DIV = 'div'
+    IDIV = 'idiv'
 
-        return value_type
+    CALL = 'call'
+    RET = 'ret'
 
-    def clean_type(self):
-        self.compiler.code.stack_pop()
+    INT = 'int'
+
+    NOP = 'nop'
+
+    CMP = 'cmp'
+
+    MOV = 'mov'
+    MOVZX = 'movzx'
+
+    JNZ = 'jnz near'
+    JZ = 'jz near'
+    JMP = 'jmp near'
+    JE = 'je near'
+    JNE = 'jne near'
+    JG = 'jg near'
+    JGE = 'jge near'
+    JL = 'jl near'
+    JLE = 'jle near'

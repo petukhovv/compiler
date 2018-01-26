@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from .environment import Environment
-from .commands import Commands
 from .types import *
+from .commands import Commands
 
 ASM_COMMANDS_SEPARATOR = '\n'
 ASM_ARGS_SEPARATOR = ','
@@ -11,6 +11,19 @@ ASM_ARGS_SEPARATOR = ','
 class Data(list):
     def add(self, label, command, data):
         self.append(label + ': ' + command + ' ' + str(data) + ASM_COMMANDS_SEPARATOR)
+
+
+class CommandsHelper:
+    def __init__(self, compiler):
+        self.compiler = compiler
+
+    def set_and_return_type(self, value_type):
+        self.compiler.code.add(Commands.PUSH, [value_type])
+
+        return value_type
+
+    def clean_type(self):
+        self.compiler.code.stack_pop()
 
 
 class Vars:
@@ -36,12 +49,12 @@ class Vars:
         self.bss.add('_var_' + str(name), asm_type, bytes)
         if type:
             self.bss.add('_var_type_' + str(name), asm_type, 1)
-            self.code.add('mov', ['dword [%s]' % ('_var_type_' + str(name)), type])
+            self.code.add(Commands.MOV, ['dword [%s]' % ('_var_type_' + str(name)), type])
 
         return '_var_' + str(name)
 
     def pop(self, name):
-        self.compiler.code.add('pop', ['dword [%s]' % name])
+        self.compiler.code.add(Commands.POP, ['dword [%s]' % name])
 
     def get(self, name):
         env = self.environment
@@ -75,17 +88,17 @@ class Code(list):
     def check_and_fix_stack_balance(self):
         if self.stack_balance != 0:
             for i in range(1, self.stack_balance):
-                self.add('add', ['esp', 4])
+                self.add(Commands.ADD, ['esp', 4])
                 self.stack_balance -= 1
 
     def stack_pop(self):
         self.stack_balance -= 1
-        self.add('add', ['esp', 4])
+        self.add(Commands.ADD, ['esp', 4])
 
     def add(self, command, args):
-        if command == 'push':
+        if command == Commands.PUSH:
             self.stack_balance += 1
-        elif command == 'pop':
+        elif command == Commands.POP:
             self.stack_balance -= 1
 
         self.append(command + '\t\t' + ASM_ARGS_SEPARATOR.join(str(x) for x in args))
@@ -114,15 +127,15 @@ class Compiler:
         self.environment = Environment()
         self.code = Code()
         self.bss = BSS(self, self.code, self.environment)
-        self.commands = Commands(self)
+        self.commands = CommandsHelper(self)
         self.labels = Labels(self.bss)
         self.target_register = None
 
     def exit(self):
-        self.code.add('push', [0])
-        self.code.add('mov', ['eax', 1])
-        self.code.add('sub', ['esp', 1])
-        self.code.add('int', [0x80])
+        self.code.add(Commands.PUSH, [0])
+        self.code.add(Commands.MOV, ['eax', 1])
+        self.code.add(Commands.SUB, ['esp', 1])
+        self.code.add(Commands.INT, [0x80])
 
     def assemble(self):
         self.exit()
