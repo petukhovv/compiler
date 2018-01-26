@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+from ..Helpers.commands import Commands
+from ..Helpers.registers import Registers
 
 
 class TrueResult:
@@ -17,9 +18,13 @@ class TrueResult:
         return self.label_name + str(self.current_number)
 
     def add(self):
-        self.compiler.labels.add(self.label_name + str(self.current_number) + ':\n'
-                                 '   mov eax, 1\n'
-                                 '   jmp ' + self.ret_label_name_prefix + str(self.current_number))
+        prolog = [
+            '%s %s, 1' % (Commands.MOV, Registers.EAX),
+            'jmp %s' % self.ret_label_name_prefix + str(self.current_number)
+        ]
+        self.compiler.labels.add(
+            '%s%s:\n   %s\n   %s' % (self.label_name, str(self.current_number), prolog[0], prolog[1])
+        )
 
         return self
 

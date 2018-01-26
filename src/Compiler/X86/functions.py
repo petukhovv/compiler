@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from .Helpers.commands import Commands
+from .Helpers.registers import Registers
 
 
 def function(compiler, name, args, body):
@@ -15,8 +16,8 @@ def function(compiler, name, args, body):
     # На эту метку переходим при вызове
     compiler.code.add('_fun_' + str(start_function) + ':', [])
 
-    compiler.code.add(Commands.PUSH, ['ebp'])
-    compiler.code.add(Commands.MOV, ['ebp', 'esp'])
+    compiler.code.add(Commands.PUSH, [Registers.EBP])
+    compiler.code.add(Commands.MOV, [Registers.EBP, Registers.ESP])
 
     # Привязываем мапу аргументов с их порядковыми номерами к метке функции
     args_map = {k: v for v, k in enumerate(args.elements)}
@@ -29,8 +30,8 @@ def function(compiler, name, args, body):
 
     if not return_type:
         # Компилируем конструкцию возврата к месту вызова
-        compiler.code.add(Commands.MOV, ['esp', 'ebp'])
-        compiler.code.add(Commands.POP, ['ebp'])
+        compiler.code.add(Commands.MOV, [Registers.ESP, Registers.EBP])
+        compiler.code.add(Commands.POP, [Registers.EBP])
         env = compiler.environment
         args = env.labels[env.current_function]['args']
         compiler.code.add(Commands.RET, [len(args) * 4])
@@ -45,10 +46,10 @@ def return_statement(compiler, expr):
     return_type = expr.compile_x86(compiler)
     compiler.commands.clean_type()
 
-    compiler.code.add(Commands.POP, ['eax'])
+    compiler.code.add(Commands.POP, [Registers.EAX])
     # Компилируем конструкцию возврата к месту вызова
-    compiler.code.add(Commands.MOV, ['esp', 'ebp'])
-    compiler.code.add(Commands.POP, ['ebp'])
+    compiler.code.add(Commands.MOV, [Registers.ESP, Registers.EBP])
+    compiler.code.add(Commands.POP, [Registers.EBP])
     env = compiler.environment
     args = env.labels[env.current_function]['args']
     compiler.environment.set_return_type(return_type)
@@ -63,7 +64,7 @@ def call_statement(compiler, name, args):
 
     function_label = compiler.environment.get_label(name)
     compiler.code.add(Commands.CALL, ['_fun_' + str(function_label)])
-    compiler.code.add(Commands.PUSH, ['eax'])
+    compiler.code.add(Commands.PUSH, [Registers.EAX])
     compile_time_type = compiler.environment.get_return_type(name)
 
     return compiler.commands.set_and_return_type(compile_time_type)

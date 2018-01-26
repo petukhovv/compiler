@@ -1,6 +1,6 @@
-from .base import Base
-
 from ..Utils.atoi import *
+from ..Helpers.commands import Commands
+from ..Helpers.registers import Registers
 
 
 class Malloc(Base):
@@ -17,7 +17,7 @@ class Malloc(Base):
 
     def call(self):
         if self.compiler.environment.current_function is None:
-            self.compiler.code.add('call', ['malloc'])
+            self.compiler.code.add(Commands.CALL, ['malloc'])
         else:
-            self.compiler.code.add('push', ['eax'])
-            self.compiler.code.add('call', ['_malloc'])
+            self.compiler.code.add(Commands.PUSH, [Registers.EAX])
+            self.compiler.code.add(Commands.CALL, ['_malloc'])

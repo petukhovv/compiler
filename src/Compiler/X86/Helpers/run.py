@@ -3,6 +3,7 @@
 from .environment import Environment
 from .types import *
 from .commands import Commands
+from .registers import Registers
 
 ASM_COMMANDS_SEPARATOR = '\n'
 ASM_ARGS_SEPARATOR = ','
@@ -46,12 +47,12 @@ class Vars:
         self.vars[name] = {
             'type': type
         }
-        self.bss.add('_var_' + str(name), asm_type, bytes)
+        self.bss.add('_var_%s' % str(name), asm_type, bytes)
         if type:
-            self.bss.add('_var_type_' + str(name), asm_type, 1)
-            self.code.add(Commands.MOV, ['dword [%s]' % ('_var_type_' + str(name)), type])
+            self.bss.add('_var_type_%s' % str(name), asm_type, 1)
+            self.code.add(Commands.MOV, ['dword [%s]' % ('_var_type_%s' % str(name)), type])
 
-        return '_var_' + str(name)
+        return '_var_%s' % str(name)
 
     def pop(self, name):
         self.compiler.code.add(Commands.POP, ['dword [%s]' % name])
@@ -63,12 +64,12 @@ class Vars:
             args = env.labels[env.current_function]['args']
             arg_number = args[name]
             offset = (len(args) - arg_number - 1) * 4 + 8
-            return 'dword [ebp + ' + str(offset) + ']'
+            return 'dword [%s + %d]' % (Registers.EBP, offset)
         else:
-            return 'dword [_var_' + str(name) + ']'
+            return 'dword [_var_%s]' % str(name)
 
     def get_type(self, name):
-        return 'dword [_var_type_' + str(name) + ']'
+        return 'dword [_var_type_%s]' % str(name)
 
     def get_compile_time_type(self, name):
         return self.vars[name]['type'] if name in self.vars else Types.DYNAMIC
@@ -88,12 +89,12 @@ class Code(list):
     def check_and_fix_stack_balance(self):
         if self.stack_balance != 0:
             for i in range(1, self.stack_balance):
-                self.add(Commands.ADD, ['esp', 4])
+                self.add(Commands.ADD, [Registers.ESP, 4])
                 self.stack_balance -= 1
 
     def stack_pop(self):
         self.stack_balance -= 1
-        self.add(Commands.ADD, ['esp', 4])
+        self.add(Commands.ADD, [Registers.ESP, 4])
 
     def add(self, command, args):
         if command == Commands.PUSH:
@@ -133,8 +134,8 @@ class Compiler:
 
     def exit(self):
         self.code.add(Commands.PUSH, [0])
-        self.code.add(Commands.MOV, ['eax', 1])
-        self.code.add(Commands.SUB, ['esp', 1])
+        self.code.add(Commands.MOV, [Registers.EAX, 1])
+        self.code.add(Commands.SUB, [Registers.ESP, 1])
         self.code.add(Commands.INT, [0x80])
 
     def assemble(self):

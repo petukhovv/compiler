@@ -1,5 +1,6 @@
 from .Deep.arrays import *
 from .Helpers.commands import Commands
+from .Helpers.registers import Registers
 
 
 def arrmake(compiler, args, type):
@@ -16,7 +17,7 @@ def arrmake(compiler, args, type):
             # We clear the pointer to an empty array
             # TODO: after the implementation of the GC do here delete the array
             compiler.code.stack_pop()
-            compiler.code.add('push', [0])
+            compiler.code.add(Commands.PUSH, [0])
             default_values_variant = 'zeros'
         # If the second argument was passed [n1, n2, ...] or {a1, a2, ...},
         # then the array is already created, just return the type and exit
@@ -57,10 +58,10 @@ def arrmake_inline(compiler, elements, type):
         if type == Types.BOXED_ARR:
             element_type = compiler.bss.vars.get_type(element)
             element = compiler.bss.vars.get(element)
-            compiler.code.add(Commands.MOV, ['eax', element_type])
-            compiler.code.add(Commands.MOV, ['ebx', element])
-            element_type = 'eax'
-            element = 'ebx'
+            compiler.code.add(Commands.MOV, [Registers.EAX, element_type])
+            compiler.code.add(Commands.MOV, [Registers.EBX, element])
+            element_type = Registers.EAX
+            element = Registers.EBX
         else:
             element_type = Types.DYNAMIC
 

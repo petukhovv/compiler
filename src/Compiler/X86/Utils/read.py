@@ -1,4 +1,6 @@
 from ..Utils.atoi import *
+from ..Helpers.registers import Registers
+from ..Helpers.commands import Commands
 
 from .write import Write
 
@@ -22,17 +24,17 @@ class Read(Base):
         Write(compiler)
 
     def call(self):
-        self.compiler.code.add('call', ['_read'])
-        self.compiler.code.add('mov', ['[_read_buffer_all]', 'eax'])
+        self.compiler.code.add(Commands.CALL, ['_read'])
+        self.compiler.code.add(Commands.MOV, ['[_read_buffer_all]', Registers.EAX])
 
         Atoi(self.compiler)
 
-        self.compiler.code.add('mov', ['eax', 62])
-        self.compiler.code.add('call', ['_write'])
-        self.compiler.code.add('mov', ['eax', 32])
-        self.compiler.code.add('call', ['_write'])
+        self.compiler.code.add(Commands.MOV, [Registers.EAX, 62])
+        self.compiler.code.add(Commands.CALL, ['_write'])
+        self.compiler.code.add(Commands.MOV, [Registers.EAX, 32])
+        self.compiler.code.add(Commands.CALL, ['_write'])
 
-        self.compiler.code.add('mov', ['esi', '_read_buffer'])
-        self.compiler.code.add('mov', ['eax', 0])
-        self.compiler.code.add('call', ['_atoi'])
-        self.compiler.code.add('push', ['eax'])
+        self.compiler.code.add(Commands.MOV, [Registers.ESI, '_read_buffer'])
+        self.compiler.code.add(Commands.MOV, [Registers.EAX, 0])
+        self.compiler.code.add(Commands.CALL, ['_atoi'])
+        self.compiler.code.add(Commands.PUSH, [Registers.EAX])

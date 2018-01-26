@@ -2,6 +2,7 @@
 
 from .base import *
 from .types import *
+from .registers import Registers
 
 
 class Loop:
@@ -29,9 +30,9 @@ class Loop:
         compiler.code.add(str(continue_label) + ':', [])
 
         # Инкрементируем счетчик цикла
-        compiler.code.add(Commands.MOV, ['eax', 'dword [%s]' % counter])
-        compiler.code.add(Commands.ADD, ['eax', 1])
-        compiler.code.add(Commands.MOV, ['dword [%s]' % counter, 'eax'])
+        compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % counter])
+        compiler.code.add(Commands.ADD, [Registers.EAX, 1])
+        compiler.code.add(Commands.MOV, ['dword [%s]' % counter, Registers.EAX])
 
         # Выполняем переданное условие останова
         if check_break_condition is not None:
@@ -64,15 +65,15 @@ class Loop:
         """
         def check_break_condition(a, finish_label, b):
             # Если после выполнения callback на стеке 0 - завершаем цикл.
-            compiler.code.add(Commands.POP, ['eax'])
-            compiler.code.add(Commands.PUSH, ['eax'])
-            compiler.code.add(Commands.CMP, ['eax', 0])
+            compiler.code.add(Commands.POP, [Registers.EAX])
+            compiler.code.add(Commands.PUSH, [Registers.EAX])
+            compiler.code.add(Commands.CMP, [Registers.EAX, 0])
             compiler.code.add(Commands.JZ, [finish_label])
 
         result = Loop.base(compiler, check_break_condition, callback, load_counter, return_counter)
 
         # Очищаем оставшийся на стеке 0 (поскольку перед Jz использовали Dup).
-        compiler.code.add(Commands.POP, ['eax'])
+        compiler.code.add(Commands.POP, [Registers.EAX])
 
         return result
 
@@ -84,11 +85,11 @@ class Loop:
         """
         def check_break_condition(a, finish_label, _counter):
             # Если после выполнения callback в ячейке памяти 0 - завершаем цикл.
-            compiler.code.add(Commands.MOV, ['eax', 'dword [%s]' % start_pointer])
-            compiler.code.add(Commands.MOV, ['ebx', 'dword [%s]' % _counter])
-            compiler.code.add(Commands.ADD, ['eax', 'ebx'])
-            compiler.code.add(Commands.MOVZX, ['eax', 'byte [eax]'])
-            compiler.code.add(Commands.CMP, ['eax', 0])
+            compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % start_pointer])
+            compiler.code.add(Commands.MOV, [Registers.EBX, 'dword [%s]' % _counter])
+            compiler.code.add(Commands.ADD, [Registers.EAX, Registers.EBX])
+            compiler.code.add(Commands.MOVZX, [Registers.EAX, 'byte [%s]' % Registers.EAX])
+            compiler.code.add(Commands.CMP, [Registers.EAX, 0])
             compiler.code.add(Commands.JZ, [finish_label])
 
         return Loop.base(compiler, check_break_condition, callback, load_counter, return_counter)
