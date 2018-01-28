@@ -42,20 +42,22 @@ def arrmake_inline(compiler, elements, type):
 
     arr_elements = elements.compile_asm(compiler)
     arr_length = len(arr_elements)
-    arr_pointer = compiler.vars.add(
-        None,
-        'resb',
-        arr_length * 2 * 4 + 4,
-        Types.INT if type == Types.BOXED_ARR else Types.DYNAMIC
-    )
+    arr_size = arr_length * 2 * 4 + 4
+    if arr_length == 0:
+        compiler.code.add(Commands.PUSH, 0)
+        return
+    arr_pointer = compiler.environment.add_local_var(size=arr_size)
 
-    compiler.code.add(Commands.MOV, ['dword [%s]' % arr_pointer, arr_length])
-    for i, element in enumerate(arr_elements):
+    compiler.code.add(Commands.MOV, [Registers.EAX, arr_pointer['pointer']]) \
+        .add(Commands.ADD, [Registers.EAX, -arr_pointer['offset'] - arr_size]) \
+        .add(Commands.MOV, ['dword [%s-%d]' % (arr_pointer['pointer'], arr_pointer['offset']), Registers.EAX])
+
+    for i, element in enumerate(reversed(arr_elements)):
         element_place = i * 2 * 4 + 4
 
         if type == Types.BOXED_ARR:
-            element_type = compiler.vars.get_type(element)
-            element = compiler.vars.get(element)
+            element_type = compiler.environment.get_local_var_type(element)
+            element = compiler.environment.get_local_var(element)
             compiler.code.add(Commands.MOV, [Registers.EAX, element_type])
             compiler.code.add(Commands.MOV, [Registers.EBX, element])
             element_type = Registers.EAX
@@ -63,18 +65,20 @@ def arrmake_inline(compiler, elements, type):
         else:
             element_type = Types.DYNAMIC
 
-        compiler.code.add(Commands.MOV, ['dword [%s+%d]' % (arr_pointer, element_place), element_type])
-        compiler.code.add(Commands.MOV, ['dword [%s+%d]' % (arr_pointer, element_place + 4), element])
+        compiler.code.add(Commands.MOV, ['dword [%s-%d]' % (arr_pointer['pointer'], element_place + arr_pointer['offset']), element])\
+            .add(Commands.MOV, ['dword [%s-%d]' % (arr_pointer['pointer'], element_place + arr_pointer['offset'] + 4), element_type])
 
-    compiler.code.add(Commands.PUSH, arr_pointer)
+        compiler.code.add(Commands.MOV, ['dword [%s-%d]' % (arr_pointer['pointer'], arr_pointer['offset'] + arr_size), arr_length])\
+            .add(Commands.MOV, [Registers.EAX, 'dword [%s-%d]' % (arr_pointer['pointer'], arr_pointer['offset'])]) \
+            .add(Commands.PUSH, Registers.EAX)
 
     return compiler.types.set(type)
 
 
 def array_element(compiler, array, index, other_indexes, context):
     """ Compilation the get array element operator: A[n] """
-    var_name = compiler.vars.get(array)
-    var_type = compiler.vars.get_type(array)
+    var_name = compiler.environment.get_local_var(array)
+    var_type = compiler.environment.get_local_var_type(array)
 
     # Compilation obtain a pointer construction to the beginning of an array
     compiler.code.add(Commands.PUSH, var_name)

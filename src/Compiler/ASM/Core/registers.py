@@ -21,7 +21,7 @@ class Registers:
 
     # 32-bit registers
     EAX = 'eax'
-    ECX = 'eсx'
+    ECX = 'ecx'
     EDX = 'edx'
     EBX = 'ebx'
     ESP = 'esp'

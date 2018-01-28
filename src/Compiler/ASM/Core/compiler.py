@@ -14,7 +14,7 @@ class Compiler:
 
     def __init__(self):
         self.environment = Environment()
-        self.code = Code()
+        self.code = Code(self)
         self.labels = Labels()
         self.vars = Vars(self, self.code, self.environment)
         self.types = Types(self)
@@ -32,9 +32,8 @@ class Compiler:
     def get_section(self, section_name, content):
         return 'SECTION .%s %s%s' % (section_name, ASM_COMMANDS_SEPARATOR, ASM_COMMANDS_SEPARATOR.join(content))
 
-    def get_content(self, content, label=None):
-        return (('%s:' % label) if label else '') + \
-               ASM_COMMANDS_SEPARATOR + ASM_COMMANDS_SEPARATOR.join(content) + ASM_COMMANDS_SEPARATOR
+    def get_content(self, content):
+        return ASM_COMMANDS_SEPARATOR + ASM_COMMANDS_SEPARATOR.join(content) + ASM_COMMANDS_SEPARATOR
 
     def get_result(self):
         self.exit()
@@ -45,6 +44,8 @@ class Compiler:
         text = self.get_section('text', ['global %s' % self.entry_point_label])
 
         labels = self.get_content(self.labels)
-        code = self.get_content(self.code, self.entry_point_label)
+        self.code.allocate_stack_memory(self.environment.list['root']['memory'], place=0)
+        self.code.add_label(self.entry_point_label, place=0)
+        code = self.get_content(self.code.assemble())
 
         return externs + data + bss + text + labels + code

@@ -16,8 +16,14 @@ class Malloc(Base):
         Malloc.is_loaded = True
 
     def call(self):
-        if self.compiler.environment.current is None:
-            self.compiler.code.add(Commands.CALL, ['malloc'])
-        else:
-            self.compiler.code.add(Commands.PUSH, Registers.EAX)
-            self.compiler.code.add(Commands.CALL, ['_malloc'])
+        self.compiler.code.add(Commands.MOV, [Registers.ECX, Registers.EAX])
+        self.compiler.code.stack_align(16, 0 if self.compiler.environment.current is None else 4)
+
+        self.compiler.code.add(Commands.PUSH, ['ebp'])
+        self.compiler.code.add(Commands.MOV, ['ebp', 'esp'])
+
+        self.compiler.code.add(Commands.PUSH, Registers.ECX)
+        self.compiler.code.add(Commands.CALL, ['_malloc'])
+
+        self.compiler.code.add(Commands.MOV, ['esp', 'ebp'])
+        self.compiler.code.add(Commands.POP, ['ebp'])

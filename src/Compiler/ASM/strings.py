@@ -13,13 +13,19 @@ def char(compiler, character):
 def string(compiler, characters):
     """ Компиляция выражения "строка" """
     str_length = len(characters)
-    str_pointer = compiler.vars.add(None, 'resb', str_length + 2, Types.INT)
+    str_pointer = compiler.environment.add_local_var(size=str_length + 5)
 
-    for i, character in enumerate(characters):
-        compiler.code.add(Commands.MOV, ['byte [%s+%d]' % (str_pointer, i), ord(character)])
+    compiler.code.add(Commands.MOV, [Registers.EAX, str_pointer['pointer']])\
+        .add(Commands.ADD, [Registers.EAX, -str_pointer['offset'] - str_length - 4])\
+        .add(Commands.MOV, ['dword [%s-%d]' % (str_pointer['pointer'], str_pointer['offset']), Registers.EAX])\
+        .add(Commands.MOV, ['byte [%s-%d]' % (str_pointer['pointer'], str_pointer['offset'] + 4), 0])
 
-    compiler.code.add(Commands.MOV, ['byte [%s+%d]' % (str_pointer, str_length), 0])\
-        .add(Commands.PUSH, str_pointer)
+    for i, character in enumerate(reversed(characters)):
+        compiler.code.add(Commands.MOV,
+                          ['byte [%s-%d]' % (str_pointer['pointer'], i + 5 + str_pointer['offset']), ord(character)])
+
+    compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s-%d]' % (str_pointer['pointer'], str_pointer['offset'])])\
+        .add(Commands.PUSH, Registers.EAX)
 
     return compiler.types.set(Types.STRING)
 

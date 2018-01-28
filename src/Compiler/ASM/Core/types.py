@@ -11,6 +11,23 @@ class Types:
     UNBOXED_ARR = 6
     DYNAMIC = 9
 
+    SIZES = {
+        INT: 4,
+        CHAR: 1,
+        BOOL: 1,
+        STRING: 4,
+        BOXED_ARR: 4,
+        UNBOXED_ARR: 4,
+        DYNAMIC: 4
+    }
+
+    ASM = {
+        1: 'byte',
+        2: 'word',
+        4: 'dword',
+        8: 'qword'
+    }
+
     def __init__(self, compiler):
         self.compiler = compiler
 

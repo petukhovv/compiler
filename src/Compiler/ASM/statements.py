@@ -16,9 +16,7 @@ def assign_statement(compiler, variable, aexp):
 def compound_statement(compiler, first, second):
     """ Компиляция составного выражения """
     first.compile_asm(compiler)
-    compiler.code.fix_stack_balance()
     second.compile_asm(compiler)
-    compiler.code.fix_stack_balance()
 
 
 def repeat_statement(compiler, condition, body):

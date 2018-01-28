@@ -12,14 +12,14 @@ class Loop:
         Условие останова - динамическое, передается извне.
         """
         # Создаем метки и переменные, необходимые для прохождения цикла.
-        counter = compiler.vars.add(None, 'resb', 4, Types.INT)
+        counter = compiler.environment.add_local_var(Types.INT)
 
         start_label = compiler.labels.create()
         finish_label = compiler.labels.create()
         continue_label = compiler.labels.create()
 
         # Инициализируем счетчик цикла
-        compiler.code.add(Commands.MOV, ['dword [%s]' % counter, 0])\
+        compiler.code.add(Commands.MOV, [counter, 0])\
             .add_label(start_label)
 
         # Выполняем тело цикла
@@ -29,9 +29,9 @@ class Loop:
         compiler.code.add_label(continue_label)
 
         # Инкрементируем счетчик цикла
-        compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % counter])\
+        compiler.code.add(Commands.MOV, [Registers.EAX, counter])\
             .add(Commands.ADD, [Registers.EAX, 1])\
-            .add(Commands.MOV, ['dword [%s]' % counter, Registers.EAX])
+            .add(Commands.MOV, [counter, Registers.EAX])
 
         # Выполняем переданное условие останова
         if check_break_condition is not None:
@@ -42,7 +42,7 @@ class Loop:
 
         # Если требуется, загружаем на стек количество совершенных итераций
         if load_counter:
-            compiler.code.add(Commands.PUSH, ['dword [%s]' % counter])
+            compiler.code.add(Commands.PUSH, [counter])
 
         # Если требуется, возвращаем переменную, в которой содержится кол-во совершенных итераций
         if return_counter:
@@ -84,8 +84,8 @@ class Loop:
         """
         def check_break_condition(a, finish_label, _counter):
             # Если после выполнения callback в ячейке памяти 0 - завершаем цикл.
-            compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % start_pointer])\
-                .add(Commands.MOV, [Registers.EBX, 'dword [%s]' % _counter])\
+            compiler.code.add(Commands.MOV, [Registers.EAX, start_pointer])\
+                .add(Commands.MOV, [Registers.EBX, _counter])\
                 .add(Commands.ADD, [Registers.EAX, Registers.EBX])\
                 .add(Commands.MOVZX, [Registers.EAX, 'byte [%s]' % Registers.EAX])\
                 .add(Commands.CMP, [Registers.EAX, 0])\

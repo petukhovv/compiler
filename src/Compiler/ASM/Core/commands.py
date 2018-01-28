@@ -7,6 +7,7 @@ class Commands:
     MUL = 'mul'
     DIV = 'div'
     IDIV = 'idiv'
+    XOR = 'xor'
 
     CDQ = 'cdq'
 

@@ -59,11 +59,11 @@ def binop_aexp(compiler, op, left, right):
 def var_aexp(compiler, name, context, value_type):
     """ Variable compilation """
     if context == 'assign':
-        compiler.vars.add(name, 'resb', 4, value_type)
-        compiler.code.add(Commands.POP, [compiler.vars.get(name)])
+        var = compiler.environment.add_local_var(value_type, name)
+        compiler.code.add(Commands.POP, var)
     else:
-        compiler.code.add(Commands.MOV, [Registers.EAX, compiler.vars.get(name)])\
+        compiler.code.add(Commands.MOV, [Registers.EAX, compiler.environment.get_local_var(name)])\
             .add(Commands.PUSH, Registers.EAX)
-        compile_time_type = compiler.vars.get_compile_time_type(name)
+        var_type = compiler.environment.get_local_var_type(name)
 
-        return compiler.types.set(compile_time_type)
+        return compiler.types.set(var_type)

@@ -14,17 +14,17 @@ class ArrayCompiler:
         """
         Генерация инструкций для выделения памяти под boxed и unboxed массивы и записи в него значений по умолчанию
         """
-        arr_length = compiler.vars.add(None, 'resb', ArrayCompiler.ELEMENT_SIZE, Types.INT)
+        arr_length = compiler.environment.add_local_var(Types.INT)
 
-        compiler.code.add(Commands.POP, 'dword [%s]' % arr_length)
+        compiler.code.add(Commands.POP, arr_length)
 
         is_repeated_values = default_values_variant == 'zeros' or default_values_variant == 'repeated'
         if is_repeated_values:
-            basis_element = compiler.vars.add(None, 'resb', ArrayCompiler.ELEMENT_SIZE, Types.INT)
-            compiler.code.add(Commands.POP, 'dword [%s]' % basis_element)
+            basis_element = compiler.environment.add_local_var(Types.INT)
+            compiler.code.add(Commands.POP, basis_element)
 
         # Сохраняем длину массива в переменную
-        compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % arr_length])\
+        compiler.code.add(Commands.MOV, [Registers.EAX, arr_length])\
             .add(Commands.MOV, [Registers.EBX, 2 * ArrayCompiler.ELEMENT_SIZE])\
             .add(Commands.MUL, Registers.EBX)\
             .add(Commands.ADD, [Registers.EAX, ArrayCompiler.ELEMENT_SIZE])
@@ -33,20 +33,20 @@ class ArrayCompiler:
 
         # Если значения по умолчанию не заданы, оставляем элементы массива пустыми и выходим
         if default_values_variant == 'none':
-            compiler.code.add(Commands.MOV, [Registers.EBX, 'dword [%s]' % arr_length])\
+            compiler.code.add(Commands.MOV, [Registers.EBX, arr_length])\
                 .add(Commands.MOV, ['dword [%s]' % Registers.EAX, Registers.EBX])\
                 .add(Commands.PUSH, Registers.EAX)
             return
 
-        arr_pointer = compiler.vars.add(None, 'resb', ArrayCompiler.ELEMENT_SIZE, Types.INT)
+        arr_pointer = compiler.environment.add_local_var(Types.INT)
         finish_label = compiler.labels.create()
 
         # Сохраняем указатель на начало массива
-        compiler.code.add(Commands.MOV, ['dword [%s]' % arr_pointer, Registers.EAX])
+        compiler.code.add(Commands.MOV, [arr_pointer, Registers.EAX])
 
         def cycle_body(_counter, b, c):
-            compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % _counter])\
-                .add(Commands.MOV, [Registers.EBX, 'dword [%s]' % arr_length])\
+            compiler.code.add(Commands.MOV, [Registers.EAX, _counter])\
+                .add(Commands.MOV, [Registers.EBX, arr_length])\
                 .add(Commands.CMP, [Registers.EAX, Registers.EBX])\
                 .add(Commands.JZ, finish_label)
 
@@ -56,11 +56,11 @@ class ArrayCompiler:
             # В случае если элементы должны быть одинаковыми, загружаем базисное значение,
             # в противном случае (при полном задании default values) значения уже будут находиться на стеке
             if is_repeated_values:
-                compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % element_address])\
+                compiler.code.add(Commands.MOV, [Registers.EAX, element_address])\
                     .add(Commands.ADD, [Registers.EAX, ArrayCompiler.ELEMENT_SIZE])\
                     .add(Commands.MOV, ['dword [%s]' % Registers.EAX, Types.INT])\
                     .add(Commands.ADD, [Registers.EAX, ArrayCompiler.ELEMENT_SIZE])\
-                    .add(Commands.MOV, [Registers.EBX, 'dword [%s]' % basis_element])\
+                    .add(Commands.MOV, [Registers.EBX, basis_element])\
                     .add(Commands.MOV, ['dword [%s]' % Registers.EAX, Registers.EBX])
 
         Loop.simple(compiler, cycle_body)
@@ -68,12 +68,12 @@ class ArrayCompiler:
         compiler.code.add_label(finish_label)
 
         # Сохраняем длину массива в первую ячейку памяти, где располагается массив
-        compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % arr_length])\
-            .add(Commands.MOV, [Registers.EBX, 'dword [%s]' % arr_pointer])\
+        compiler.code.add(Commands.MOV, [Registers.EAX, arr_length])\
+            .add(Commands.MOV, [Registers.EBX, arr_pointer])\
             .add(Commands.MOV, ['dword [%s]' % Registers.EBX, Registers.EAX])
 
         # Загружаем на стек указатель на начало массива
-        compiler.code.add(Commands.PUSH, 'dword [%s]' % arr_pointer)
+        compiler.code.add(Commands.PUSH, arr_pointer)
 
     @staticmethod
     def get_element(compiler, type):
