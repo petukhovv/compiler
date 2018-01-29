@@ -35,8 +35,13 @@ class Code(list):
         self.add(Commands.DIV, [Registers.EBX])
         self.add(Commands.MOV, [Registers.EAX, multiplicity])
         self.add(Commands.SUB, [Registers.EAX, Registers.EDX])
+        self.add(Commands.ADD, [Registers.EAX, offset])
         self.add(Commands.SUB, [Registers.ESP, Registers.EAX])
-        self.add(Commands.SUB, [Registers.ESP, offset])
+        self.add(Commands.PUSH, Registers.EAX)
+
+    def restore_stack_align(self):
+        self.add(Commands.POP, Registers.EBX)
+        self.add(Commands.ADD, [Registers.ESP, Registers.EBX])
 
     def stack_pop(self):
         self.stack['balance'] -= 1
@@ -61,7 +66,6 @@ class Code(list):
 
         if not isinstance(args, list):
             args = [args] if args is not None else []
-
 
         if index is not None:
             self.insert(index, (command, args))
