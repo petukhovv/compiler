@@ -31,6 +31,14 @@ class Types:
     def __init__(self, compiler):
         self.compiler = compiler
 
+    def get_static_type(self, value):
+        if isinstance(value, str):
+            return Types.CHAR
+        elif isinstance(value, int):
+            return Types.INT
+        else:
+            return None
+
     def set(self, value_type):
         self.compiler.code.add(Commands.PUSH, [value_type])
 

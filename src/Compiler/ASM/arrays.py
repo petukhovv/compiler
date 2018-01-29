@@ -63,7 +63,9 @@ def arrmake_inline(compiler, elements, type):
             element_type = Registers.EAX
             element = Registers.EBX
         else:
-            element_type = Types.DYNAMIC
+            element_static_type = compiler.types.get_static_type(element)
+            element_type = element_static_type\
+                if element_static_type else compiler.environment.get_local_var_type(element)
 
         compiler.code.add(Commands.MOV, ['dword [%s-%d]' % (arr_pointer['pointer'], element_place + arr_pointer['offset']), element])\
             .add(Commands.MOV, ['dword [%s-%d]' % (arr_pointer['pointer'], element_place + arr_pointer['offset'] + 4), element_type])

@@ -100,3 +100,8 @@ class Environment:
         env = self.list[self.current if self.current else 'root']
 
         return env['vars'][name]['type'] if name in env['vars'] else Types.INT
+
+    def is_exist_local_var(self, name=None):
+        env = self.list[self.current if self.current else 'root']
+
+        return name in env['vars']
