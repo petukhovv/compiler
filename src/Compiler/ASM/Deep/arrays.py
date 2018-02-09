@@ -98,15 +98,6 @@ class ArrayCompiler:
     @staticmethod
     def set_element(compiler, type):
         """ Генерация инструкций для присвоения значения элементу массива: A[n] := x """
-        # Расчитываем адрес элемента (с учетом хранения типов для каждого элемента - умножаем на 2)
-        compiler.code.add(Commands.POP, Registers.EAX)\
-            .add(Commands.MOV, [Registers.EBX, 2 * ArrayCompiler.ELEMENT_SIZE])\
-            .add(Commands.MUL, Registers.EBX)\
-            .add(Commands.ADD, [Registers.EAX, ArrayCompiler.ELEMENT_SIZE])
-        # Прибавляем к номеру ячейки с началом массива индекс требуемого значения (offset)
-        compiler.code.add(Commands.POP, Registers.EBX)\
-            .add(Commands.ADD, [Registers.EAX, Registers.EBX])
-
         # Записываем в heap memory тип элемента по адресу его ячейки в heap memory
         compiler.code.add(Commands.ADD, [Registers.EAX, ArrayCompiler.ELEMENT_SIZE])\
             .add(Commands.POP, Registers.EBX)\
@@ -122,3 +113,12 @@ class ArrayCompiler:
         compiler.code.add(Commands.POP, Registers.EAX)\
             .add(Commands.MOV, [Registers.EAX, 'dword [%s]' % Registers.EAX])\
             .add(Commands.PUSH, Registers.EAX)
+
+    @staticmethod
+    def calc_element_place(compiler):
+        compiler.code.add(Commands.POP, Registers.EAX) \
+            .add(Commands.MOV, [Registers.ECX, 2 * ArrayCompiler.ELEMENT_SIZE]) \
+            .add(Commands.MUL, Registers.ECX) \
+            .add(Commands.ADD, [Registers.EAX, ArrayCompiler.ELEMENT_SIZE]) \
+            .add(Commands.POP, Registers.EBX) \
+            .add(Commands.ADD, [Registers.EBX, Registers.EAX])

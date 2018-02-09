@@ -1,4 +1,5 @@
 from .Deep.arrays import *
+from .GC.commands import run as gc
 
 
 def arrmake(compiler, args, type):
@@ -100,6 +101,12 @@ def array_element(compiler, array, index, other_indexes, context):
             for other_index in other_indexes:
                 ArrayCompiler.get_element(compiler, var_type)
                 other_index_compile(other_index)
+
+        ArrayCompiler.calc_element_place(compiler)
+        compiler.code.add(Commands.PUSH, Registers.EBX) \
+            .add(Commands.MOV, [Registers.EAX, 'dword [%s]' % Registers.EBX])
+        gc(compiler)
+        compiler.code.add(Commands.POP, Registers.EAX)
         ArrayCompiler.set_element(compiler, var_type)
     else:
         ArrayCompiler.get_element(compiler, var_type)
