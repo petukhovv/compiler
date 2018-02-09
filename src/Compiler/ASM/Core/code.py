@@ -26,7 +26,7 @@ class Code(list):
             'multiplicity': multiplicity
         })
 
-    def stack_align(self, multiplicity, offset):
+    def stack_align(self, multiplicity, offset=0):
         self.add(Commands.MOV, [Registers.EAX, Registers.EBP])
         self.add(Commands.SUB, [Registers.EAX, Registers.ESP])
 
@@ -35,7 +35,8 @@ class Code(list):
         self.add(Commands.DIV, [Registers.EBX])
         self.add(Commands.MOV, [Registers.EAX, multiplicity])
         self.add(Commands.SUB, [Registers.EAX, Registers.EDX])
-        self.add(Commands.ADD, [Registers.EAX, offset])
+        if offset != 0:
+            self.add(Commands.ADD, [Registers.EAX, offset])
         self.add(Commands.SUB, [Registers.ESP, Registers.EAX])
         self.add(Commands.PUSH, Registers.EAX)
 

@@ -19,9 +19,7 @@ class Environment:
         self.list[self.current]['return_type'] = type
 
     def get_return_type(self, name):
-        return_type = self.list[name]['return_type'] if name in self.list else Types.DYNAMIC
-
-        return return_type if return_type else Types.DYNAMIC
+        return self.list[name]['return_type']
 
     def set_args(self, args):
         if self.current is None:
@@ -41,7 +39,7 @@ class Environment:
             'memory': 0,
             'vars': {},
             'args': None,
-            'return_type': None,
+            'return_type': Types.NOTHING,
             'number': self.counter
         }
         self.current = name

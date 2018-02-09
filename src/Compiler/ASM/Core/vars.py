@@ -54,4 +54,4 @@ class Vars:
         return 'dword [_var_type_%s]' % str(name)
 
     def get_compile_time_type(self, name):
-        return self.vars[name]['type'] if name in self.vars else Types.DYNAMIC
+        return self.vars[name]['type']

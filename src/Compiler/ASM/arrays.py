@@ -45,7 +45,7 @@ def arrmake_inline(compiler, elements, type):
     arr_size = arr_length * 2 * 4 + 4
     if arr_length == 0:
         compiler.code.add(Commands.PUSH, 0)
-        return
+        return type
     arr_pointer = compiler.environment.add_local_var(size=arr_size)
 
     compiler.code.add(Commands.MOV, [Registers.EAX, arr_pointer['pointer']]) \
@@ -109,7 +109,7 @@ def array_element(compiler, array, index, other_indexes, context):
                 other_index_compile(other_index)
                 ArrayCompiler.get_element(compiler, var_type)
 
-    return Types.DYNAMIC
+    return Types.REFERENCE if var_type == Types.BOXED_ARR else Types.INT
 
 
 def arrlen(compiler, args):

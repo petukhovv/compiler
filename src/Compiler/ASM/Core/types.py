@@ -2,14 +2,14 @@ from .commands import Commands
 
 
 class Types:
-    NONE = 0
+    NOTHING = 0
     INT = 1
     CHAR = 2
     BOOL = 3
     STRING = 4
     BOXED_ARR = 5
     UNBOXED_ARR = 6
-    DYNAMIC = 9
+    REFERENCE = 7
 
     SIZES = {
         INT: 4,
@@ -17,8 +17,7 @@ class Types:
         BOOL: 1,
         STRING: 4,
         BOXED_ARR: 4,
-        UNBOXED_ARR: 4,
-        DYNAMIC: 4
+        UNBOXED_ARR: 4
     }
 
     ASM = {
@@ -37,7 +36,7 @@ class Types:
         elif isinstance(value, int):
             return Types.INT
         else:
-            return None
+            return Types.NOTHING
 
     def set(self, value_type):
         self.compiler.code.add(Commands.PUSH, [value_type])
