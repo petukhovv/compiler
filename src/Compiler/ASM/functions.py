@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from .Core.commands import Commands
 from .Core.registers import Registers
 from .Core.config import FUNCTIONS_LABEL_PREFIX
+from .Core.types import *
+from .GC.commands import increment as gc_increment
 
 
 def function(compiler, name, args, body):
@@ -67,8 +68,12 @@ def call_statement(compiler, name, args):
     compiler.code.stack_align(align_factor, stack_remainder)
 
     for arg in args.elements:
-        arg.compile_asm(compiler)
+        arg_type = arg.compile_asm(compiler)
         compiler.types.pop()
+        if arg_type == Types.BOXED_ARR:
+            compiler.code.add(Commands.POP, Registers.EAX)
+            compiler.code.add(Commands.PUSH, Registers.EAX)
+            gc_increment(compiler)
 
     function_number = compiler.environment.get_number(name)
     compiler.code.add(Commands.CALL, FUNCTIONS_LABEL_PREFIX + str(function_number))

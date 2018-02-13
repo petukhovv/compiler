@@ -1,5 +1,5 @@
 from .Deep.arrays import *
-from .GC.commands import run as gc
+from .GC.commands import clear as gc_clear, increment as gc_increment
 
 
 def arrmake(compiler, args, type):
@@ -78,10 +78,15 @@ def arrmake_inline(compiler, elements, type):
     return compiler.types.set(type)
 
 
-def array_element(compiler, array, index, other_indexes, context):
+def array_element(compiler, array, index, other_indexes, context, value_type):
     """ Compilation the get array element operator: A[n] """
     var_name = compiler.environment.get_local_var(array)
     var_type = compiler.environment.get_local_var_type(array)
+
+    if value_type == Types.BOXED_ARR:
+        compiler.code.add(Commands.POP, Registers.EAX)
+        compiler.code.add(Commands.PUSH, Registers.EAX)
+        gc_increment(compiler)
 
     # Compilation obtain a pointer construction to the beginning of an array
     compiler.code.add(Commands.PUSH, var_name)
@@ -108,7 +113,7 @@ def array_element(compiler, array, index, other_indexes, context):
         if var_type == Types.BOXED_ARR:
             compiler.code.add(Commands.ADD, [Registers.EBX, ArrayCompiler.ELEMENT_SIZE])
             compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % Registers.EBX])
-            gc(compiler)
+            gc_clear(compiler)
 
         compiler.code.add(Commands.POP, Registers.EAX)
         ArrayCompiler.set_element(compiler, var_type)

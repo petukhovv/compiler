@@ -1,6 +1,6 @@
 from .Core.registers import Registers
 from .Core.types import *
-from .GC.commands import run as gc
+from .GC.commands import clear as gc_clear, increment as gc_increment
 
 """ Map: arithmetic operator in programming language = arithmetic operator in ASM """
 binop_compare_map = {
@@ -65,9 +65,15 @@ def var_aexp(compiler, name, context, value_type):
             var_type = compiler.environment.get_local_var_type(name)
             if var_type == Types.BOXED_ARR:
                 compiler.code.add(Commands.MOV, [Registers.EAX, var])
-                gc(compiler)
+                gc_clear(compiler)
         else:
             var = compiler.environment.add_local_var(value_type, name)
+
+        if value_type == Types.BOXED_ARR:
+            compiler.code.add(Commands.POP, Registers.EAX)
+            compiler.code.add(Commands.PUSH, Registers.EAX)
+            gc_increment(compiler)
+
         compiler.code.add(Commands.POP, var)
     else:
         compiler.code.add(Commands.MOV, [Registers.EAX, compiler.environment.get_local_var(name)])\

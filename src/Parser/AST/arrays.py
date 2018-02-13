@@ -45,6 +45,7 @@ class ArrayElement:
         self.index = index
         self.other_indexes = other_indexes
         self.context = 'get'
+        self.type = None
 
     def interpret(self, env):
         return interpreter.array_element(env, self.array, self.index, self.other_indexes)
@@ -53,7 +54,7 @@ class ArrayElement:
         return compile_vm.array_element(commands, data, self.array, self.index, self.other_indexes, self.context)
 
     def compile_asm(self, compiler):
-        return compile_asm.array_element(compiler, self.array, self.index, self.other_indexes, self.context)
+        return compile_asm.array_element(compiler, self.array, self.index, self.other_indexes, self.context, self.type)
 
 
 class ArrLen:

@@ -22,7 +22,7 @@ class Malloc(Base):
         self.compiler.code.add(Commands.ADD, [Registers.ECX, 2])
         self.compiler.code.add(Commands.PUSH, Registers.ECX)
         self.compiler.code.add(Commands.CALL, ['_malloc'])
-        self.compiler.code.add(Commands.MOV, ['word [%s]' % Registers.EAX, 1])
+        self.compiler.code.add(Commands.MOV, ['word [%s]' % Registers.EAX, 0])
         self.compiler.code.add(Commands.ADD, [Registers.EAX, 2])
         self.compiler.code.add(Commands.ADD, [Registers.ESP, 4])
         self.compiler.code.restore_stack_align()

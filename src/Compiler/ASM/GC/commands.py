@@ -1,8 +1,8 @@
-from ..Core.commands import Commands
 from ..Core.registers import Registers
+from ..Core.types import *
 
 
-def run(compiler):
+def clear(compiler):
     gc_not_need = compiler.labels.create()
     gc_free = compiler.labels.create()
 
@@ -27,3 +27,16 @@ def run(compiler):
 
     compiler.code.add(Commands.NOP)\
         .add_label(gc_not_need)
+
+
+def increment(compiler):
+    gc_not_need = compiler.labels.create()
+
+    compiler.code.add(Commands.CMP, [Registers.EBX, Types.BOXED_ARR]) \
+        .add(Commands.JZ, gc_not_need) \
+        .add(Commands.SUB, [Registers.EAX, 2]) \
+        .add(Commands.MOV, [Registers.BX, 'word [%s]' % Registers.EAX]) \
+        .add(Commands.ADD, [Registers.BX, 1]) \
+        .add(Commands.MOV, ['word [%s]' % Registers.EAX, Registers.BX]) \
+
+    compiler.code.add_label(gc_not_need)
