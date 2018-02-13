@@ -60,14 +60,14 @@ def binop_aexp(compiler, op, left, right):
 def var_aexp(compiler, name, context, value_type):
     """ Variable compilation """
     if context == 'assign':
-        var = compiler.environment.add_local_var(value_type, name)
-
         if compiler.environment.is_exist_local_var(name):
+            var = compiler.environment.get_local_var(name)
             var_type = compiler.environment.get_local_var_type(name)
-            if var_type == Types.REFERENCE:
+            if var_type == Types.BOXED_ARR:
                 compiler.code.add(Commands.MOV, [Registers.EAX, var])
                 gc(compiler)
-
+        else:
+            var = compiler.environment.add_local_var(value_type, name)
         compiler.code.add(Commands.POP, var)
     else:
         compiler.code.add(Commands.MOV, [Registers.EAX, compiler.environment.get_local_var(name)])\

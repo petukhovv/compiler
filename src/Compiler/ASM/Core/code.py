@@ -75,6 +75,11 @@ class Code(list):
 
         return self
 
+    def log(self):
+        self.add(Commands.CALL, 'itoa')
+        self.add(Commands.MOV, [Registers.EAX, 10])
+        self.add(Commands.CALL, 'write')
+
     def get_current_place(self):
         return len(self)
 

@@ -122,3 +122,5 @@ class ArrayCompiler:
             .add(Commands.ADD, [Registers.EAX, ArrayCompiler.ELEMENT_SIZE]) \
             .add(Commands.POP, Registers.EBX) \
             .add(Commands.ADD, [Registers.EBX, Registers.EAX])
+
+

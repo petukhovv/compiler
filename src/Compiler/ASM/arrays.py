@@ -103,9 +103,13 @@ def array_element(compiler, array, index, other_indexes, context):
                 other_index_compile(other_index)
 
         ArrayCompiler.calc_element_place(compiler)
-        compiler.code.add(Commands.PUSH, Registers.EBX) \
-            .add(Commands.MOV, [Registers.EAX, 'dword [%s]' % Registers.EBX])
-        gc(compiler)
+        compiler.code.add(Commands.PUSH, Registers.EBX)
+
+        if var_type == Types.BOXED_ARR:
+            compiler.code.add(Commands.ADD, [Registers.EBX, ArrayCompiler.ELEMENT_SIZE])
+            compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % Registers.EBX])
+            gc(compiler)
+
         compiler.code.add(Commands.POP, Registers.EAX)
         ArrayCompiler.set_element(compiler, var_type)
     else:
@@ -116,7 +120,7 @@ def array_element(compiler, array, index, other_indexes, context):
                 other_index_compile(other_index)
                 ArrayCompiler.get_element(compiler, var_type)
 
-    return Types.REFERENCE if var_type == Types.BOXED_ARR else Types.INT
+    return var_type
 
 
 def arrlen(compiler, args):

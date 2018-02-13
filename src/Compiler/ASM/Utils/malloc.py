@@ -18,7 +18,7 @@ class Malloc(Base):
 
     def call(self):
         self.compiler.code.add(Commands.MOV, [Registers.ECX, Registers.EAX])
-        self.compiler.code.stack_align(16, 4)   # 4 - compensation of one argument push - memory size
+        self.compiler.code.stack_align(16, 12)   # 4 - compensation of one argument push - memory size
         self.compiler.code.add(Commands.ADD, [Registers.ECX, 2])
         self.compiler.code.add(Commands.PUSH, Registers.ECX)
         self.compiler.code.add(Commands.CALL, ['_malloc'])
