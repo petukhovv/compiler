@@ -15,10 +15,10 @@ class Vars:
         self.data = []
 
     def add_in_data(self, label, command, data):
-        self.data.append(label + ': ' + command + ' ' + str(data) + ASM_COMMANDS_SEPARATOR)
+        self.data.append(label + ': ' + command + ' ' + str(data))
 
     def add_in_bss(self, name, type, bytes):
-        self.bss.append(name + '\t\t' + type + ' ' + str(bytes) + ASM_COMMANDS_SEPARATOR)
+        self.bss.append(name + '\t\t' + type + ' ' + str(bytes))
 
     def add(self, name, asm_type, bytes, type=None):
         if name in self.vars:

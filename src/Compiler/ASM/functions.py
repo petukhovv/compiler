@@ -71,8 +71,7 @@ def call_statement(compiler, name, args):
         arg_type = arg.compile_asm(compiler)
         compiler.types.pop()
         if arg_type == Types.BOXED_ARR:
-            compiler.code.add(Commands.POP, Registers.EAX)
-            compiler.code.add(Commands.PUSH, Registers.EAX)
+            compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % Registers.ESP])
             GC(compiler).increment()
 
     function_number = compiler.environment.get_number(name)

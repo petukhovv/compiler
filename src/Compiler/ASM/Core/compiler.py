@@ -30,7 +30,8 @@ class Compiler:
         return ''.join(map(lambda f: 'EXTERN %s%s' % (f, ASM_COMMANDS_SEPARATOR), externs))
 
     def get_section(self, section_name, content):
-        return 'SECTION .%s %s%s' % (section_name, ASM_COMMANDS_SEPARATOR, ASM_COMMANDS_SEPARATOR.join(content))
+        return '%sSECTION .%s %s%s' % (ASM_COMMANDS_SEPARATOR, section_name, ASM_COMMANDS_SEPARATOR,
+                                       ASM_COMMANDS_SEPARATOR.join(content))
 
     def get_content(self, content):
         return ASM_COMMANDS_SEPARATOR + ASM_COMMANDS_SEPARATOR.join(content) + ASM_COMMANDS_SEPARATOR

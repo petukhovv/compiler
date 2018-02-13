@@ -84,8 +84,7 @@ def array_element(compiler, array, index, other_indexes, context, value_type):
     var_type = compiler.environment.get_local_var_type(array)
 
     if value_type == Types.BOXED_ARR:
-        compiler.code.add(Commands.POP, Registers.EAX)
-        compiler.code.add(Commands.PUSH, Registers.EAX)
+        compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % Registers.ESP])
         GC(compiler).increment()
 
     # Compilation obtain a pointer construction to the beginning of an array
