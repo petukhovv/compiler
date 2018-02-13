@@ -3,7 +3,7 @@
 from .Core.registers import Registers
 from .Core.config import FUNCTIONS_LABEL_PREFIX
 from .Core.types import *
-from .GC.commands import increment as gc_increment
+from .Utils.gc import GC
 
 
 def function(compiler, name, args, body):
@@ -73,7 +73,7 @@ def call_statement(compiler, name, args):
         if arg_type == Types.BOXED_ARR:
             compiler.code.add(Commands.POP, Registers.EAX)
             compiler.code.add(Commands.PUSH, Registers.EAX)
-            gc_increment(compiler)
+            GC(compiler).increment()
 
     function_number = compiler.environment.get_number(name)
     compiler.code.add(Commands.CALL, FUNCTIONS_LABEL_PREFIX + str(function_number))
