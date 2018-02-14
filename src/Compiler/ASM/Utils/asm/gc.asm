@@ -29,10 +29,14 @@ gc:
     .gc_finish:
         ret
     .gc_increment:
-        cmp		    ebx, 5              ; compare type to boxed array (id = 5)
-        jz  		.gc_finish
         sub		    eax, 2              ; store pointers counter in first two bytes of heap object
         mov		    bx, word [eax]
         add		    bx, 1               ; pointers counter increment
         mov		    word [eax], bx
         jmp         .gc_finish
+    .gc_start_if_need:
+        cmp		    ebx, 5              ; compare type to boxed array (id = 5)
+        jnz  		.gc_finish
+        cmp		    ebx, 6              ; compare type to unboxed array (id = 6)
+        jnz  		.gc_finish
+        jmp         .gc_start

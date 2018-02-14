@@ -32,6 +32,7 @@ def function(compiler, name, args, body):
     return_type = compiler.environment.get_return_type(name)
 
     if not return_type:
+        GC(compiler).check_args(args)
         # Компилируем конструкцию возврата к месту вызова
         args = compiler.environment.get_args()
         compiler.code.add(Commands.MOV, [Registers.ESP, Registers.EBP])\
@@ -53,6 +54,8 @@ def return_statement(compiler, expr):
 
     if return_type == Types.BOXED_ARR or return_type == Types.UNBOXED_ARR:
         GC(compiler).increment()
+
+    GC(compiler).check_args(args)
 
     compiler.code.add(Commands.POP, Registers.EAX)
     # Компилируем конструкцию возврата к месту вызова

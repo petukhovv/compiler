@@ -94,6 +94,24 @@ class Environment:
 
         return var_pointer
 
+    def get_local_var_runtime_type(self, name=None, as_object=False):
+        env = self.list[self.current if self.current else 'root']
+        if name in env['vars']:
+            size = env['vars'][name]['size']
+            type = env['vars'][name]['type']
+            stack_pointer = env['vars'][name]['stack_pointer']
+            if as_object:
+                var_pointer = {'pointer': 'ebp', 'offset': stack_pointer}
+            elif type:
+                var_pointer = '%s [ebp-%s]' % (Types.ASM[size], stack_pointer)
+            else:
+                var_pointer = '%s [ebp-%s]' % (Types.ASM[4], stack_pointer)
+        else:
+            var_pointer = '%s [ebp+%s]' % (Types.ASM[4], (env['args'][name] + 2) * 8 - 8)\
+                if name in env['args'] else None
+
+        return var_pointer
+
     def get_local_var_type(self, name=None):
         env = self.list[self.current if self.current else 'root']
 
