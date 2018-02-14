@@ -55,6 +55,11 @@ class Environment:
     def get_number(self, name):
         return self.list[name]['number'] if name in self.list else None
 
+    def get_all_vars(self):
+        env = self.list[self.current if self.current else 'root']
+
+        return env['vars']
+
     def add_local_var(self, type=None, name=None, size=None):
         env = self.list[self.current if self.current else 'root']
 
@@ -93,6 +98,16 @@ class Environment:
                 if name in env['args'] else None
 
         return var_pointer
+
+    def get_arg(self, name=None):
+        env = self.list[self.current if self.current else 'root']
+        return '%s [ebp+%s]' % (Types.ASM[4], (env['args'][name] + 2) * 8 - 4)\
+            if name in env['args'] else None
+
+    def get_arg_runtime_type(self, name=None):
+        env = self.list[self.current if self.current else 'root']
+        return '%s [ebp+%s]' % (Types.ASM[4], (env['args'][name] + 2) * 8 - 8)\
+            if name in env['args'] else None
 
     def get_local_var_runtime_type(self, name=None, as_object=False):
         env = self.list[self.current if self.current else 'root']

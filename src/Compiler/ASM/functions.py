@@ -5,6 +5,8 @@ from .Core.config import FUNCTIONS_LABEL_PREFIX
 from .Core.types import *
 from .Utils.gc import GC
 
+from .Deep.functions import return_function
+
 
 def function(compiler, name, args, body):
     """ Компиляция функций (объявление, вызов, исполнение, возврат к месту вызова) """
@@ -32,12 +34,7 @@ def function(compiler, name, args, body):
     return_type = compiler.environment.get_return_type(name)
 
     if not return_type:
-        GC(compiler).check_args(args)
-        # Компилируем конструкцию возврата к месту вызова
-        args = compiler.environment.get_args()
-        compiler.code.add(Commands.MOV, [Registers.ESP, Registers.EBP])\
-            .add(Commands.POP, Registers.EBP)\
-            .add(Commands.RET, len(args) * 8)
+        return_function(compiler, args)
 
     compiler.code.add_label(finish_function)
 
@@ -55,13 +52,7 @@ def return_statement(compiler, expr):
     if return_type == Types.BOXED_ARR or return_type == Types.UNBOXED_ARR:
         GC(compiler).increment()
 
-    GC(compiler).check_args(args)
-
-    compiler.code.add(Commands.POP, Registers.EAX)
-    # Компилируем конструкцию возврата к месту вызова
-    compiler.code.add(Commands.MOV, [Registers.ESP, Registers.EBP])\
-        .add(Commands.POP, Registers.EBP)\
-        .add(Commands.RET, len(args) * 8)
+    return_function(compiler, args)
 
 
 def call_statement(compiler, name, args):
