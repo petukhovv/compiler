@@ -1,7 +1,7 @@
 gc:
     .gc_start:
         cmp		    eax, 0
-        jle 	    .gc_finish          ; go to gc_finish if pointer is zero pointer or stack pointer (less than zero)
+        jle 	    .gc_finish          ; go to gc_finish if pointer is zero pointer or stack pointer
         sub		    eax, 2
         mov		    bx, word [eax]
         sub		    bx, 1               ; pointers counter decrement

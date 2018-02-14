@@ -14,7 +14,6 @@ def arrmake(compiler, args, type):
         # ( signature: arrmake(n, []), Arrmake(n, {}) )
         if default_value_type == type and len(args.elements[1].elements.elements) == 0:
             # We clear the pointer to an empty array
-            # TODO: after the implementation of the GC do here delete the array
             compiler.code.stack_pop()
             compiler.code.add(Commands.PUSH, 0)
             default_values_variant = 'zeros'
@@ -83,7 +82,7 @@ def array_element(compiler, array, index, other_indexes, context, value_type):
     var_name = compiler.environment.get_local_var(array)
     var_type = compiler.environment.get_local_var_type(array)
 
-    if value_type == Types.BOXED_ARR:
+    if value_type == Types.BOXED_ARR or value_type == Types.UNBOXED_ARR:
         compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % Registers.ESP])
         GC(compiler).increment()
 

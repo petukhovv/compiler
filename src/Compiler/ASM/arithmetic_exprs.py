@@ -69,7 +69,7 @@ def var_aexp(compiler, name, context, value_type):
         else:
             var = compiler.environment.add_local_var(value_type, name)
 
-        if value_type == Types.BOXED_ARR:
+        if value_type == Types.BOXED_ARR or value_type == Types.UNBOXED_ARR:
             compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % Registers.ESP])
             GC(compiler).increment()
 

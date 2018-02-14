@@ -36,12 +36,11 @@ def function(compiler, name, args, body):
         args = compiler.environment.get_args()
         compiler.code.add(Commands.MOV, [Registers.ESP, Registers.EBP])\
             .add(Commands.POP, Registers.EBP)\
-            .add(Commands.RET, len(args) * 4)
+            .add(Commands.RET, len(args) * 8)
 
     compiler.code.add_label(finish_function)
 
     need_memory = compiler.environment.finish()
-
     compiler.code.allocate_stack_memory(need_memory, function_start_place)
 
 
@@ -52,26 +51,28 @@ def return_statement(compiler, expr):
     compiler.types.pop()
     compiler.environment.set_return_type(return_type)
 
+    if return_type == Types.BOXED_ARR or return_type == Types.UNBOXED_ARR:
+        GC(compiler).increment()
+
     compiler.code.add(Commands.POP, Registers.EAX)
     # Компилируем конструкцию возврата к месту вызова
     compiler.code.add(Commands.MOV, [Registers.ESP, Registers.EBP])\
         .add(Commands.POP, Registers.EBP)\
-        .add(Commands.RET, len(args) * 4)
+        .add(Commands.RET, len(args) * 8)
 
 
 def call_statement(compiler, name, args):
     """ Компиляция выражения вызова функции """
     align_factor = 16
     args_len = len(args.elements)
-    stack_remainder = align_factor - ((args_len * 4 + 12) % align_factor)    # +8 - push of return address and saved ebp
+    stack_remainder = align_factor - ((args_len * 8 + 12) % align_factor)    # +8 - push of return address and saved ebp
     stack_remainder = 0 if stack_remainder == align_factor else stack_remainder
     compiler.code.stack_align(align_factor, stack_remainder)
 
     for arg in args.elements:
         arg_type = arg.compile_asm(compiler)
-        compiler.types.pop()
-        if arg_type == Types.BOXED_ARR:
-            compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % Registers.ESP])
+        if arg_type == Types.BOXED_ARR or arg_type == Types.UNBOXED_ARR:
+            compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s + 4]' % Registers.ESP])
             GC(compiler).increment()
 
     function_number = compiler.environment.get_number(name)

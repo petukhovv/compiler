@@ -4,6 +4,7 @@ from .config import *
 
 from ..Utils.write import Write
 
+
 class Code(list):
     stack_align_points = []
     stack = {

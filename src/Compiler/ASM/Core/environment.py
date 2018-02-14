@@ -89,7 +89,7 @@ class Environment:
             else:
                 var_pointer = '%s [ebp-%s]' % (Types.ASM[4], stack_pointer + 4)
         else:
-            var_pointer = '%s [ebp+%s]' % (Types.ASM[4], (env['args'][name] + 2) * 4)\
+            var_pointer = '%s [ebp+%s]' % (Types.ASM[4], (env['args'][name] + 2) * 8 - 4)\
                 if name in env['args'] else None
 
         return var_pointer
