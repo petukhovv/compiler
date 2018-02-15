@@ -28,14 +28,14 @@ class Compiler:
         self.code.add(Commands.SUB, [Registers.ESP, 1])
         self.code.add(Commands.INT, [self.exit_interrupt])
 
-    def add_runtime_func(self, code, names):
+    def add_extern(self, code, names):
         if isinstance(names, list):
             self.externs += names
         else:
             self.externs.append(names)
         self.runtime.append(code)
 
-    def get_extern(self, externs):
+    def get_externs(self, externs):
         return ''.join(map(lambda f: 'EXTERN %s%s' % (f, ASM_COMMANDS_SEPARATOR), externs))
 
     def get_section(self, section_name, content):
@@ -48,7 +48,7 @@ class Compiler:
     def get_result(self):
         self.exit()
 
-        externs = self.get_extern(self.externs)
+        externs = self.get_externs(self.externs)
         global_decl = '%sglobal %s' % (ASM_COMMANDS_SEPARATOR, self.entry_point_label)
 
         labels = self.get_content(self.labels)

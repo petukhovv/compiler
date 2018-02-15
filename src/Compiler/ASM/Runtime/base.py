@@ -11,4 +11,4 @@ class Base:
         dir = os.path.dirname(os.path.abspath(__file__))
         f = open(dir + self.path + file, 'r')
         code = f.read()
-        self.compiler.add_runtime_func(code, func_names)
+        self.compiler.add_extern(code, func_names)
