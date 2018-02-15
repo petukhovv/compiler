@@ -84,6 +84,7 @@ def array_element(compiler, array, index, other_indexes, context, value_type):
 
     if value_type == Types.BOXED_ARR or value_type == Types.UNBOXED_ARR:
         compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % Registers.ESP])
+        compiler.code.add(Commands.MOV, [Registers.ECX, value_type])
         GC(compiler).increment()
 
     # Compilation obtain a pointer construction to the beginning of an array

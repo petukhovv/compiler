@@ -19,6 +19,9 @@ class GC(Base):
     def run(self):
         self.compiler.code.add(Commands.CALL, ['gc'])
 
+    def clean(self):
+        self.compiler.code.add(Commands.CALL, ['gc.gc_clean'])
+
     def increment(self):
         self.compiler.code.add(Commands.CALL, ['gc.gc_increment'])
 

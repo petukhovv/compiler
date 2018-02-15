@@ -50,6 +50,7 @@ def return_statement(compiler, expr):
     compiler.environment.set_return_type(return_type)
 
     if return_type == Types.BOXED_ARR or return_type == Types.UNBOXED_ARR:
+        compiler.code.add(Commands.MOV, [Registers.ECX, return_type])
         GC(compiler).increment()
 
     return_function(compiler, args)
@@ -67,6 +68,7 @@ def call_statement(compiler, name, args):
         arg_type = arg.compile_asm(compiler)
         if arg_type == Types.BOXED_ARR or arg_type == Types.UNBOXED_ARR:
             compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s + 4]' % Registers.ESP])
+            compiler.code.add(Commands.MOV, [Registers.ECX, arg_type])
             GC(compiler).increment()
 
     function_number = compiler.environment.get_number(name)
