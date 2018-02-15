@@ -49,16 +49,14 @@ class Compiler:
         self.exit()
 
         externs = self.get_extern(self.externs)
-        data = self.get_section('data', self.vars.data)
-        bss = self.get_section('bss', self.vars.bss)
-        text = self.get_section('text', ['global %s' % self.entry_point_label])
+        global_decl = '%sglobal %s' % (ASM_COMMANDS_SEPARATOR, self.entry_point_label)
 
         labels = self.get_content(self.labels)
         self.code.allocate_stack_memory(self.environment.list['root']['memory'], place=0)
         self.code.add_label(self.entry_point_label, place=0)
         code = self.get_content(self.code.assemble())
 
-        return externs + data + bss + text + labels + code
+        return externs + global_decl + labels + code
 
     def get_runtime(self):
         return ASM_COMMANDS_SEPARATOR.join(self.runtime)
