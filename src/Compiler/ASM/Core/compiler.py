@@ -19,12 +19,21 @@ class Compiler:
         self.vars = Vars(self, self.code, self.environment)
         self.types = Types(self)
         self.target_register = None
+        self.runtime = []
+        self.externs = []
 
     def exit(self):
         self.code.add(Commands.PUSH, [0])
         self.code.add(Commands.MOV, [Registers.EAX, 1])
         self.code.add(Commands.SUB, [Registers.ESP, 1])
         self.code.add(Commands.INT, [self.exit_interrupt])
+
+    def add_runtime_func(self, code, names):
+        if isinstance(names, list):
+            self.externs += names
+        else:
+            self.externs.append(names)
+        self.runtime.append(code)
 
     def get_extern(self, externs):
         return ''.join(map(lambda f: 'EXTERN %s%s' % (f, ASM_COMMANDS_SEPARATOR), externs))
@@ -39,7 +48,7 @@ class Compiler:
     def get_result(self):
         self.exit()
 
-        externs = self.get_extern(EXTERNS)
+        externs = self.get_extern(self.externs)
         data = self.get_section('data', self.vars.data)
         bss = self.get_section('bss', self.vars.bss)
         text = self.get_section('text', ['global %s' % self.entry_point_label])
@@ -50,3 +59,6 @@ class Compiler:
         code = self.get_content(self.code.assemble())
 
         return externs + data + bss + text + labels + code
+
+    def get_runtime(self):
+        return ASM_COMMANDS_SEPARATOR.join(self.runtime)

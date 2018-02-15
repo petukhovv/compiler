@@ -1,6 +1,6 @@
 from .Core.registers import Registers
 from .Core.types import *
-from .Utils.gc import GC
+from .Runtime.gc import GC
 
 """ Map: arithmetic operator in programming language = arithmetic operator in ASM """
 binop_compare_map = {

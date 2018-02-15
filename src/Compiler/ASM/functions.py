@@ -3,7 +3,7 @@
 from .Core.registers import Registers
 from .Core.config import FUNCTIONS_LABEL_PREFIX
 from .Core.types import *
-from .Utils.gc import GC
+from .Runtime.gc import GC
 
 from .Deep.functions import return_function
 

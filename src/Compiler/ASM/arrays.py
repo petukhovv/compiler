@@ -1,5 +1,5 @@
 from .Deep.arrays import *
-from .Utils.gc import GC
+from .Runtime.gc import GC
 
 
 def arrmake(compiler, args, type):

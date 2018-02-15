@@ -1,3 +1,6 @@
+EXTERN _malloc
+
+global malloc
 malloc:
     mov		ecx, eax    ; stack alignment start
     mov		eax, ebp

@@ -1,4 +1,4 @@
-from ..Utils.gc import GC
+from ..Runtime.gc import GC
 from ..Core.registers import Registers
 from ..Core.commands import Commands
 

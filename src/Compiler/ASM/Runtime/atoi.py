@@ -1,14 +1,14 @@
 from .base import Base
 
 
-class Itoa(Base):
+class Atoi(Base):
     is_loaded = False
 
     def __init__(self, compiler):
         Base.__init__(self, compiler)
 
-        if Itoa.is_loaded:
+        if Atoi.is_loaded:
             return
 
-        self.load('itoa.asm')
-        Itoa.is_loaded = True
+        self.load('atoi.asm', 'atoi')
+        Atoi.is_loaded = True

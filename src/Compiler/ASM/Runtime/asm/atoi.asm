@@ -1,6 +1,9 @@
+global atoi
 atoi:
     mov ebx, 0
     mov ecx, 0
+    mov eax, 0
+    mov esi, read_buffer
     add esi, [read_buffer_done]
     .atoi_start:
         xor     edx, edx

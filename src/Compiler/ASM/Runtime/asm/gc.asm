@@ -1,13 +1,14 @@
-gc:
+EXTERN _free
+
+global gc_decrease
+gc_decrease:
     .gc_start:
         cmp		    eax, 0
         jle 	    .gc_finish          ; go to gc_finish if pointer is zero pointer or stack pointer
         jmp         .gc_decrement
-    .gc_finish:
-        ret
     .gc_decrement:
         push        eax
-        call  		gc_deep_decrement
+        call  		gc_deep_decrease
         pop         eax
         sub		    eax, 2
         mov		    bx, word [eax]
@@ -18,21 +19,27 @@ gc:
         jnz     	.gc_finish
         call  		gc_clean
         jmp     	.gc_finish
-    .gc_increment:
-        sub		    eax, 2              ; store pointers counter in first two bytes of heap object
-        mov		    bx, word [eax]
-        add		    bx, 1               ; pointers counter increment
-        mov		    word [eax], bx
-        add		    eax, 2
-        cmp         ecx, 5              ; compare type to boxed array (id = 5)
-        call  		gc_deep_increment
-        jmp         .gc_finish
-    .gc_start_if_need:
-        cmp		    ebx, 5              ; compare type to boxed array (id = 5)
-        jz  		.gc_start
-        cmp		    ebx, 6              ; compare type to unboxed array (id = 6)
-        jz  		.gc_start
-        jmp         .gc_finish
+    .gc_finish:
+        ret
+
+global gc_increase
+gc_increase:
+    sub		    eax, 2              ; store pointers counter in first two bytes of heap object
+    mov		    bx, word [eax]
+    add		    bx, 1               ; pointers counter increment
+    mov		    word [eax], bx
+    add		    eax, 2
+    cmp         ecx, 5              ; compare type to boxed array (id = 5)
+    call  		gc_deep_increase
+    ret
+
+global gc_start_if_need
+gc_start_if_need:
+    cmp		    ebx, 5              ; compare type to boxed array (id = 5)
+    jz  		gc_decrease.gc_start
+    cmp		    ebx, 6              ; compare type to unboxed array (id = 6)
+    jz  		gc_decrease.gc_start
+    ret
 
 gc_clean:
     sub		    eax, 2
@@ -54,7 +61,7 @@ gc_clean:
     add		    esp, ebx            ; restore stack alignment finish
     ret
 
-gc_deep_decrement:
+gc_deep_decrease:
     mov         edx, eax
     mov         ecx, dword [edx]
     cmp		    ecx, 0
@@ -76,21 +83,21 @@ gc_deep_decrement:
             sub         edx, 4
             mov         ebx, dword [edx]
             cmp         ebx, 5                  ; compare type to boxed array (id = 5)
-            jnz  		.gc_deep_decrement_continue
+            jnz  		.gc_deep_decrease_continue
 
             push        ecx
             push        edx
             push        eax
-            call  		gc_deep_decrement
+            call  		gc_deep_decrease
             pop         eax
             pop         edx
             pop         ecx
-        .gc_deep_decrement_continue:
+        .gc_deep_decrease_continue:
             call  		gc_clean
             loop        loop_elements
         ret
 
-gc_deep_increment:
+gc_deep_increase:
     mov         edx, eax
     mov         ecx, dword [edx]
     cmp		    ecx, 0
@@ -112,13 +119,13 @@ gc_deep_increment:
             sub         edx, 4
             mov         ebx, dword [edx]
             cmp         ebx, 5                  ; compare type to boxed array (id = 5)
-            jnz  		.gc_deep_increment_continue
+            jnz  		.gc_deep_increase_continue
 
             push        ecx
             push        edx
-            call  		gc_deep_increment
+            call  		gc_deep_increase
             pop         edx
             pop         ecx
-        .gc_deep_increment_continue:
+        .gc_deep_increase_continue:
             loop        loop_by_elements
         ret

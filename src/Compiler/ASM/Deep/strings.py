@@ -1,7 +1,7 @@
 from ..Helpers.base import *
 from ..Helpers.loop import Loop
 from ..Core.registers import Registers
-from ..Utils.malloc import Malloc
+from ..Runtime.malloc import Malloc
 
 
 class StringCompiler:

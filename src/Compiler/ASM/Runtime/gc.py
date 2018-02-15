@@ -1,7 +1,7 @@
 from ..Core.types import Types
 from ..Core.commands import Commands
 from ..Core.registers import Registers
-from ..Utils.atoi import *
+from ..Runtime.atoi import *
 
 
 class GC(Base):
@@ -13,17 +13,17 @@ class GC(Base):
         if GC.is_loaded:
             return
 
-        self.load('gc.asm')
+        self.load('gc.asm', ['gc_decrease', 'gc_increase', 'gc_clean', 'gc_start_if_need'])
         GC.is_loaded = True
 
     def run(self):
-        self.compiler.code.add(Commands.CALL, ['gc'])
+        self.compiler.code.add(Commands.CALL, ['gc_decrease'])
 
     def clean(self):
-        self.compiler.code.add(Commands.CALL, ['gc.gc_clean'])
+        self.compiler.code.add(Commands.CALL, ['gc_clean'])
 
     def increment(self):
-        self.compiler.code.add(Commands.CALL, ['gc.gc_increment'])
+        self.compiler.code.add(Commands.CALL, ['gc_increase'])
 
     def check_args(self, args):
         for arg in args:
@@ -31,7 +31,7 @@ class GC(Base):
             var_type_pointer = self.compiler.environment.get_arg_runtime_type(arg)
             self.compiler.code.add(Commands.MOV, [Registers.EAX, var_pointer])
             self.compiler.code.add(Commands.MOV, [Registers.EBX, var_type_pointer])
-            self.compiler.code.add(Commands.CALL, ['gc.gc_start_if_need'])
+            self.compiler.code.add(Commands.CALL, ['gc_start_if_need'])
 
     def check_local_vars(self):
         for variable in self.compiler.environment.get_all_vars():

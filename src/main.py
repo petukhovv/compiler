@@ -44,17 +44,22 @@ if args.stack_machine:
 if args.compile:
     target_file = args.compile[0]
     ast = parse_program(target_file)
-    nasm_program = compile_asm(ast)
+    program, runtime = compile_asm(ast)
 
     filename = os.path.splitext(os.path.basename(target_file))[0]
-    runtime = os.environ.get('RC_RUNTIME')
-    basepath = runtime + '/' + filename
+    runtime_folder = os.environ.get('RC_RUNTIME')
+    program_path = '%s/%s' % (runtime_folder, filename)
+    runtime_path = '%s/runtime' % runtime_folder
 
-    if not os.path.exists(runtime):
-        os.makedirs(runtime)
+    if not os.path.exists(runtime_folder):
+        os.makedirs(runtime_folder)
 
-    with open(basepath + '.asm', 'w') as f:
-        f.write(nasm_program)
+    with open('%s.asm' % runtime_path, 'w') as f:
+        f.write(runtime)
 
-    os.system('nasm -g -f macho ' + basepath + '.asm')
-    os.system('gcc  -m32 -Wl,-no_pie -o ./' + filename + ' ' + basepath + '.o')
+    with open('%s.asm' % program_path, 'w') as f:
+        f.write(program)
+
+    os.system('nasm -g -f macho %s.asm' % runtime_path)
+    os.system('nasm -g -f macho %s.asm' % program_path)
+    os.system('gcc  -m32 -Wl,-no_pie -o ./%s %s.o %s.o' % (filename, runtime_path, program_path))

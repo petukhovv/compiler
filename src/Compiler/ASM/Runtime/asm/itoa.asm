@@ -1,3 +1,4 @@
+global itoa
 itoa:
     .itoa_start:
         test    eax, eax

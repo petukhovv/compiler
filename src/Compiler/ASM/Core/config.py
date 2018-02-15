@@ -1,6 +1,4 @@
 ASM_COMMANDS_SEPARATOR = '\n'
 ASM_ARGS_SEPARATOR = ','
 
-EXTERNS = ['_malloc', '_free']
-
 FUNCTIONS_LABEL_PREFIX = '_fun_'

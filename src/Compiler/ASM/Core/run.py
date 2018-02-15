@@ -9,4 +9,4 @@ def compile_asm(ast):
 
     ast.compile_asm(compiler)
 
-    return compiler.get_result()
+    return compiler.get_result(), compiler.get_runtime()

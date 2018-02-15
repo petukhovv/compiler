@@ -14,8 +14,7 @@ class Write(Base):
         if Write.is_loaded:
             return
 
-        self.load('write.asm')
-        self.compiler.vars.add_in_bss('write_buffer', 'resb', 4)
+        self.load('write.asm', 'write')
         Write.is_loaded = True
 
     def call(self, value_type):

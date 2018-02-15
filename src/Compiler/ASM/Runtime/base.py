@@ -7,8 +7,8 @@ class Base:
     def __init__(self, compiler):
         self.compiler = compiler
 
-    def load(self, file):
+    def load(self, file, func_names):
         dir = os.path.dirname(os.path.abspath(__file__))
         f = open(dir + self.path + file, 'r')
-        asm_code = f.read()
-        self.compiler.labels.add(asm_code)
+        code = f.read()
+        self.compiler.add_runtime_func(code, func_names)

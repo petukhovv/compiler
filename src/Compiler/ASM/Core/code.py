@@ -2,7 +2,7 @@ from .commands import Commands
 from .registers import Registers
 from .config import *
 
-from ..Utils.write import Write
+from ..Runtime.write import Write
 
 
 class Code(list):

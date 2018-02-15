@@ -1,6 +1,6 @@
 from .Core.types import *
-from .Utils.read import Read
-from .Utils.write import Write
+from .Runtime.read import Read
+from .Runtime.write import Write
 
 
 def read_statement(compiler):
