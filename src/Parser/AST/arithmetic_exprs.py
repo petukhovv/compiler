@@ -53,6 +53,7 @@ class BinopAexp:
         self.op = op
         self.left = left
         self.right = right
+        self.children = [left, right]
 
     def interpret(self, env):
         return interpreter.binop_aexp(env, self.op, self.left, self.right)

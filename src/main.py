@@ -7,6 +7,7 @@ from Compiler.VM.Helpers.run import compile_vm
 from Interpreter.Helpers.run import interpret
 from Lexer.run import run as lex
 from Parser.run import parse
+from Parser.Helpers.ast_printer import ast_print
 from VM.parser import parse as vm_parse
 from VM.run import run as vm_interpret
 
@@ -44,6 +45,9 @@ if args.stack_machine:
 if args.compile:
     target_file = args.compile[0]
     ast = parse_program(target_file)
+
+    ast_print(ast)
+
     program, runtime = compile_asm(ast)
 
     filename = os.path.splitext(os.path.basename(target_file))[0]

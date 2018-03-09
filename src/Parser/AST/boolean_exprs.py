@@ -13,6 +13,7 @@ class RelopBexp:
         self.op = op
         self.left = left
         self.right = right
+        self.children = [left, right]
 
     def interpret(self, env):
         return interpreter.relop_bexp(env, self.op, self.left, self.right)
@@ -33,6 +34,7 @@ class AndBexp:
     def __init__(self, left, right):
         self.left = left
         self.right = right
+        self.children = [left, right]
 
     def interpret(self, env):
         return interpreter.and_bexp(env, self.left, self.right)
@@ -53,6 +55,7 @@ class OrBexp:
     def __init__(self, left, right):
         self.left = left
         self.right = right
+        self.children = [left, right]
 
     def interpret(self, env):
         return interpreter.or_bexp(env, self.left, self.right)
@@ -72,6 +75,7 @@ class NotBexp:
     """
     def __init__(self, exp):
         self.exp = exp
+        self.children = [exp]
 
     def interpret(self, env):
         return interpreter.not_bexp(env, self.exp)

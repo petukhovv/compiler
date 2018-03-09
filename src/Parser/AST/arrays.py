@@ -10,6 +10,7 @@ class UnboxedArray:
 
     def __init__(self, elements):
         self.elements = elements
+        self.children = [elements]
 
     def interpret(self, env):
         return interpreter.unboxed_array(env, self.elements)
@@ -26,6 +27,7 @@ class BoxedArray:
 
     def __init__(self, elements):
         self.elements = elements
+        self.children = [elements]
 
     def interpret(self, env):
         return interpreter.boxed_array(env, self.elements)
@@ -46,6 +48,7 @@ class ArrayElement:
         self.other_indexes = other_indexes
         self.context = 'get'
         self.type = None
+        self.children = [array, index, other_indexes]
 
     def interpret(self, env):
         return interpreter.array_element(env, self.array, self.index, self.other_indexes)
@@ -60,6 +63,7 @@ class ArrayElement:
 class ArrLen:
     def __init__(self, args):
         self.args = args
+        self.children = [args]
 
     def interpret(self, env):
         return interpreter.arr_len(env, self.args)
@@ -74,6 +78,7 @@ class ArrLen:
 class UnboxedArrMake:
     def __init__(self, args):
         self.args = args
+        self.children = [args]
 
     def interpret(self, env):
         return interpreter.unboxed_arr_make(env, self.args)
@@ -88,6 +93,7 @@ class UnboxedArrMake:
 class BoxedArrMake:
     def __init__(self, args):
         self.args = args
+        self.children = [args]
 
     def interpret(self, env):
         return interpreter.boxed_arr_make(env, self.args)

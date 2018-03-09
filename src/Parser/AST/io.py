@@ -27,6 +27,7 @@ class WriteStatement:
     """
     def __init__(self, aexp):
         self.aexp = aexp
+        self.children = [aexp]
 
     def interpret(self, env):
         return interpreter.write_statement(env, self.aexp)

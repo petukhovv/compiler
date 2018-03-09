@@ -14,6 +14,7 @@ class Function:
         self.name = name
         self.args = args
         self.body = body
+        self.children = [args, body]
 
     def interpret(self, env):
         return interpreter.function(env, self.name, self.args, self.body)
@@ -32,6 +33,7 @@ class ReturnStatement:
     """
     def __init__(self, expr):
         self.expr = expr
+        self.children = [expr]
 
     def interpret(self, env):
         return interpreter.return_statement(env, self.expr)
@@ -51,6 +53,7 @@ class FunctionCallStatement:
     def __init__(self, name, args):
         self.name = name
         self.args = args
+        self.children = [args]
 
     def interpret(self, env):
         fun = env['f'][self.name]

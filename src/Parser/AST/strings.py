@@ -36,6 +36,7 @@ class String(Heapable):
 class StrLen(Stackable):
     def __init__(self, args):
         self.args = args
+        self.children = [args]
 
     def interpret(self, env):
         return interpreter.str_len(env, self.args)
@@ -50,6 +51,7 @@ class StrLen(Stackable):
 class StrGet(Stackable):
     def __init__(self, args):
         self.args = args
+        self.children = [args]
 
     def interpret(self, env):
         return interpreter.str_get(env, self.args)
@@ -64,6 +66,7 @@ class StrGet(Stackable):
 class StrSub(Heapable):
     def __init__(self, args):
         self.args = args
+        self.children = [args]
 
     def interpret(self, env):
         return interpreter.str_sub(env, self.args)
@@ -78,6 +81,7 @@ class StrSub(Heapable):
 class StrDup(Heapable):
     def __init__(self, args):
         self.args = args
+        self.children = [args]
 
     def interpret(self, env):
         return interpreter.str_dup(env, self.args)
@@ -92,6 +96,7 @@ class StrDup(Heapable):
 class StrSet:
     def __init__(self, args):
         self.args = args
+        self.children = [args]
 
     def interpret(self, env):
         return interpreter.str_set(env, self.args)
@@ -106,6 +111,7 @@ class StrSet:
 class StrCat(Heapable):
     def __init__(self, args):
         self.args = args
+        self.children = [args]
 
     def interpret(self, env):
         return interpreter.str_cat(env, self.args)
@@ -120,6 +126,7 @@ class StrCat(Heapable):
 class StrCmp:
     def __init__(self, args):
         self.args = args
+        self.children = [args]
 
     def interpret(self, env):
         return interpreter.str_cmp(env, self.args)
@@ -134,6 +141,7 @@ class StrCmp:
 class StrMake:
     def __init__(self, args):
         self.args = args
+        self.children = [args]
 
     def interpret(self, env):
         return interpreter.str_make(env, self.args)
