@@ -45,6 +45,7 @@ token_expressions = [
     token('\]', RESERVED),
     token('\{', RESERVED),
     token('\}', RESERVED),
+    token('\.', RESERVED),
 
     # Language reserved keywords
     keyword('if'),

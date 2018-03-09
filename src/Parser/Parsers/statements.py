@@ -14,8 +14,9 @@ def assign_stmt():
     def process(parsed):
         ((name, _), exp) = parsed
         return AssignStatement(name, exp)
-    return (el_exp() | id ^ (lambda v: VarAexp(v))) + keyword(':=') + \
-        (bexp(allow_single=True) | aexp() | bexp() | read_stmt() | str_exp() | char_exp() | arr_exp() | object_def()) ^ process
+    return (el_exp() | object_val() | id ^ (lambda v: VarAexp(v))) + keyword(':=') + \
+        (object_method() | object_val() | bexp(allow_single=True) | aexp() | bexp() | read_stmt() | str_exp() | char_exp()
+         | arr_exp() | object_def()) ^ process
 
 
 def stmt_list():
@@ -28,6 +29,7 @@ def stmt_list():
     """
     def process_stmt(x):
         return lambda l, r: CompoundStatement(l, r)
+
     def process(parsed_list):
         if len(parsed_list) == 1:
             return parsed_list[0]
