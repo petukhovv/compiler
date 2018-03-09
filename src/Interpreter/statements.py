@@ -1,5 +1,6 @@
 from Parser.AST.common import *
 from Parser.AST.arrays import *
+from Parser.AST.objects import *
 
 from .Helpers.environment import *
 from .Helpers.common import BoxedArrayWrap, UnboxedArrayWrap
@@ -23,6 +24,16 @@ def assign_statement(env, variable, aexp):
         else:
             arr[index] = Pointer(env, aexp)
         Environment(env).set(arr_descr.array, arr)
+    elif isinstance(variable, ObjectVal):
+        obj_descr = variable
+        prop_name = obj_descr.prop_name
+        obj = Environment(env).get(obj_descr.object_name)
+        value_is_reference = isinstance(aexp, UnboxedArrayWrap) or isinstance(aexp, BoxedArrayWrap) or isinstance(aexp, Object)
+        if not value_is_reference:
+            obj.set(prop_name, value)
+        else:
+            obj.set(prop_name, Pointer(env, aexp))
+        Environment(env).set(obj_descr.object_name, obj)
     else:
         name = variable.name
         Environment(env).set(name, value)

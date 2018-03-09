@@ -1,6 +1,10 @@
+import sys
+
 from ..AST.io import *
 
 from .arithmetic_exprs import *
+
+objects = sys.modules[__package__ + '.objects']
 
 io_predefined_functions = {
     'read': ReadStatement,
@@ -19,4 +23,4 @@ def write_stmt():
         (((_, _), name), _) = parsed
         return WriteStatement(name)
     return keyword('write') + \
-        keyword('(') + aexp() + keyword(')') ^ process
+        keyword('(') + (objects.object_method() | objects.object_val() | aexp()) + keyword(')') ^ process

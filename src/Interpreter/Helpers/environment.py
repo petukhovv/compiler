@@ -38,7 +38,7 @@ class Environment:
 
         return None
 
-    def create(self, func_env=None):
+    def create(self, func_env=None, obj_env=None):
         env = {
             'v': {},
             'f': {},

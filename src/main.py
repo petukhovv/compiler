@@ -39,6 +39,7 @@ def parse_program(target_file):
 if args.interpret:
     target_file = args.interpret[0]
     ast = parse_program(target_file)
+    # ast_print(ast)
     interpret(ast)
 
 if args.stack_machine:

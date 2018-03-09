@@ -67,7 +67,6 @@ token_expressions = [
     keyword('return'),
     keyword('end'),
     keyword('val'),
-    keyword('method'),
 
     token('\d+', INT),          # Integers regexp
     token('[A-Za-z]\w*', ID)    # Identifiers regexp (variable names, function names, etc)
