@@ -16,8 +16,10 @@ group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument('--interpret', '-i', nargs=1, type=str, help='interpret and run')
 group.add_argument('--stack_machine', '-s', nargs=1, type=str, help='compile in virtual machine code and run')
 group.add_argument('--compile', '-o', nargs=1, type=str, help='compile in nasm code and then executable file')
+parser.add_argument('--ast_print', action='store_true', help='whether to output the AST')
 
 args = parser.parse_args()
+ast_print_arg = args.ast_print
 
 
 def parse_program(target_file):
@@ -27,6 +29,10 @@ def parse_program(target_file):
     if not parse_result:
         sys.stderr.write('Parse error!\n')
         exit()
+
+    if ast_print_arg:
+        print(parse_result.value)
+
     return parse_result.value
 
 
