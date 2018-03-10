@@ -46,13 +46,10 @@ def object_val(commands, data, object_name, prop_name, other_prop_names, context
 
     prop_var = data.get_object_property(obj_var, prop_name, Types.DYNAMIC)
 
-    if object_name == 'this':
-        prop_var = -prop_var
-
     if context == 'assign':
-        commands.store_value(prop_var, type=Types.DYNAMIC)
+        commands.store_value(prop_var, type=Types.DYNAMIC, is_parent_scope=object_name == 'this')
     else:
-        commands.load_value(prop_var)
+        commands.load_value(prop_var, is_parent_scope=object_name == 'this')
 
     return Types.DYNAMIC
 

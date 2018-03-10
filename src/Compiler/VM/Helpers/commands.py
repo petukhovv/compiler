@@ -7,11 +7,15 @@ Pop = 'POP'
 Nop = 'NOP'
 Dup = 'DUP'
 Load = 'LOAD'
+PLoad = 'PLOAD'
 BLoad = 'BLOAD'
+BPLoad = 'BPLOAD'
 DLoad = 'DLOAD'
 DBLoad = 'DBLOAD'
 Store = 'STORE'
+PStore = 'PSTORE'
 BStore = 'BSTORE'
+BPStore = 'BPSTORE'
 DStore = 'DSTORE'
 DBStore = 'DBSTORE'
 Add = 'ADD'
@@ -59,20 +63,20 @@ class Commands(list):
         self.add(Pop)
 
     """ Генерация строкового представления заданной команды для стековой машины """
-    def load_value(self, variable, only_value=False):
+    def load_value(self, variable, only_value=False, is_parent_scope=False):
         if not only_value:
             self.add(Load, variable)
-        self.add(Load, variable + 1)
+        self.add(PLoad if is_parent_scope else Load, variable + 1)
 
     """ Генерация строкового представления заданной команды для стековой машины """
-    def store_value(self, variable, type=None, type_variable=None):
+    def store_value(self, variable, type=None, type_variable=None, is_parent_scope=False):
         if type is not None:
             self.add(Push, type)
         elif type_variable:
             self.add(Load, type_variable)
         self.add(Push, variable)
-        self.add(BStore, 1)
-        self.add(Store, variable)
+        self.add(BPStore if is_parent_scope else BStore, 1)
+        self.add(PStore if is_parent_scope else Store, variable)
 
     """ Генерация строкового представления заданной команды для стековой машины """
     def bload_value(self, data, only_value=False):

@@ -49,14 +49,21 @@ class Load:
     """ Помещение в стек значения переменной с адресом address, взимаемой из стековой памяти данных. """
     def __init__(self, address):
         self.address = address
-        if self.address < 0:
-            self.is_parent_scope = True
-            self.address = -self.address
-        else:
-            self.is_parent_scope = False
 
     def interpret(self, vm):
-        value = vm.scope(-2 if self.is_parent_scope else -1).stack[self.address]
+        value = vm.scope().stack[self.address]
+        if value is None:
+            raise RuntimeError('Unknown variable \'' + str(self.address) + '\'')
+        vm.stack.append(value)
+
+
+class PLoad:
+    """ Помещение в стек значения переменной с адресом address, взимаемой из стековой памяти данных родительского scope. """
+    def __init__(self, address):
+        self.address = address
+
+    def interpret(self, vm):
+        value = vm.scope(-2).stack[self.address]
         if value is None:
             raise RuntimeError('Unknown variable \'' + str(self.address) + '\'')
         vm.stack.append(value)
@@ -69,22 +76,26 @@ class BLoad:
     """
     def __init__(self, address):
         self.address = address
-        if self.address < 0:
-            self.is_parent_scope = True
-            self.address = -self.address
-        else:
-            self.is_parent_scope = False
 
     def interpret(self, vm):
-        address = vm.stack.pop()
+        address = self.address + vm.stack.pop()
+        value = vm.scope().stack[address]
+        if value is None:
+            raise RuntimeError('Unknown variable \'' + str(self.address) + '\'')
+        vm.stack.append(value)
 
-        if address < 0:
-            address = -address + self.address
-            self.is_parent_scope = True
-        else:
-            address += self.address
 
-        value = vm.scope(-2 if self.is_parent_scope else -1).stack[address]
+class BPLoad:
+    """
+    Помещение в стек значение переменной с адресом address, взимаемой из стековой памяти данных родительского scope,
+    который расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
+    """
+    def __init__(self, address):
+        self.address = address
+
+    def interpret(self, vm):
+        address = self.address + vm.stack.pop()
+        value = vm.scope(-2).stack[address]
         if value is None:
             raise RuntimeError('Unknown variable \'' + str(self.address) + '\'')
         vm.stack.append(value)
@@ -116,20 +127,26 @@ class DBLoad:
         vm.stack.append(value)
 
 
-class Store:
-    """ Сохранение значения переменной с адресом address в стекуовую память данных. """
+class PStore:
+    """ Сохранение значения переменной с адресом address в стекуовую память данных родительского scope. """
     def __init__(self, address):
         self.address = address
-        if self.address < 0:
-            self.is_parent_scope = True
-            self.address = -self.address
-        else:
-            self.is_parent_scope = False
 
     def interpret(self, vm):
         if len(vm.stack) == 0:
             raise RuntimeError('Stack is empty')
-        vm.scope(-2 if self.is_parent_scope else -1).stack[self.address] = vm.stack.pop()
+        vm.scope(-2).stack[self.address] = vm.stack.pop()
+
+
+class Store:
+    """ Сохранение значения переменной с адресом address в стекуовую память данных. """
+    def __init__(self, address):
+        self.address = address
+
+    def interpret(self, vm):
+        if len(vm.stack) == 0:
+            raise RuntimeError('Stack is empty')
+        vm.scope().stack[self.address] = vm.stack.pop()
 
 
 class BStore:
@@ -139,25 +156,29 @@ class BStore:
     """
     def __init__(self, address):
         self.address = address
-        if self.address < 0:
-            self.is_parent_scope = True
-            self.address = -self.address
-        else:
-            self.is_parent_scope = False
 
     def interpret(self, vm):
         if len(vm.stack) == 0:
             raise RuntimeError('Stack is empty')
 
-        address = vm.stack.pop()
+        address = self.address + vm.stack.pop()
+        vm.scope().stack[address] = vm.stack.pop()
 
-        if address < 0:
-            address = -address + self.address
-            self.is_parent_scope = True
-        else:
-            address += self.address
 
-        vm.scope(-2 if self.is_parent_scope else -1).stack[address] = vm.stack.pop()
+class BPStore:
+    """
+    Сохранение значения переменной с адресом address в стековую памяти данных родительского scope,
+    который расчитывается по следующему правилу: <адрес в памяти> = <переданный адрес> + <значение с вершины стека>.
+    """
+    def __init__(self, address):
+        self.address = address
+
+    def interpret(self, vm):
+        if len(vm.stack) == 0:
+            raise RuntimeError('Stack is empty')
+
+        address = self.address + vm.stack.pop()
+        vm.scope(-2).stack[address] = vm.stack.pop()
 
 
 class DStore:
