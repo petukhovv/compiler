@@ -4,6 +4,7 @@ from ..AST.arithmetic_exprs import IntAexp
 from .arithmetic_exprs import aexp, any_operator_in_list, precedence, process_group
 from .strings import *
 
+
 """
 Precedence levels for binary operations.
 """

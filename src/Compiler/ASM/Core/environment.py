@@ -64,13 +64,17 @@ class Environment:
 
         return self.counter
 
-    def get_parent_local_var(self, name=None):
+    def get_parent_local_var(self, name=None, as_object=True):
         env = self.list[self.current if self.current else 'root']
 
         env = env['parent']
         if name in env['vars']:
+            size = env['vars'][name]['size']
             stack_pointer = env['vars'][name]['stack_pointer']
-            var_pointer = {'pointer': 'ebp', 'offset': stack_pointer + 4}
+            if as_object:
+                var_pointer = {'pointer': 'ebp', 'offset': stack_pointer + 4}
+            else:
+                var_pointer = '%s [ebp-%s]' % (Types.ASM[size], stack_pointer + 4)
         else:
             var_pointer = '%s [ebp+%s]' % (Types.ASM[4], (env['args'][name] + 2) * 8 - 4) \
                 if name in env['args'] else None
@@ -120,6 +124,7 @@ class Environment:
 
     def get_local_var(self, name=None, as_object=False, env=None):
         env = self.list[self.current if self.current else 'root'] if env is None else env
+
         if name in env['vars']:
             size = env['vars'][name]['size']
             type = env['vars'][name]['type']

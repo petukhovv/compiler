@@ -6,6 +6,7 @@ from .arrays import *
 
 
 statements = sys.modules[__package__ + '.statements']
+objects = sys.modules[__package__ + '.objects']
 
 predefined = {
     'strings': string_predefined_functions,
@@ -32,7 +33,8 @@ def args_call():
     """
     Parsing function arguments statement (call point).
     """
-    return enumeration(alternative_args_parser=(aexp() | bexp() | str_exp() | char_exp() | arr_exp()))
+    return enumeration(alternative_args_parser=(objects.object_def() | objects.object_val() | objects.object_method()
+                                                | aexp() | bexp() | str_exp() | char_exp() | arr_exp()))
 
 
 def fun():
@@ -55,7 +57,7 @@ def return_stmt():
     def process(parsed):
         (_, expr) = parsed
         return ReturnStatement(expr)
-    return keyword('return') + Opt(aexp() | bexp() | str_exp() | char_exp() | arr_exp()) ^ process
+    return keyword('return') + Opt(objects.object_def() | objects.object_val() | aexp() | bexp() | str_exp() | char_exp() | arr_exp()) ^ process
 
 
 def fun_call_stmt():

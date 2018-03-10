@@ -51,7 +51,7 @@ def object_val():
     deref_op_obj = keyword('.') + id
     deref_op_arr = keyword('[') + Lazy(arithmetic_exprs.aexp) + keyword(']')
 
-    return (id | el_exp()) + deref_op_obj + Opt(Rep(deref_op_obj | deref_op_arr)) ^ process
+    return id + deref_op_obj + Opt(Rep(deref_op_obj | deref_op_arr)) ^ process
 
 
 def object_method():

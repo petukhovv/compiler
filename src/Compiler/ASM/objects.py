@@ -48,7 +48,10 @@ def object_val(compiler, object_name, prop_name, other_prop_names, context):
     if object_name == 'this':
         obj_var = compiler.environment.object_list[-1][0]
     else:
-        obj_var = compiler.environment.get_object_name(compiler.environment.get_local_var(object_name))
+        if compiler.environment.current is not None:
+            obj_var = compiler.environment.get_object_name(compiler.environment.get_parent_local_var(object_name, as_object=False))
+        else:
+            obj_var = compiler.environment.get_object_name(compiler.environment.get_local_var(object_name))
 
     prop_var = compiler.environment.get_local_var("var_%s_%s" % (obj_var, prop_name))
 
@@ -61,8 +64,15 @@ def object_val(compiler, object_name, prop_name, other_prop_names, context):
         else:
             compiler.code.add(Commands.POP, prop_var)
     else:
-        compiler.code.add(Commands.PUSH, prop_var)
-        compiler.code.add(Commands.PUSH, Types.REFERENCE)
+        if object_name == 'this':
+            prop_var = compiler.environment.get_parent_local_var("var_%s_%s" % (obj_var, prop_name))
+            compiler.code.add(Commands.MOV, [Registers.EBX, "dword [%s]" % compiler.environment.object_list[-1][1]])
+            compiler.code.add(Commands.SUB, [Registers.EBX, prop_var['offset']])
+            compiler.code.add(Commands.PUSH, 'dword [%s]' % Registers.EBX)
+        else:
+            compiler.code.add(Commands.PUSH, prop_var)
+
+    return compiler.types.set(Types.REFERENCE)
 
 
 def object_method(compiler, object_name, method_name, args):
