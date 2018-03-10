@@ -38,8 +38,11 @@ class Environment:
     def set_link_object(self, var_name, object_name):
         self.objects[var_name] = object_name
 
-    def get_object_property(self, var_name, property_name):
-        return self.get_var(property_name, object_namespace=self.objects[var_name])
+    def get_object_name(self, var_name):
+        return self.objects[var_name]
+
+    def get_object_property(self, var_name, property_name, type):
+        return self.var(type, property_name, object_namespace=self.objects[var_name])
 
     def label(self, name=None):
         """ Создание новой метки """
@@ -71,19 +74,19 @@ class Environment:
             self.var_counter += 1
         return var_number
 
-    def var(self, type=None, alias=None, double_size=False):
+    def var(self, type=None, alias=None, double_size=False, object_namespace=None):
         """
         Создание новой переменной в stack memory
         Если name не передано, просто инкрементируем счетчик
         """
         # Если переменная уже существует, возвращаем её
-        if self.is_exist_var(alias):
-            var_number = self.get_var(alias)
+        if self.is_exist_var(alias, object_namespace):
+            var_number = self.get_var(alias, object_namespace)
             if type is not None and type != 9:
                 self.set_type(var_number, type)
             return var_number
         else:
-            return self.create_var(type, alias, double_size)
+            return self.create_var(type, alias, double_size, object_namespace)
 
     def get_label(self, name):
         """ Получение метки по имени """
@@ -112,8 +115,10 @@ class Environment:
         if number in self.vars:
             self.vars[number]['type'] = type
 
-    def is_exist_var(self, name):
+    def is_exist_var(self, name, object_namespace=None):
         """ Проверка переменной на существование """
         if self.current_function is not None:
             name = '!' + str(self.current_function) + '!' + str(name)
+        if object_namespace is not None:
+            name = '!o' + str(object_namespace) + '!' + str(name)
         return name in self.vars

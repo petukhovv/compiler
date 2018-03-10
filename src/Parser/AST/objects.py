@@ -38,7 +38,7 @@ class ObjectValDef:
 
 class ObjectMethodDef(Function):
     def compile_vm(self, commands, data):
-        return None
+        return compile_vm.object_method_def(commands, data, self.name, self.args, self.body)
 
     def compile_asm(self, compiler):
         return None
@@ -71,7 +71,7 @@ class ObjectMethod:
         return interpreter.object_method(env, self.object_name, self.method_name, self.args)
 
     def compile_vm(self, commands, data):
-        return None
+        return compile_vm.object_method(commands, data, self.object_name, self.method_name, self.args)
 
     def compile_asm(self, compiler):
         return None
