@@ -35,8 +35,10 @@ def var_aexp(commands, data, name, context, value_type):
     """ Компиляция переменной """
     if context == 'assign':
         var = data.var(alias=name, type=value_type, double_size=True)
+
         if data.defined_object is not None:
             data.set_link_object(var, data.defined_object)
+            data.defined_objects = None
         commands.store_value(var, type=value_type)
     else:
         var_number = data.get_var(name)

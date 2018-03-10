@@ -41,8 +41,8 @@ class Environment:
     def get_object_name(self, var_name):
         return self.objects[var_name]
 
-    def get_object_property(self, var_name, property_name, type):
-        return self.var(type, property_name, object_namespace=self.objects[var_name])
+    def get_object_property(self, obj_name, property_name, type):
+        return self.var(type, property_name, object_namespace=obj_name)
 
     def label(self, name=None):
         """ Создание новой метки """
@@ -58,10 +58,10 @@ class Environment:
     def create_var(self, type=None, alias=None, double_size=False, object_namespace=None):
         var_number = self.var_counter
         if alias is not None:
-            if self.current_function is not None:
-                alias = '!' + str(self.current_function) + '!' + str(alias)
-            elif object_namespace is not None:
+            if object_namespace is not None:
                 alias = '!o' + str(object_namespace) + '!' + str(alias)
+            elif self.current_function is not None:
+                alias = '!' + str(self.current_function) + '!' + str(alias)
             self.vars[alias] = {
                 'number': var_number
             }
@@ -94,10 +94,10 @@ class Environment:
 
     def get_var(self, name, object_namespace=None):
         """ Получение переменной по имени """
-        if self.current_function is not None:
-            name = '!' + str(self.current_function) + '!' + str(name)
         if object_namespace is not None:
             name = '!o' + str(object_namespace) + '!' + str(name)
+        elif self.current_function is not None:
+            name = '!' + str(self.current_function) + '!' + str(name)
         if name in self.vars:
             return self.vars[name]['number']
         else:
@@ -117,8 +117,8 @@ class Environment:
 
     def is_exist_var(self, name, object_namespace=None):
         """ Проверка переменной на существование """
-        if self.current_function is not None:
-            name = '!' + str(self.current_function) + '!' + str(name)
         if object_namespace is not None:
             name = '!o' + str(object_namespace) + '!' + str(name)
+        elif self.current_function is not None:
+            name = '!' + str(self.current_function) + '!' + str(name)
         return name in self.vars

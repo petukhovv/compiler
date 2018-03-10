@@ -11,7 +11,6 @@ objects = sys.modules['Parser.AST.objects']
 
 def object_def(commands, data, elements):
     object_var = data.create_var(type=Types.OBJECT)
-    data.defined_object = object_var
     data.context_objects.append(object_var)
 
     for element in elements.elements:
@@ -24,6 +23,7 @@ def object_def(commands, data, elements):
 
     data.context_objects.pop()
     commands.add(Push, object_var)
+    data.defined_object = object_var
 
     return commands.set_and_return_type(Types.OBJECT)
 
@@ -35,11 +35,19 @@ def object_val_def(commands, data, name, value):
 
 
 def object_method_def(commands, data, name, args, body):
-    return compile_function(commands, data, "!%s!%s" % (data.context_objects[-1], name), args, body)
+    return compile_function(commands, data, "o%s!%s" % (data.context_objects[-1], name), args, body)
 
 
 def object_val(commands, data, object_name, prop_name, other_prop_names, context):
-    prop_var = data.get_object_property(data.get_var(object_name), prop_name, Types.DYNAMIC)
+    if object_name == 'this':
+        obj_var = data.context_objects[-1]
+    else:
+        obj_var = data.get_object_name(data.get_var(object_name))
+
+    prop_var = data.get_object_property(obj_var, prop_name, Types.DYNAMIC)
+
+    if object_name == 'this':
+        prop_var = -prop_var
 
     if context == 'assign':
         commands.store_value(prop_var, type=Types.DYNAMIC)
@@ -50,4 +58,4 @@ def object_val(commands, data, object_name, prop_name, other_prop_names, context
 
 
 def object_method(commands, data, object_name, method_name, args):
-    return compile_call_statement(commands, data, "!%s!%s" % (data.get_object_name(data.get_var(object_name)), method_name), args)
+    return compile_call_statement(commands, data, "o%s!%s" % (data.get_object_name(data.get_var(object_name)), method_name), args)
