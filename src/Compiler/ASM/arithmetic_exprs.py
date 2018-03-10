@@ -70,6 +70,10 @@ def var_aexp(compiler, name, context, value_type):
         else:
             var = compiler.environment.add_local_var(value_type, name)
 
+        if compiler.environment.defined_object is not None:
+            compiler.environment.set_link_object(var, compiler.environment.defined_object)
+            compiler.environment.defined_object = None
+
         if value_type == Types.BOXED_ARR or value_type == Types.UNBOXED_ARR:
             compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % Registers.ESP])
             compiler.code.add(Commands.MOV, [Registers.ECX, value_type])

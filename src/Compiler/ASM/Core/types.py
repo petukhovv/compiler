@@ -17,7 +17,8 @@ class Types:
         BOOL: 1,
         STRING: 4,
         BOXED_ARR: 4,
-        UNBOXED_ARR: 4
+        UNBOXED_ARR: 4,
+        REFERENCE: 4
     }
 
     ASM = {

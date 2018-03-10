@@ -1,7 +1,7 @@
 from .functions import Function
 
 from Compiler.VM import objects as compile_vm
-# from Compiler.ASM import arrays as compile_asm
+from Compiler.ASM import objects as compile_asm
 from Interpreter import objects as interpreter
 
 
@@ -17,7 +17,7 @@ class Object:
         return compile_vm.object_def(commands, data, self.elements)
 
     def compile_asm(self, compiler):
-        return None
+        return compile_asm.object_def(compiler, self.elements)
 
 
 class ObjectValDef:
@@ -33,7 +33,7 @@ class ObjectValDef:
         return compile_vm.object_val_def(commands, data, self.name, self.value)
 
     def compile_asm(self, compiler):
-        return None
+        return compile_asm.object_val_def(compiler, self.name, self.value)
 
 
 class ObjectMethodDef(Function):
@@ -41,7 +41,7 @@ class ObjectMethodDef(Function):
         return compile_vm.object_method_def(commands, data, self.name, self.args, self.body)
 
     def compile_asm(self, compiler):
-        return None
+        return compile_asm.object_method_def(compiler, self.name, self.args, self.body)
 
 
 class ObjectVal:
@@ -58,7 +58,7 @@ class ObjectVal:
         return compile_vm.object_val(commands, data, self.object_name, self.prop_name, self.other_prop_names, self.context)
 
     def compile_asm(self, compiler):
-        return None
+        return compile_asm.object_val(compiler, self.object_name, self.prop_name, self.other_prop_names, self.context)
 
 
 class ObjectMethod:
@@ -74,5 +74,5 @@ class ObjectMethod:
         return compile_vm.object_method(commands, data, self.object_name, self.method_name, self.args)
 
     def compile_asm(self, compiler):
-        return None
+        return compile_asm.object_method(compiler, self.object_name, self.method_name, self.args)
 

@@ -3,14 +3,22 @@ from .types import Types
 
 class Environment:
     counter = 0         # Function counter
-    var_counter = 0         # Function counter
+    var_counter = 0     # Function counter
     list = {            # Function list
         'root': {
             'memory': 0,
             'vars': {}
         }
     }
+    objects = {}            # Мапа, связывающая переменные с объектами, на которые они ссылаются
+    object_list = []
+    object_counter = 0
+    defined_object = None
     current = None      # The name of the function in which we are currently
+
+    def add_object(self):
+        self.object_counter += 1
+        return self.object_counter
 
     def set_return_type(self, type):
         if self.current is None:
@@ -20,6 +28,15 @@ class Environment:
 
     def get_return_type(self, name):
         return self.list[name]['return_type']
+
+    def set_link_object(self, var_name, object_name):
+        self.objects[var_name] = object_name
+
+    def get_object_name(self, var_name):
+        return self.objects[var_name]
+
+    def get_object_property(self, obj_name, property_name, type):
+        return self.var(type, property_name, object_namespace=obj_name)
 
     def set_args(self, args):
         if self.current is None:
@@ -40,11 +57,25 @@ class Environment:
             'vars': {},
             'args': None,
             'return_type': Types.NOTHING,
-            'number': self.counter
+            'number': self.counter,
+            'parent': self.list[self.current if self.current else 'root']
         }
         self.current = name
 
         return self.counter
+
+    def get_parent_local_var(self, name=None):
+        env = self.list[self.current if self.current else 'root']
+
+        env = env['parent']
+        if name in env['vars']:
+            stack_pointer = env['vars'][name]['stack_pointer']
+            var_pointer = {'pointer': 'ebp', 'offset': stack_pointer}
+        else:
+            var_pointer = '%s [ebp+%s]' % (Types.ASM[4], (env['args'][name] + 2) * 8 - 4) \
+                if name in env['args'] else None
+
+        return var_pointer
 
     def finish(self):
         need_memory = self.list[self.current]['memory']
@@ -60,12 +91,18 @@ class Environment:
 
         return env['vars']
 
-    def add_local_var(self, type=None, name=None, size=None):
+    def add_local_var(self, type=None, name=None, size=None, object_namespace=None):
         env = self.list[self.current if self.current else 'root']
 
         if name is None:
-            name = 'var_%s' % self.var_counter
+            if object_namespace is not None:
+                name = 'var_%s_%s' % (object_namespace, self.var_counter)
+            else:
+                name = 'var_%s' % self.var_counter
             self.var_counter += 1
+
+        if object_namespace is not None:
+            name = 'var_%s_%s' % (object_namespace, name)
 
         if name in env['vars']:
             return self.get_local_var(name, as_object=type is None)
@@ -81,8 +118,8 @@ class Environment:
 
         return self.get_local_var(name, as_object=type is None)
 
-    def get_local_var(self, name=None, as_object=False):
-        env = self.list[self.current if self.current else 'root']
+    def get_local_var(self, name=None, as_object=False, env=None):
+        env = self.list[self.current if self.current else 'root'] if env is None else env
         if name in env['vars']:
             size = env['vars'][name]['size']
             type = env['vars'][name]['type']
