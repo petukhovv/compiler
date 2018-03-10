@@ -70,7 +70,7 @@ class Environment:
         env = env['parent']
         if name in env['vars']:
             stack_pointer = env['vars'][name]['stack_pointer']
-            var_pointer = {'pointer': 'ebp', 'offset': stack_pointer}
+            var_pointer = {'pointer': 'ebp', 'offset': stack_pointer + 4}
         else:
             var_pointer = '%s [ebp+%s]' % (Types.ASM[4], (env['args'][name] + 2) * 8 - 4) \
                 if name in env['args'] else None
@@ -125,7 +125,7 @@ class Environment:
             type = env['vars'][name]['type']
             stack_pointer = env['vars'][name]['stack_pointer']
             if as_object:
-                var_pointer = {'pointer': 'ebp', 'offset': stack_pointer}
+                var_pointer = {'pointer': 'ebp', 'offset': stack_pointer + 4}
             elif type:
                 var_pointer = '%s [ebp-%s]' % (Types.ASM[size], stack_pointer + 4)
             else:

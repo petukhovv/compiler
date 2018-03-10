@@ -13,8 +13,8 @@ objects = sys.modules['Parser.AST.objects']
 
 def object_def(compiler, elements):
     object_number = compiler.environment.add_object()
-    obj_ebp_pointer = compiler.environment.add_local_var(type=Types.INT)
-    compiler.code.add(Commands.MOV, [obj_ebp_pointer, Registers.EBP])
+    obj_ebp_pointer = compiler.vars.add(None, "resb", Types.SIZES[Types.INT])
+    compiler.code.add(Commands.MOV, ["dword [%s]" % obj_ebp_pointer, Registers.EBP])
 
     compiler.environment.object_list.append((object_number, obj_ebp_pointer))
 
@@ -55,7 +55,7 @@ def object_val(compiler, object_name, prop_name, other_prop_names, context):
     if context == 'assign':
         if object_name == 'this':
             prop_var = compiler.environment.get_parent_local_var("var_%s_%s" % (obj_var, prop_name))
-            compiler.code.add(Commands.MOV, [Registers.EBX, compiler.environment.object_list[-1][1]])
+            compiler.code.add(Commands.MOV, [Registers.EBX, "dword [%s]" % compiler.environment.object_list[-1][1]])
             compiler.code.add(Commands.SUB, [Registers.EBX, prop_var['offset']])
             compiler.code.add(Commands.POP, 'dword [%s]' % Registers.EBX)
         else:

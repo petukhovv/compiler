@@ -55,8 +55,12 @@ class Compiler:
         self.code.allocate_stack_memory(self.environment.list['root']['memory'], place=0)
         self.code.add_label(self.entry_point_label, place=0)
         code = self.get_content(self.code.assemble())
+        bss = "" if len(self.vars.bss) == 0 else self.get_section("bss", self.vars.bss)
 
-        return externs + global_decl + labels + code
+        if len(self.vars.bss) != 0:
+            global_decl = "%sSECTION .text%s" % (ASM_COMMANDS_SEPARATOR, ASM_COMMANDS_SEPARATOR) + global_decl
+
+        return externs + bss + global_decl + labels + code
 
     def get_runtime(self):
         return ASM_COMMANDS_SEPARATOR.join(self.runtime)
