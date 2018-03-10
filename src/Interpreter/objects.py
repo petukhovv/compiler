@@ -18,11 +18,13 @@ class ObjectWrap:
 
 def object_def(env, elements):
     obj_env = Environment(env).create()
+    obj = ObjectWrap(obj_env)
+    Environment.context_objects.append(obj)
 
     for element in elements.elements:
         element.interpret(obj_env)
 
-    return ObjectWrap(obj_env)
+    return obj
 
 
 def object_val_def(env, variable, value):
@@ -39,7 +41,7 @@ def object_val(env, object_name, prop_name, other_prop_names):
     if other_prop_names:
         for other_prop_name in other_prop_names:
             if isinstance(value, UnboxedArrayWrap) or isinstance(value, BoxedArrayWrap):
-                other_index = other_prop_name.interpret(env)
+                other_index = other_prop_name.interpret(value.env)
                 value = value[other_index]
             else:
                 value = value.get_var(other_prop_name)

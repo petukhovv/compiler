@@ -2,6 +2,7 @@ from copy import deepcopy
 
 
 class Environment:
+    context_objects = []
     """
     Integer arithmetic expression class for AST.
     interpret - runtime function for Evaluator (just return i).
@@ -9,6 +10,7 @@ class Environment:
     """
     def __init__(self, env=None):
         self.env = env
+        self.last = env
 
     def set(self, variable, value):
         env = self.env
@@ -38,7 +40,7 @@ class Environment:
 
         return None
 
-    def create(self, func_env=None, obj_env=None):
+    def create(self, func_env=None):
         env = {
             'v': {},
             'f': {},

@@ -27,7 +27,11 @@ def assign_statement(env, variable, aexp):
     elif isinstance(variable, ObjectVal):
         obj_descr = variable
         prop_name = obj_descr.prop_name
-        obj = Environment(env).get(obj_descr.object_name)
+
+        if obj_descr.object_name == 'this':
+            obj = Environment.context_objects[-1]
+        else:
+            obj = Environment(env).get(obj_descr.object_name)
         value_is_reference = isinstance(aexp, UnboxedArrayWrap) or isinstance(aexp, BoxedArrayWrap) or isinstance(aexp, Object)
         if not value_is_reference:
             obj.set(prop_name, value)
