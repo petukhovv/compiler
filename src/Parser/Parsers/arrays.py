@@ -43,5 +43,6 @@ def el_exp():
                 ((_, other_index), _) = other_index_parsed
                 other_indexes.append(other_index)
         return ArrayElement(name, index, other_indexes)
-    deref_op = keyword('[') + Lazy(arithmetic_exprs.aexp) + keyword(']')
-    return id + deref_op + Opt(Rep(deref_op)) ^ process
+    deref_op_obj = keyword('.') + id
+    deref_op_arr = keyword('[') + Lazy(arithmetic_exprs.aexp) + keyword(']')
+    return id + deref_op_arr + Opt(Rep(deref_op_arr | deref_op_obj)) ^ process

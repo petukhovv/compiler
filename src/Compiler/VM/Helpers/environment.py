@@ -8,8 +8,11 @@ class Environment:
     vars = {}               # Переменные в stack memory
     label_counter = 0       # Счетчик меток
     labels = {}             # Метки
+    objects = {}            # Мапа, связывающая переменные с объектами, на которые они ссылаются
 
-    current_function = None  # Тип данных возвращаемого значения из подпрограммы
+    current_function = None     # Тип данных возвращаемого значения из подпрограммы
+    defined_objects = None      # Ссылка на описанный объект (используется при компиляции конструкции присваивания)
+    context_objects = []        # Ссылка на описанный объект (используется при компиляции конструкции присваивания)
 
     def set_return_type(self, type):
         if self.current_function is None:
@@ -32,6 +35,12 @@ class Environment:
         self.var_counter = self.var_counter_root
         self.current_function = None
 
+    def set_link_object(self, var_name, object_name):
+        self.objects[var_name] = object_name
+
+    def get_object_property(self, var_name, property_name):
+        return self.get_var(property_name, object_namespace=self.objects[var_name])
+
     def label(self, name=None):
         """ Создание новой метки """
         label_number = self.label_counter
@@ -43,11 +52,13 @@ class Environment:
         self.label_counter += 1
         return label_number
 
-    def create_var(self, type=None, alias=None, double_size=False):
+    def create_var(self, type=None, alias=None, double_size=False, object_namespace=None):
         var_number = self.var_counter
         if alias is not None:
             if self.current_function is not None:
                 alias = '!' + str(self.current_function) + '!' + str(alias)
+            elif object_namespace is not None:
+                alias = '!o' + str(object_namespace) + '!' + str(alias)
             self.vars[alias] = {
                 'number': var_number
             }
@@ -78,10 +89,12 @@ class Environment:
         """ Получение метки по имени """
         return self.labels[name]['number']
 
-    def get_var(self, name):
+    def get_var(self, name, object_namespace=None):
         """ Получение переменной по имени """
         if self.current_function is not None:
             name = '!' + str(self.current_function) + '!' + str(name)
+        if object_namespace is not None:
+            name = '!o' + str(object_namespace) + '!' + str(name)
         if name in self.vars:
             return self.vars[name]['number']
         else:

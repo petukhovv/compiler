@@ -9,4 +9,5 @@ class Types:
     STRING = 4
     BOXED_ARR = 5
     UNBOXED_ARR = 6
+    OBJECT = 7
     DYNAMIC = 9

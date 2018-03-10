@@ -35,6 +35,7 @@ Malloc = 'MALLOC'
 DMalloc = 'DMALLOC'
 Log = 'LOG'
 
+
 class Commands(list):
     """ Добалвение команды в список команд для стековой машины """
     def add(self, command, argument=None):

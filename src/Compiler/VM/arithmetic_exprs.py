@@ -34,7 +34,10 @@ def binop_aexp(commands, data, op, left, right):
 def var_aexp(commands, data, name, context, value_type):
     """ Компиляция переменной """
     if context == 'assign':
-        commands.store_value(data.var(alias=name, type=value_type, double_size=True), type=value_type)
+        var = data.var(alias=name, type=value_type, double_size=True)
+        if data.defined_object is not None:
+            data.set_link_object(var, data.defined_object)
+        commands.store_value(var, type=value_type)
     else:
         var_number = data.get_var(name)
         compile_time_type = data.get_type(var_number)
