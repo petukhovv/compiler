@@ -35,8 +35,11 @@ def object_val_def(env, variable, value):
 
 
 def object_val(env, object_name, prop_name, other_prop_names):
-    obj = Environment(env).get(object_name)
-    value = obj.get_var(prop_name)
+    if object_name == 'this':
+        value = Environment.context_objects[-1].get_var(prop_name)
+    else:
+        obj = Environment(env).get(object_name)
+        value = obj.get_var(prop_name)
 
     if other_prop_names:
         for other_prop_name in other_prop_names:
@@ -50,9 +53,13 @@ def object_val(env, object_name, prop_name, other_prop_names):
 
 
 def object_method(env, object_name, method_name, call_args):
-    obj = Environment(env).get(object_name)
+    if object_name == 'this':
+        method = Environment.context_objects[-1].get_method(method_name)
+    else:
+        obj = Environment(env).get(object_name)
+        method = obj.get_method(method_name)
+
     func_env = Environment(env).create(env['f'])
-    method = obj.get_method(method_name)
     args = method['args'].interpret()
     call_args_interpreted = call_args.interpret()
 
