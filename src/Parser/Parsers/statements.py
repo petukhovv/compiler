@@ -119,5 +119,6 @@ def stmt():
         return_stmt() | \
         write_stmt() | \
         fun_call_stmt() | \
+        object_method() | \
         skip_stmt() | \
         aexp()

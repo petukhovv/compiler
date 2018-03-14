@@ -36,7 +36,7 @@ def object_def(compiler, elements):
 def object_val_def(compiler, name, value):
     value_type = value.compile_asm(compiler)
 
-    prop_var = compiler.environment.add_local_var(Types.INT, name.name, object_namespace=compiler.environment.object_list[-1][0])
+    prop_var = compiler.environment.add_local_var(value_type, name.name, object_namespace=compiler.environment.object_list[-1][0])
     compiler.code.add(Commands.POP, prop_var)
 
 
@@ -53,8 +53,6 @@ def object_val(compiler, object_name, prop_name, other_prop_names, context):
         else:
             obj_var = compiler.environment.get_object_name(compiler.environment.get_local_var(object_name))
 
-    prop_var = compiler.environment.get_local_var("var_%s_%s" % (obj_var, prop_name))
-
     if context == 'assign':
         if object_name == 'this':
             prop_var = compiler.environment.get_parent_local_var("var_%s_%s" % (obj_var, prop_name))
@@ -62,7 +60,20 @@ def object_val(compiler, object_name, prop_name, other_prop_names, context):
             compiler.code.add(Commands.SUB, [Registers.EBX, prop_var['offset']])
             compiler.code.add(Commands.POP, 'dword [%s]' % Registers.EBX)
         else:
-            compiler.code.add(Commands.POP, prop_var)
+            if compiler.environment.current is not None:
+                prop_var = compiler.environment.get_parent_local_var("var_%s_%s" % (obj_var, prop_name))
+
+                if prop_var is None:
+                    prop_var = compiler.environment.add_parent_local_var(Types.INT, prop_name, object_namespace=obj_var)
+
+                compiler.code.add(Commands.MOV, [Registers.EBX, "dword [%s]" % compiler.environment.object_list[-1][1]])
+                compiler.code.add(Commands.SUB, [Registers.EBX, prop_var['offset']])
+                compiler.code.add(Commands.POP, ['dword [%s]' % Registers.EBX])
+            else:
+                prop_var = compiler.environment.get_local_var("var_%s_%s" % (obj_var, prop_name))
+                if prop_var is None:
+                    prop_var = compiler.environment.add_local_var(Types.INT, prop_name, object_namespace=obj_var)
+                compiler.code.add(Commands.POP, prop_var)
     else:
         if object_name == 'this':
             prop_var = compiler.environment.get_parent_local_var("var_%s_%s" % (obj_var, prop_name))
@@ -70,12 +81,25 @@ def object_val(compiler, object_name, prop_name, other_prop_names, context):
             compiler.code.add(Commands.SUB, [Registers.EBX, prop_var['offset']])
             compiler.code.add(Commands.PUSH, 'dword [%s]' % Registers.EBX)
         else:
-            compiler.code.add(Commands.PUSH, prop_var)
+            if compiler.environment.current is not None:
+                prop_var = compiler.environment.get_parent_local_var("var_%s_%s" % (obj_var, prop_name))
+                compiler.code.add(Commands.MOV, [Registers.EBX, "dword [%s]" % compiler.environment.object_list[-1][1]])
+                compiler.code.add(Commands.SUB, [Registers.EBX, prop_var['offset']])
+                compiler.code.add(Commands.PUSH, 'dword [%s]' % Registers.EBX)
+            else:
+                prop_var = compiler.environment.get_local_var("var_%s_%s" % (obj_var, prop_name))
+                compiler.code.add(Commands.PUSH, prop_var)
 
     return compiler.types.set(Types.REFERENCE)
 
 
 def object_method(compiler, object_name, method_name, args):
-    obj_var = compiler.environment.get_object_name(compiler.environment.get_local_var(object_name))
+    if object_name == 'this':
+        obj_var = compiler.environment.object_list[-1][0]
+    else:
+        if compiler.environment.current is not None:
+            obj_var = compiler.environment.get_object_name(compiler.environment.get_parent_local_var(object_name, as_object=False))
+        else:
+            obj_var = compiler.environment.get_object_name(compiler.environment.get_local_var(object_name))
 
     return compile_call_statement(compiler, "o%s!%s" % (obj_var, method_name), args)

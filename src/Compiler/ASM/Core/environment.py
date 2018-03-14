@@ -75,9 +75,11 @@ class Environment:
                 var_pointer = {'pointer': 'ebp', 'offset': stack_pointer + 4}
             else:
                 var_pointer = '%s [ebp-%s]' % (Types.ASM[size], stack_pointer + 4)
-        else:
+        elif 'args' in env:
             var_pointer = '%s [ebp+%s]' % (Types.ASM[4], (env['args'][name] + 2) * 8 - 4) \
                 if name in env['args'] else None
+        else:
+            var_pointer = None
 
         return var_pointer
 
@@ -94,6 +96,34 @@ class Environment:
         env = self.list[self.current if self.current else 'root']
 
         return env['vars']
+
+    def add_parent_local_var(self, type=None, name=None, size=None, object_namespace=None):
+        env = self.list[self.current if self.current else 'root']
+        env = env['parent']
+
+        if name is None:
+            if object_namespace is not None:
+                name = 'var_%s_%s' % (object_namespace, self.var_counter)
+            else:
+                name = 'var_%s' % self.var_counter
+            self.var_counter += 1
+
+        if object_namespace is not None:
+            name = 'var_%s_%s' % (object_namespace, name)
+
+        if name in env['vars']:
+            return self.get_local_var(name, as_object=type is None)
+
+        stack_pointer = env['memory']
+        size = Types.SIZES[type] if type else size + 4
+        env['vars'][name] = {
+            'stack_pointer': stack_pointer,
+            'size': size,
+            'type': type
+        }
+        env['memory'] += size
+
+        return self.get_parent_local_var(name)
 
     def add_local_var(self, type=None, name=None, size=None, object_namespace=None):
         env = self.list[self.current if self.current else 'root']
@@ -135,9 +165,11 @@ class Environment:
                 var_pointer = '%s [ebp-%s]' % (Types.ASM[size], stack_pointer + 4)
             else:
                 var_pointer = '%s [ebp-%s]' % (Types.ASM[4], stack_pointer + 4)
-        else:
+        elif 'args' in env:
             var_pointer = '%s [ebp+%s]' % (Types.ASM[4], (env['args'][name] + 2) * 8 - 4)\
                 if name in env['args'] else None
+        else:
+            var_pointer = None
 
         return var_pointer
 
