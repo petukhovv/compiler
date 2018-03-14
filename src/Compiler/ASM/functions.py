@@ -34,7 +34,7 @@ def function(compiler, name, args, body):
     return_type = compiler.environment.get_return_type(name)
 
     if not return_type:
-        return_function(compiler, args)
+        return_function(compiler, args_map)
 
     compiler.code.add_label(finish_function)
 
