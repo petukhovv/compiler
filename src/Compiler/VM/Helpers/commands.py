@@ -65,7 +65,7 @@ class Commands(list):
     """ Генерация строкового представления заданной команды для стековой машины """
     def load_value(self, variable, only_value=False, is_parent_scope=False):
         if not only_value:
-            self.add(Load, variable)
+            self.add(PLoad if is_parent_scope else Load, variable)
         self.add(PLoad if is_parent_scope else Load, variable + 1)
 
     """ Генерация строкового представления заданной команды для стековой машины """
@@ -73,7 +73,7 @@ class Commands(list):
         if type is not None:
             self.add(Push, type)
         elif type_variable:
-            self.add(Load, type_variable)
+            self.add(PLoad if is_parent_scope else Load, type_variable)
         self.add(Push, variable)
         self.add(BPStore if is_parent_scope else BStore, 1)
         self.add(PStore if is_parent_scope else Store, variable)
