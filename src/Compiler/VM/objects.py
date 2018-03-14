@@ -42,17 +42,22 @@ def object_val(commands, data, object_name, prop_name, other_prop_names, context
     if object_name == 'this':
         obj_var = data.context_objects[-1]
     else:
-        obj_var = data.get_object_name(data.get_var(object_name))
+        obj_var = data.get_object_name(data.get_var(object_name, is_root=True))
 
     prop_var = data.get_object_property(obj_var, prop_name, Types.DYNAMIC)
 
     if context == 'assign':
-        commands.store_value(prop_var, type=Types.DYNAMIC, is_parent_scope=object_name == 'this')
+        commands.store_value(prop_var, type=Types.DYNAMIC, is_parent_scope=len(data.context_objects) > 0)
     else:
-        commands.load_value(prop_var, is_parent_scope=object_name == 'this')
+        commands.load_value(prop_var, is_parent_scope=len(data.context_objects) > 0)
 
     return Types.DYNAMIC
 
 
 def object_method(commands, data, object_name, method_name, args):
-    return compile_call_statement(commands, data, "o%s!%s" % (data.get_object_name(data.get_var(object_name)), method_name), args)
+    if object_name == 'this':
+        obj_var = data.context_objects[-1]
+    else:
+        obj_var = data.get_object_name(data.get_var(object_name, is_root=True))
+
+    return compile_call_statement(commands, data, "o%s!%s" % (obj_var, method_name), args)

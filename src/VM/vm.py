@@ -9,10 +9,12 @@ class Commands:
     def __init__(self, commands_list):
         self.list = commands_list
 
+
 class Scope:
     """ Область видимости """
     def __init__(self):
         self.stack = []     # Стековая память (static allocation data)
+
 
 class VM:
     """ Виртуальная машина """

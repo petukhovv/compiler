@@ -92,11 +92,11 @@ class Environment:
         """ Получение метки по имени """
         return self.labels[name]['number']
 
-    def get_var(self, name, object_namespace=None):
+    def get_var(self, name, object_namespace=None, is_root=False):
         """ Получение переменной по имени """
-        if object_namespace is not None:
+        if object_namespace is not None and not is_root:
             name = '!o' + str(object_namespace) + '!' + str(name)
-        elif self.current_function is not None:
+        elif self.current_function is not None and not is_root:
             name = '!' + str(self.current_function) + '!' + str(name)
         if name in self.vars:
             return self.vars[name]['number']

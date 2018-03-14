@@ -63,7 +63,7 @@ class PLoad:
         self.address = address
 
     def interpret(self, vm):
-        value = vm.scope(-2).stack[self.address]
+        value = vm.scope(0).stack[self.address]
         if value is None:
             raise RuntimeError('Unknown variable \'' + str(self.address) + '\'')
         vm.stack.append(value)
@@ -95,7 +95,7 @@ class BPLoad:
 
     def interpret(self, vm):
         address = self.address + vm.stack.pop()
-        value = vm.scope(-2).stack[address]
+        value = vm.scope(0).stack[address]
         if value is None:
             raise RuntimeError('Unknown variable \'' + str(self.address) + '\'')
         vm.stack.append(value)
@@ -135,7 +135,7 @@ class PStore:
     def interpret(self, vm):
         if len(vm.stack) == 0:
             raise RuntimeError('Stack is empty')
-        vm.scope(-2).stack[self.address] = vm.stack.pop()
+        vm.scope(0).stack[self.address] = vm.stack.pop()
 
 
 class Store:
@@ -178,7 +178,8 @@ class BPStore:
             raise RuntimeError('Stack is empty')
 
         address = self.address + vm.stack.pop()
-        vm.scope(-2).stack[address] = vm.stack.pop()
+
+        vm.scope(0).stack[address] = vm.stack.pop()
 
 
 class DStore:
