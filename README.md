@@ -109,7 +109,7 @@
     5. Получение значения элемента массива по индексу:<br /> 
         `write(S[1])` => `4`
 
-11. **Массивы ссылок** (boxed-массивы), набор предопределенных функций для работы с ними, а также сборщик мусора (GC):<br />
+12. **Массивы ссылок** (boxed-массивы), набор предопределенных функций для работы с ними, а также сборщик мусора (GC):<br />
     1. **Arrmake** - создание массива:<br />
         1. `S := Arrmake (5)` => `[nullptr, nullptr, nullptr, nullptr, nullptr]`
         2. `S := Arrmake (5, {})` => `[nullptr, nullptr, nullptr, nullptr, nullptr]`
@@ -127,6 +127,48 @@
         `S[1] := S1` => `[1, 1]`
     5. Получение значения элемента массива по индексу:<br /> 
         `write(S[1][0])` => `1`
+
+13. **Объекты** со свойствами и методами:<br />
+    1. Определение свойств и получение их значений
+    ```
+        rabbit := {
+            val weight := read(),
+            val growth := read(),
+            val name := "Ralph"
+        }
+        write(rabbit.weight)
+        write(rabbit.name)
+    ```
+    2. Определение и вызов методов, изменение значений свойств (текущего — `this` и других объектов), использование свойств и методов другого объекта
+    ```
+        obj1 := {
+            val prop1 := read(),
+            fun method1() begin
+                write(2)
+            end
+        }
+
+        obj2 := {
+            val prop1 := read(),
+            fun method1(a, b) begin
+                this.prop1 := read()
+                write(obj1.prop1)
+                obj1.prop1 := read()
+                write(obj1.prop1)
+                obj1.method1()
+            end,
+            fun method2(a, b) begin
+                write(obj1.prop1)
+                write(a * b)
+                write(this.prop1)
+                this.method1(a, b)
+            end
+        }
+        
+        obj2.method2(5, 8)
+        obj2.method2(22, 4)
+        write(obj1.prop1)
+    ```
 
 #### Предопределенные функции
 
