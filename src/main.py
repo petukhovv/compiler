@@ -29,11 +29,13 @@ def parse_program(target_file):
     if not parse_result:
         print('Parse error!')
         exit()
+       
+    ast = parse_result.value
 
     if ast_print_arg:
-        print(parse_result.value)
+        print(ast)
 
-    return parse_result.value
+    return ast
 
 
 if args.interpret:
