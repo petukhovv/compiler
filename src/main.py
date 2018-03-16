@@ -27,7 +27,7 @@ def parse_program(target_file):
     tokens = lex(program)
     parse_result = parse(tokens)
     if not parse_result:
-        sys.stderr.write('Parse error!\n')
+        print('Parse error!')
         exit()
 
     if ast_print_arg:
