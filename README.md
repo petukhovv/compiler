@@ -8,36 +8,57 @@
 
 Через некоторое время README будет обновлен.
 
-# Учебный компилятор
+# Simple programming language
 
-## Features
+This repository contains toolkit for a simple programming language:
+* Interpreter,
+* Virtual stack machine,
+* Stack machine code compiler,
+* ASM X86 code compiler (with simple garbage collector).
 
-1. **Арифметически выражения** любой вложенности
-с выполнением в соответствии с уровнями старшенства
+**A toolkit was created for educational purposes.**
+
+## Language features
+
+1. **Arithmetic expressions**<br />
+    Supported arithmetic operators (by priority):
     1. `*`, `/`, `%`
     2. `+`, `-`
-2. **Логические выражения** любой вложенности
-с выполнением в соответствии с уровнями старшенства
-и операторы сравнения и проверки равенства
+
+    Example: `4 - 100 % (2 + 90) * 8 / 3`
+
+2. **Logical expressions**<br />
+    Supported logical operators (by priority):
     1. `==`, `!=`, `>`, `>=`, `<`, `<=`
     2. `&&`
     3. `||`, `!!`
-3. **Переменые** 
+
+    Examples:
+    1. `a && b || c && (d !! e)`
+    2. `a - b >= c % 10 && d != e`
+
+3. **Variables** with supports reassign.<br />
+    Examples:
     1. `x := 5 * y`
-    2. `z := x <= y`
-4. **Операции ввода-вывода** (ввод и вывод осуществляется в стандартные потоки ввода и вывода: stdin, stdout)
+    2. `x := x <= y`
+
+4. **I/O operations** using stdin/stdout<br />
+    Examples:
     1. `x := read()`
     2. `write(x)`
-5. **Условия** с альтернативным ветками (как конкретными, так и обобщенными)
+
+5. **Conditions**<br />
+    Example:
     ```
     if x >= y && z then
         write(x)
     elif !z then
         write(y)
     else
-        write(z) fi   
+        write(z) fi
     ```
-6. **Циклы while**
+6. **`while` loop**<br />
+    Example:
     ```
     while k > 0
     do
@@ -45,20 +66,23 @@
         k := k - 1
     od;
     ```
-7. **Циклы for** с поддержкой составных условий и skip в предусловии
+7. **`for` loop**<br />
+    Example 1:
     ```
     for c := 2, c * c <= p && f, c := c + 1
     do
         f := p % c != 0
     od;
     ```
+    Example 2:
     ```
     for skip, n >= 1, n := n-1
     do
         f := f * n
     od;
     ```
-8. **Фукнции**
+8. **Functions**<br />
+    Example:
     ```
     fun A (m, n)
     begin
@@ -67,53 +91,60 @@
         else return A (m-1, A(m, n-1))
         fi
     end
-    
+
     write (A (1, 21))
     ```
-    
-9. **Символы**
-    1. `C := 'a'`
 
-10. **Строки** и набор предопределенных функций для работы с ними:<br />
-    `S := "I will remember April."`
-    1. **strlen** - получение длины строки:<br />
-        `strlen(S)` => `22`
-    2. **strget** - получение заданного символа строки:<br />
-        `strget(S, 2)` => `w`
-    3. **strsub** - получение подстроки, начиная с символа n, длиной в k символов:<br />
-        `strsub (S, 7, 8)` => `remember`
-    4. **strdup** - копирование строки:<br />
-        `strdup(S)` => `I will remember April.`,
-    5. **strset** - задание i-го символа строки:<br />
-        `strset(S, 4, 'j')` => `I wijl remember April.`,
-    6. **strcat** - конкатенация двух строк:<br />
-        `strcat(S, " It was very cold.")` => `I will remember April. It was very cold.`,
-    7. **strcmp** - сравнение двух строк (сравнение осуществляется по кодам символов строк, слева направо):<br />
-        `strcmp(S, "I wijl remember April.")` => `1`<br />
-        `strcmp(S, "I wiz")` => `-1`<br />
-        `strcmp(S, "I will")` => `-1`<br />
-        `strcmp(S, "I will remember April.")` => `0`
-    8. **strmake** - создание строки из n повторящихся символов:<br />
-        `strmake (10, 'a')` => `aaaaaaaaaa`
+    **All variables have the function scope or root scope.**
 
-11. **Массивы значений** (unboxed-массивы) и набор предопределенных функций для работы с ними:<br />
-    1. **arrmake** - создание массива:<br />
-        1. `S := arrmake (5)` => `[0, 0, 0, 0, 0]`
-        2. `S := arrmake (5, 0)` => `[0, 0, 0, 0, 0]`
-        3. `S := arrmake (5, [])` => `[0, 0, 0, 0, 0]`
-        4. `S := arrmake (5, [1, 2, 3, 4, 5])` => `[1, 2, 3, 4, 5]`
-    2. **arrlen** - получение длины массивы:<br />
+9. **Chars**<br />
+    Example: `C := 'a'`
+
+10. **Strings** and some build-in functions:<br />
+    String assign example: `S := "I will remember April."`
+
+    Built-in functions:
+    1. **strlen** - get string length:<br />
+        Example: `strlen(S)` => `22`
+    2. **strget** - get specified string character:<br />
+        Example: `strget(S, 2)` => `w`
+    3. **strsub** - get a substring, starting with the character `n`, of length `k` characters:<br />
+        Example: `strsub (S, 7, 8)` => `remember`
+    4. **strdup** - copy string:<br />
+        Example: `strdup(S)` => `I will remember April.`,
+    5. **strset** - set `i` string character:<br />
+        Example: `strset(S, 4, 'j')` => `I wijl remember April.`,
+    6. **strcat** - concatenation of two strings:<br />
+        Example: `strcat(S, " It was very cold.")` => `I will remember April. It was very cold.`,
+    7. **strcmp** - comparison of two strings (the comparison is performed by the character codes of the strings, from left to right):<br />
+        Examples:
+        * `strcmp(S, "I wijl remember April.")` => `1`
+        * `strcmp(S, "I wiz")` => `-1`
+        * `strcmp(S, "I will")` => `-1`
+        * `strcmp(S, "I will remember April.")` => `0`
+    8. **strmake** - create a string of `n` repeating characters:<br />
+        Example: `strmake (10, 'a')` => `aaaaaaaaaa`
+
+11. **Values array** (unboxed-array) and some build-in functions:<br />
+    1. **arrmake** - create unboxed-array:<br />
+        Examples:
+        * `S := arrmake (5)` => `[0, 0, 0, 0, 0]`
+        * `S := arrmake (5, 0)` => `[0, 0, 0, 0, 0]`
+        * `S := arrmake (5, [])` => `[0, 0, 0, 0, 0]`
+        * `S := arrmake (5, [1, 2, 3, 4, 5])` => `[1, 2, 3, 4, 5]`
+    2. **arrlen** - get array length:<br />
         `arrlen(S)` => `5`
-    4. Присвоение значения элементу массива по индексу:<br />
+    4. Value assign to array element by index:<br />
         `S[1] := 4` => `[0, 4, 0, 0, 0]`
-    5. Получение значения элемента массива по индексу:<br /> 
+    5. Get value of array element by index:<br />
         `write(S[1])` => `4`
 
-12. **Массивы ссылок** (boxed-массивы), набор предопределенных функций для работы с ними, а также сборщик мусора (GC):<br />
-    1. **Arrmake** - создание массива:<br />
+12. **Pointers array** (boxed-array), some build-in functions and garbage collection:<br />
+    1. **Arrmake** - create boxed-array:<br />
+        Examples:
         1. `S := Arrmake (5)` => `[nullptr, nullptr, nullptr, nullptr, nullptr]`
         2. `S := Arrmake (5, {})` => `[nullptr, nullptr, nullptr, nullptr, nullptr]`
-        3. Присвоение со значением по умолчанию:<br />
+        3. Assign with default value:<br />
             1. `S1 := arrmake (2, 1)` => `[1, 1]`
             2. `S2 := arrmake (2, 3)` => `[3, 3]`
             3. `S := Arrmake (2, {S1, S2})` => `[S1, S2]`
@@ -121,15 +152,15 @@
             5. `write(S[0][1])` => `1`
             6. `write(S[1][0])` => `3`
             7. `write(S[1][1])` => `4`
-    2. **arrlen** - получение длины массивы:<br />
+    2. **arrlen** - get array length:<br />
         `arrlen(S)` => `5`
-    4. Присвоение ссылки элементу массива по индексу:<br />
+    4. Pointer assign to array element by index:<br />
         `S[1] := S1` => `[1, 1]`
-    5. Получение значения элемента массива по индексу:<br /> 
+    5. Get value of array element by index:<br />
         `write(S[1][0])` => `1`
 
-13. **Объекты** со свойствами и методами:<br />
-    1. Определение свойств и получение их значений
+13. **Objects** with properties and methods:<br />
+    1. Defining property and getting it value:
     ```
         rabbit := {
             val weight := read(),
@@ -139,7 +170,7 @@
         write(rabbit.weight)
         write(rabbit.name)
     ```
-    2. Определение и вызов методов, изменение значений свойств (текущего — `this` и других объектов), использование свойств и методов другого объекта
+    2. Defining and calling methods, changing property values (`this` and other objects), using properties and methods of another objects:
     ```
         obj1 := {
             val prop1 := read(),
@@ -164,7 +195,7 @@
                 this.method1(a, b)
             end
         }
-        
+
         obj2.method2(5, 8)
         obj2.method2(22, 4)
         write(obj1.prop1)
