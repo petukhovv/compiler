@@ -23,6 +23,10 @@ def arrmake(compiler, args, type):
             return compiler.types.set(type)
         # If no array has been passed, but the number (or pointer), then it will be a duplicate element
         else:
+            # If the array is boxed and default pointer is not specified, then default pointer will be a 0
+            if type == Types.BOXED_ARR:
+                compiler.code.stack_pop()
+                compiler.code.add(Commands.PUSH, 0)
             default_values_variant = 'repeated'
     # If nothing has been passed, then the elements of the array will be 0
     else:
