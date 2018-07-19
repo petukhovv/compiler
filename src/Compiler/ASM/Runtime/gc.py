@@ -2,6 +2,7 @@ from ..Core.types import Types
 from ..Core.commands import Commands
 from ..Core.registers import Registers
 from ..Runtime.atoi import *
+from .free import Free
 
 
 class GC(Base):
@@ -15,6 +16,7 @@ class GC(Base):
 
         self.load('gc.asm', ['gc_decrease', 'gc_increase', 'gc_clean', 'gc_start_if_need'])
         GC.is_loaded = True
+        Free(compiler)
 
     def run(self):
         self.compiler.code.add(Commands.CALL, ['gc_decrease'])

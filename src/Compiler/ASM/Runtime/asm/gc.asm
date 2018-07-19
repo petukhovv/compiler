@@ -1,5 +1,3 @@
-EXTERN _free
-
 global gc_decrease
 gc_decrease:
     .gc_start:
@@ -17,7 +15,7 @@ gc_decrease:
         add		    eax, 2
         cmp		    bx, 0
         jnz     	.gc_finish
-        call  		gc_clean
+        call  		free
         jmp     	.gc_finish
     .gc_finish:
         ret
@@ -39,26 +37,6 @@ gc_start_if_need:
     jz  		gc_decrease.gc_start
     cmp		    ebx, 6              ; compare type to unboxed array (id = 6)
     jz  		gc_decrease.gc_start
-    ret
-
-gc_clean:
-    sub		    eax, 2
-
-    mov         ecx, esp
-    and         esp, -16            ; stack alignment
-    sub         ecx, esp
-    sub         esp, 8
-    push	    ecx                 ; store stack aligned diff
-
-    push		eax
-    call		_free
-
-    add		    esp, 4
-
-    pop     ecx             ; restore stack aligned diff
-    add		esp, ecx        ; restore stack alignment
-    add		esp, 8
-
     ret
 
 gc_deep_decrease:
@@ -93,7 +71,7 @@ gc_deep_decrease:
             pop         edx
             pop         ecx
         .gc_deep_decrease_continue:
-            call  		gc_clean
+            call  		free
             loop        loop_elements
         ret
 

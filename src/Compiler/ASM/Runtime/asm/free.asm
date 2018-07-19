@@ -1,7 +1,7 @@
-EXTERN _malloc
+EXTERN _free
 
-global malloc
-malloc:
+global free
+free:
     add		eax, 2
 
     mov		ebx, esp
@@ -11,7 +11,7 @@ malloc:
     push	ebx				; store difference between an aligned stack and no
 
     push	eax				; push the required memory size
-    call	_malloc
+    call	_free
     mov		word [eax], 0	; zeroing the reference count (2 byte)
     add		eax, 2			; reservation of the 2 byte for reference count (make offset)
 
