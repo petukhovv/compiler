@@ -43,22 +43,22 @@ gc_start_if_need:
 
 gc_clean:
     sub		    eax, 2
-    mov		    ecx, eax            ; stack alignment start
-    mov		    eax, ebp
-    sub		    eax, esp
-    xor		    edx, edx
-    mov		    ebx, 16
-    div		    ebx
-    mov		    eax, 16
-    sub		    eax, edx
-    add		    eax, 12
-    sub		    esp, eax
-    push		eax                 ; stack alignment finish
-    push		ecx
+
+    mov         ecx, esp
+    and         esp, -16            ; stack alignment
+    sub         ecx, esp
+    sub         esp, 8
+    push	    ecx                 ; store stack aligned diff
+
+    push		eax
     call		_free
+
     add		    esp, 4
-    pop		    ebx                 ; restore stack alignment start
-    add		    esp, ebx            ; restore stack alignment finish
+
+    pop     ecx             ; restore stack aligned diff
+    add		esp, ecx        ; restore stack alignment
+    add		esp, 8
+
     ret
 
 gc_deep_decrease:

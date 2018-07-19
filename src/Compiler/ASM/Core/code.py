@@ -15,18 +15,6 @@ class Code(list):
     def __init__(self, compiler):
         self.compiler = compiler
 
-    def fix_stack_balance(self):
-        if self.stack['balance'] != 0:
-            for i in range(1, self.stack['balance']):
-                self.add(Commands.ADD, [Registers.ESP, 4])
-                self.stack['balance'] -= 1
-
-    def add_stack_align_point(self, multiplicity):
-        self.stack_align_points.append({
-            'place': len(self),
-            'multiplicity': multiplicity
-        })
-
     def stack_align(self, multiplicity, offset=0):
         self.add(Commands.MOV, [Registers.EAX, Registers.EBP])
         self.add(Commands.SUB, [Registers.EAX, Registers.ESP])
