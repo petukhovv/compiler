@@ -51,7 +51,7 @@ gc_deep_decrease:
         mul         ebx
         add         eax, 4
         add         edx, eax
-        loop_elements:
+        .loop_by_elements:
             sub         edx, 4
             mov         eax, dword [edx]
             mov		    bx, word [eax - 2]
@@ -72,7 +72,7 @@ gc_deep_decrease:
             pop         ecx
         .gc_deep_decrease_continue:
             call  		free
-            loop        loop_elements
+            loop        .loop_by_elements
         ret
 
 gc_deep_increase:
@@ -87,7 +87,7 @@ gc_deep_increase:
         mul         ebx
         add         eax, 4
         add         edx, eax
-        loop_by_elements:
+        .loop_by_elements:
             sub         edx, 4
             mov         eax, dword [edx]
             mov		    bx, word [eax - 2]
@@ -105,5 +105,5 @@ gc_deep_increase:
             pop         edx
             pop         ecx
         .gc_deep_increase_continue:
-            loop        loop_by_elements
+            loop        .loop_by_elements
         ret
