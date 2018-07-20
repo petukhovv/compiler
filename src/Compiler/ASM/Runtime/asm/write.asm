@@ -1,17 +1,13 @@
-SECTION .bss
-    write_buffer    resb 4
-
 SECTION .text
     global write
     write:
-        mov     [write_buffer], eax
+        push    eax
+        mov     ebx, esp
         push    1
-        push    write_buffer
+        push    ebx
         push    1
-        mov     ebx, eax
         mov     eax, 4
         sub     esp, 4
         int     0x80
-        mov     eax, ebx
-        add     esp, 16
+        add     esp, 20
         ret
