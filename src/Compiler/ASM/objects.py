@@ -13,7 +13,7 @@ objects = sys.modules['Parser.AST.objects']
 
 def object_def(compiler, elements):
     object_number = compiler.environment.add_object()
-    obj_ebp_pointer = compiler.vars.add(None, "resb", Types.SIZES[Types.INT])
+    obj_ebp_pointer = compiler.vars.add(None, "resb", Types.SIZE)
     compiler.code.add(Commands.MOV, ["dword [%s]" % obj_ebp_pointer, Registers.EBP])
 
     compiler.environment.object_list.append((object_number, obj_ebp_pointer))

@@ -72,4 +72,4 @@ if args.compile:
 
     os.system('nasm -g -f macho %s.asm' % runtime_path)
     os.system('nasm -g -f macho %s.asm' % program_path)
-    os.system('gcc  -m32 -Wl,-no_pie -o ./%s %s.o %s.o' % (filename, runtime_path, program_path))
+    os.system('gcc -m32 -Wl,-no_pie -o ./%s %s.o %s.o' % (filename, runtime_path, program_path))
