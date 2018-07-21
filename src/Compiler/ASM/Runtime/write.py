@@ -2,7 +2,7 @@ from ..Core.registers import Registers
 from ..Core.types import *
 
 from .base import Base
-from .itoa import Itoa
+from .itoa_and_write import ItoaWrite
 
 
 class Write(Base):
@@ -19,9 +19,9 @@ class Write(Base):
 
     def call(self, value_type):
         if value_type == Types.INT or True:
-            Itoa(self.compiler)
+            ItoaWrite(self.compiler)
             self.compiler.code.add(Commands.POP, Registers.EAX)
-            self.compiler.code.add(Commands.CALL, ['itoa'])
+            self.compiler.code.add(Commands.CALL, ['itoa_and_write'])
             self.compiler.code.add(Commands.MOV, [Registers.EAX, 10])
             self.compiler.code.add(Commands.CALL, ['write'])
         else:

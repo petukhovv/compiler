@@ -65,7 +65,7 @@ class Code(list):
         return self
 
     def log(self):
-        self.add(Commands.CALL, 'itoa')
+        self.add(Commands.CALL, 'itoa_and_write')
         self.add(Commands.MOV, [Registers.EAX, 10])
         self.add(Commands.CALL, 'write')
 

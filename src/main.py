@@ -70,6 +70,6 @@ if args.compile:
     with open('%s.asm' % program_path, 'w') as f:
         f.write(program)
 
-    os.system('nasm -g -f macho %s.asm' % runtime_path)
-    os.system('nasm -g -f macho %s.asm' % program_path)
-    os.system('gcc -m32 -o ./%s %s.o %s.o' % (filename, runtime_path, program_path))
+    os.system('nasm -g -f macho -l %s.lst %s.asm' % (runtime_path, runtime_path))
+    os.system('nasm -g -f macho -l %s.lst %s.asm' % (program_path, program_path))
+    os.system('gcc -m32 -Wl,-no_pie -o ./%s %s.o %s.o' % (filename, runtime_path, program_path))

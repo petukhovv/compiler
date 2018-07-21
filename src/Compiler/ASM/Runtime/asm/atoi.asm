@@ -1,45 +1,46 @@
+%define ASCII_EOL       10
+%define ASCII_ZERO      48
+%define ASCII_MINUS     45
+
 global atoi
 atoi:
-    mov ebx, 0
-    mov ecx, 0
-    mov eax, 0
-    mov esi, read_buffer
-    add esi, [read_buffer_done]
+    ; zeroing the use of registers
+    xor     eax, eax
+    xor     bx, bx
+    xor     cx, cx
+
+    movzx   edx, word [read_buffer_offset]      ; setting offset (if some data has already been read before)
+    add     edx, read_buffer                    ; placing the address on the read buffer in the edx register
     .atoi_start:
-        xor     edx, edx
-        mov     dl, byte [esi]
-        test    dl, dl
+        mov     bl, byte [edx]                  ; place the next byte of read data in the bl register
+        test    bl, bl                          ; zero check for read byte and exit if it's true
         jz      .atoi_exit
-        add     ecx, 1
-        cmp     dl, 10                  ; 10 - ASCII code of EOL (\n)
+        inc     cx                              ; increment chars counter
+        cmp     bl, ASCII_EOL                   ; EOL check (ASCII code 10) and exit if it's true
         je      .atoi_exit
-        cmp     dl, 45                  ; 45 - ASCII code of - (minus - mark for negative value)
+        inc	    edx                             ; increment read buffer address (go to the next byte)
+        cmp     bl, ASCII_MINUS                 ; minus check (ASCII code 45) and go to the negative mark if it's true
         je      .atoi_negative_mark
-        imul    eax, 10
-        sub	    dl, 48                  ; 48 - ASCII code of 0
-        add	    eax, edx
-        inc	    esi
+        imul    eax, 10                         ; go to the next digit (order) of the read number
+        sub	    bl, ASCII_ZERO                  ; subtraction of the first number (0 with ASCII code 48) in ASCII symbols
+        add	    al, bl                          ; writing the digit to the first order (guaranteed without overflow: first order al is 0, bl is 0..9)
         jmp	    .atoi_start
     .atoi_negative_mark:
-        mov     ebx, 1
-        inc	    esi
+        mov     bh, 1                           ; set negative number flag
         jmp	    .atoi_start
     .atoi_negative:
-        neg     eax
-        mov     ebx, 0
+        neg     eax                             ; read number invert to negative
+        xor     bh, bh                          ; zeroing the negative number flag
         jmp     .atoi_exit
     .atoi_exit:
-        cmp     ebx, 1
+        cmp     bh, 1                           ; check negative number flag and go to the invert to negative section if it's true
         je      .atoi_negative
-        mov     dl, 0
 
-        cmp     ecx, [read_buffer_all]
-        jnz     .atoi_write_buffer_done
-        mov     dword [read_buffer_done], 0
-        jmp     .atoi_process_buffer_end
+        cmp     cx, [read_buffer_size]
+        jnz     .atoi_write_buffer_offset
+        mov     dword [read_buffer_offset], 0   ; the whole stdin is read, zeroing the offset
+        ret
 
-        .atoi_write_buffer_done:
-            add     [read_buffer_done], ecx
-
-        .atoi_process_buffer_end:
+        .atoi_write_buffer_offset:
+            add     [read_buffer_offset], cx    ; offset which equal of the read data size before the newline symbol (\n)
             ret
