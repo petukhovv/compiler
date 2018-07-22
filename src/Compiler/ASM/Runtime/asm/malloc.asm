@@ -2,7 +2,7 @@ EXTERN _malloc
 
 global malloc
 malloc:
-    add		eax, 2
+    add		eax, 2          ; additional two bytes for reference count
 
     mov		ebx, esp
     and		esp, -16		; stack alignment by 16 bytes

@@ -2,7 +2,7 @@ EXTERN _free
 
 global free
 free:
-    add		eax, 2
+    sub		eax, 2          ; accounting for reservation of the 2 byte for reference count
 
     mov		ebx, esp
     and		esp, -16		; stack alignment by 16 bytes
@@ -10,10 +10,8 @@ free:
     sub		esp, 8			; compensation of the following two push operations (for stack alignment)
     push	ebx				; store difference between an aligned stack and no
 
-    push	eax				; push the required memory size
+    push	eax				; push the pointer to the memory to be freed
     call	_free
-    mov		word [eax], 0	; zeroing the reference count (2 byte)
-    add		eax, 2			; reservation of the 2 byte for reference count (make offset)
 
     add		esp, 4			; set a pointer to the second (from the end) pushed value (difference between an aligned stack and no) on the stack
     pop		ebx
