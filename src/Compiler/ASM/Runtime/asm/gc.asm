@@ -62,9 +62,8 @@ gc_deep_decrease:
         add         eax, 4
         add         edx, eax
         .loop_by_elements:
-            sub         edx, 4
-            mov         eax, dword [edx]
-            sub         edx, 4
+            sub         edx, 8
+            mov         eax, dword [edx + 4]
             cmp         eax, 0
             jz  		.gc_deep_decrease_continue
 
@@ -72,7 +71,6 @@ gc_deep_decrease:
             sub		    bx, 1                   ; pointers counter decrement
             mov		    word [eax - 2], bx
 
-            add         edx, 4
             mov         ebx, dword [edx]
             cmp         ebx, BOXED_ARRAY_TYPE_ID                  ; compare type to boxed array (id = 5)
             jnz  		.gc_free
@@ -107,9 +105,8 @@ gc_deep_increase:
         add         eax, 4
         add         edx, eax
         .loop_by_elements:
-            sub         edx, 4
-            mov         eax, dword [edx]
-            sub         edx, 4
+            sub         edx, 8
+            mov         eax, dword [edx + 4]
             cmp         eax, 0
             jz  		.gc_deep_increase_continue
 
@@ -117,7 +114,6 @@ gc_deep_increase:
             add		    bx, 1                   ; pointers counter increment
             mov		    word [eax - 2], bx
 
-            add         edx, 4
             mov         ebx, dword [edx]
             cmp         ebx, BOXED_ARRAY_TYPE_ID                  ; compare type to boxed array (id = 5)
             jnz  		.gc_deep_increase_continue

@@ -96,16 +96,13 @@ class ArrayCompiler:
             .add(Commands.PUSH, Registers.EAX)
 
     @staticmethod
-    def set_element(compiler, type):
+    def set_element(compiler, value_type):
         """ Генерация инструкций для присвоения значения элементу массива: A[n] := x """
         # Записываем в heap memory тип элемента по адресу его ячейки в heap memory
-        compiler.code.add(Commands.ADD, [Registers.EAX, ArrayCompiler.ELEMENT_SIZE])\
-            .add(Commands.POP, Registers.EBX)\
-            .add(Commands.MOV, ['dword [%s]' % Registers.EAX, Registers.EBX])
+        compiler.code.add(Commands.MOV, ['dword [%s]' % Registers.EAX, value_type])
         # Записываем в heap memory значение элемента по адресу его ячейки в heap memory
-        compiler.code.add(Commands.SUB, [Registers.EAX, ArrayCompiler.ELEMENT_SIZE])\
-            .add(Commands.POP, Registers.EBX)\
-            .add(Commands.MOV, ['dword [%s]' % Registers.EAX, Registers.EBX])
+        compiler.code.add(Commands.POP, Registers.EBX)\
+            .add(Commands.MOV, ['dword [%s+%s]' % (Registers.EAX, ArrayCompiler.ELEMENT_SIZE), Registers.EBX])
 
     @staticmethod
     def arrlen(compiler):

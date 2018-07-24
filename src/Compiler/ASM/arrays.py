@@ -119,7 +119,7 @@ def array_element(compiler, array, index, other_indexes, context, value_type):
             GC(compiler).run()
 
         compiler.code.add(Commands.POP, Registers.EAX)
-        ArrayCompiler.set_element(compiler, var_type)
+        ArrayCompiler.set_element(compiler, value_type)
     else:
         ArrayCompiler.get_element(compiler, var_type)
         # If several consecutive indices, compile each
