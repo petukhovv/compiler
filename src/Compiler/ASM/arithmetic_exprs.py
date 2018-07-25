@@ -60,6 +60,7 @@ def binop_aexp(compiler, op, left, right):
 def var_aexp(compiler, name, context, value_type):
     """ Variable compilation """
     if context == 'assign':
+        compiler.types.pop()
         if compiler.environment.is_exist_local_var(name):
             var = compiler.environment.get_local_var(name)
             var_type = compiler.environment.get_local_var_type(name)

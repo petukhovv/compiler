@@ -86,9 +86,9 @@ def array_element(compiler, array, index, other_indexes, context, value_type):
     var_name = compiler.environment.get_local_var(array)
     var_type = compiler.environment.get_local_var_type(array)
 
-    if value_type == Types.BOXED_ARR or value_type == Types.UNBOXED_ARR:
-        compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % Registers.ESP])
-        compiler.code.add(Commands.MOV, [Registers.ECX, value_type])
+    if context == 'assign' and (value_type == Types.BOXED_ARR or value_type == Types.UNBOXED_ARR):
+        compiler.code.add(Commands.MOV, [Registers.ECX, 'dword [%s]' % Registers.ESP])
+        compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s + 4]' % Registers.ESP])
         GC(compiler).increment()
 
     # Compilation obtain a pointer construction to the beginning of an array
@@ -111,12 +111,9 @@ def array_element(compiler, array, index, other_indexes, context, value_type):
                 other_index_compile(other_index)
 
         ArrayCompiler.calc_element_place(compiler)
-        compiler.code.add(Commands.PUSH, Registers.EBX)
 
-        if var_type == Types.BOXED_ARR:
-            compiler.code.add(Commands.ADD, [Registers.EBX, ArrayCompiler.ELEMENT_SIZE])
-            compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % Registers.EBX])
-            GC(compiler).run()
+        compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s + %s]' % (Registers.EBX, ArrayCompiler.ELEMENT_SIZE)])
+        compiler.code.add(Commands.CALL, ['gc_start_if_need'])
 
         compiler.code.add(Commands.POP, Registers.EAX)
         ArrayCompiler.set_element(compiler, value_type)

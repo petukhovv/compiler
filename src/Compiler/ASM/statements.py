@@ -7,7 +7,6 @@ from .Core.registers import Registers
 def assign_statement(compiler, variable, aexp):
     """ Компиляция выражения присваивания """
     value_type = aexp.compile_asm(compiler)
-    compiler.types.pop()
     variable.context = 'assign'
     variable.type = value_type
     variable.compile_asm(compiler)

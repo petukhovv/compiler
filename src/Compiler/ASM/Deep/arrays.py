@@ -99,7 +99,7 @@ class ArrayCompiler:
     def set_element(compiler, value_type):
         """ Генерация инструкций для присвоения значения элементу массива: A[n] := x """
         # Записываем в heap memory тип элемента по адресу его ячейки в heap memory
-        compiler.code.add(Commands.MOV, ['dword [%s]' % Registers.EAX, value_type])
+        compiler.code.add(Commands.POP, 'dword [%s]' % Registers.EAX)
         # Записываем в heap memory значение элемента по адресу его ячейки в heap memory
         compiler.code.add(Commands.POP, Registers.EBX)\
             .add(Commands.MOV, ['dword [%s+%s]' % (Registers.EAX, ArrayCompiler.ELEMENT_SIZE), Registers.EBX])
@@ -118,6 +118,7 @@ class ArrayCompiler:
             .add(Commands.MUL, Registers.ECX) \
             .add(Commands.ADD, [Registers.EAX, ArrayCompiler.ELEMENT_SIZE]) \
             .add(Commands.POP, Registers.EBX) \
-            .add(Commands.ADD, [Registers.EBX, Registers.EAX])
+            .add(Commands.ADD, [Registers.EBX, Registers.EAX]) \
+            .add(Commands.PUSH, Registers.EBX)
 
 

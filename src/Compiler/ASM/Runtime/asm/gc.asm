@@ -3,15 +3,13 @@
 
 global gc_decrease
 gc_decrease:
-    .gc_start:                              ; decrease reference counter
+    .gc_start:
         cmp		    eax, 0                  ; null-check pointer and stack addresses check (pointer <= 0)
         jle 	    .gc_finish              ; do not garbage collection if true
     .gc_decrement:
-        sub		    eax, 2                  ; accounting for reservation of the 2 byte for reference count
-        mov		    cx, word [eax]
+        mov		    cx, word [eax - 2]
         sub		    cx, 1                   ; reference counter decrement
-        mov		    word [eax], cx
-        add		    eax, 2                  ; restoring 2 byte for reference count
+        mov		    word [eax - 2], cx
 
         cmp         ebx, BOXED_ARRAY_TYPE_ID    ; compare type to boxed array (id = 5), garbage collection is relevant only for it
         jnz     	.gc_skip_deep_decrease
@@ -28,11 +26,9 @@ gc_decrease:
 
 global gc_increase
 gc_increase:
-    sub		    eax, 2                      ; accounting for reservation of the 2 byte for reference count
-    mov		    bx, word [eax]
+    mov		    bx, word [eax - 2]
     add		    bx, 1                       ; reference counter increment
-    mov		    word [eax], bx
-    add		    eax, 2                      ; restoring 2 byte for reference count
+    mov		    word [eax - 2], bx
     cmp         ecx, BOXED_ARRAY_TYPE_ID    ; compare type to boxed array (id = 5), garbage collection is relevant only for it
     jnz     	.gc_finish
     call  		gc_deep_increase            ; depth walk of the objects graph and increment reference counters
