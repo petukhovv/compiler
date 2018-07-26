@@ -9,15 +9,19 @@ gc_decrease:
     .gc_decrement:
         mov		    cx, word [eax - 2]
         sub		    cx, 1                   ; reference counter decrement
+        bts         cx, 15
         mov		    word [eax - 2], cx
 
         cmp         ebx, BOXED_ARRAY_TYPE_ID    ; compare type to boxed array (id = 5), garbage collection is relevant only for it
         jnz     	.gc_skip_deep_decrease
-        push        ecx
+        push        eax
         call  		gc_deep_decrease        ; depth walk of the objects graph and decrement reference counters
-        pop         ecx
+        pop         eax
 
     .gc_skip_deep_decrease:
+        mov		    cx, word [eax - 2]
+        btr         cx, 15
+        mov		    word [eax - 2], cx
         cmp		    cx, 0
         jnz     	.gc_finish              ; do not free memory if the reference count is not zero
         call  		free
@@ -28,11 +32,17 @@ global gc_increase
 gc_increase:
     mov		    bx, word [eax - 2]
     add		    bx, 1                       ; reference counter increment
+    bts         bx, 15
     mov		    word [eax - 2], bx
     cmp         ecx, BOXED_ARRAY_TYPE_ID    ; compare type to boxed array (id = 5), garbage collection is relevant only for it
     jnz     	.gc_finish
+    push        eax
     call  		gc_deep_increase            ; depth walk of the objects graph and increment reference counters
+    pop         eax
     .gc_finish:
+        mov		    bx, word [eax - 2]
+        btr         bx, 15
+        mov		    word [eax - 2], bx
         ret
 
 global gc_start_if_need
@@ -64,7 +74,12 @@ gc_deep_decrease:
             jz  		.gc_deep_decrease_continue
 
             mov		    bx, word [eax - 2]
+
+            bt          bx, 15
+            jc  		.gc_deep_decrease_continue
+
             sub		    bx, 1                   ; pointers counter decrement
+            bts         bx, 15
             mov		    word [eax - 2], bx
 
             mov         ebx, dword [edx]
@@ -76,12 +91,18 @@ gc_deep_decrease:
             call  		gc_deep_decrease
             pop         edx
             pop         ecx
-            mov         eax, dword [edx]
+            mov         eax, dword [edx + 4]
         .gc_free:
             mov		    bx, word [eax - 2]
+            btr         bx, 15
+            mov		    word [eax - 2], bx
             cmp         bx, 0
             jnz  		.gc_deep_decrease_continue
+            push        ecx
+            push        edx
             call  		free
+            pop         edx
+            pop         ecx
         .gc_deep_decrease_continue:
             loop        .loop_by_elements
         ret
@@ -107,18 +128,28 @@ gc_deep_increase:
             jz  		.gc_deep_increase_continue
 
             mov		    bx, word [eax - 2]
+
+            bt          bx, 15
+            jc  		.gc_deep_increase_continue
+
             add		    bx, 1                   ; pointers counter increment
+            bts         bx, 15
             mov		    word [eax - 2], bx
 
             mov         ebx, dword [edx]
             cmp         ebx, BOXED_ARRAY_TYPE_ID                  ; compare type to boxed array (id = 5)
-            jnz  		.gc_deep_increase_continue
+            jnz  		.gc_deep_increase_clear_visited_flag
 
             push        ecx
             push        edx
             call  		gc_deep_increase
             pop         edx
             pop         ecx
+        .gc_deep_increase_clear_visited_flag:
+            mov         eax, dword [edx + 4]
+            mov		    bx, word [eax - 2]
+            btr         bx, 15
+            mov		    word [eax - 2], bx
         .gc_deep_increase_continue:
             loop        .loop_by_elements
         ret

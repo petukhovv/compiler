@@ -64,8 +64,9 @@ def var_aexp(compiler, name, context, value_type):
         if compiler.environment.is_exist_local_var(name):
             var = compiler.environment.get_local_var(name)
             var_type = compiler.environment.get_local_var_type(name)
-            if var_type == Types.BOXED_ARR:
+            if var_type == Types.BOXED_ARR or value_type == Types.UNBOXED_ARR:
                 compiler.code.add(Commands.MOV, [Registers.EAX, var])
+                compiler.code.add(Commands.MOV, [Registers.EBX, var_type])
                 GC(compiler).run()
             compiler.environment.update_local_var_type(name, value_type)
         else:
