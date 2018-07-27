@@ -96,7 +96,7 @@ class ArrayCompiler:
             .add(Commands.PUSH, Registers.EAX)
 
     @staticmethod
-    def set_element(compiler, value_type):
+    def set_element(compiler):
         """ Генерация инструкций для присвоения значения элементу массива: A[n] := x """
         # Записываем в heap memory тип элемента по адресу его ячейки в heap memory
         compiler.code.add(Commands.POP, 'dword [%s]' % Registers.EAX)

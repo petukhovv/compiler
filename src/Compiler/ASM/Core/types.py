@@ -25,7 +25,7 @@ class Types:
             return Types.NOTHING
 
     def set(self, value_type):
-        self.compiler.code.add(Commands.PUSH, [value_type])
+        self.compiler.code.add(Commands.PUSH, value_type)
 
         return value_type
 

@@ -86,9 +86,9 @@ def array_element(compiler, array, index, other_indexes, context, value_type):
     var_name = compiler.environment.get_local_var(array)
     var_type = compiler.environment.get_local_var_type(array)
 
-    if context == 'assign' and (value_type == Types.BOXED_ARR or value_type == Types.UNBOXED_ARR):
-        compiler.code.add(Commands.MOV, [Registers.ECX, 'dword [%s]' % Registers.ESP])
+    if context == 'assign':
         compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s + 4]' % Registers.ESP])
+        compiler.code.add(Commands.MOV, [Registers.EBX, 'dword [%s]' % Registers.ESP])
         GC(compiler).increment()
 
     # Compilation obtain a pointer construction to the beginning of an array
@@ -116,7 +116,7 @@ def array_element(compiler, array, index, other_indexes, context, value_type):
         compiler.code.add(Commands.CALL, ['gc_start_if_need'])
 
         compiler.code.add(Commands.POP, Registers.EAX)
-        ArrayCompiler.set_element(compiler, value_type)
+        ArrayCompiler.set_element(compiler)
     else:
         ArrayCompiler.get_element(compiler, var_type)
         # If several consecutive indices, compile each

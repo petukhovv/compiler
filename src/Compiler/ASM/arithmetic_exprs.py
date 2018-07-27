@@ -67,7 +67,7 @@ def var_aexp(compiler, name, context, value_type):
             if var_type == Types.BOXED_ARR or value_type == Types.UNBOXED_ARR:
                 compiler.code.add(Commands.MOV, [Registers.EAX, var])
                 compiler.code.add(Commands.MOV, [Registers.EBX, var_type])
-                GC(compiler).run()
+                compiler.code.add(Commands.CALL, ['gc_start_if_need'])
             compiler.environment.update_local_var_type(name, value_type)
         else:
             var = compiler.environment.add_local_var(value_type, name)
@@ -78,13 +78,15 @@ def var_aexp(compiler, name, context, value_type):
 
         if value_type == Types.BOXED_ARR or value_type == Types.UNBOXED_ARR:
             compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % Registers.ESP])
-            compiler.code.add(Commands.MOV, [Registers.ECX, value_type])
+            compiler.code.add(Commands.MOV, [Registers.EBX, value_type])
             GC(compiler).increment()
 
         compiler.code.add(Commands.POP, var)
     else:
         compiler.code.add(Commands.MOV, [Registers.EAX, compiler.environment.get_local_var(name)])\
             .add(Commands.PUSH, Registers.EAX)
-        var_type = compiler.environment.get_local_var_type(name)
+        runtime_var_type = compiler.environment.get_local_var_runtime_type(name)
+        compiler.types.set(runtime_var_type)
 
-        return compiler.types.set(var_type)
+        var_type = compiler.environment.get_local_var_type(name)
+        return var_type

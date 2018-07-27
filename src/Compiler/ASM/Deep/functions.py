@@ -7,6 +7,7 @@ def return_function(compiler, args):
     GC(compiler).check_args(args)
     GC(compiler).check_local_vars()
 
+    compiler.code.add(Commands.POP, Registers.EBX)
     compiler.code.add(Commands.POP, Registers.EAX)
     # Компилируем конструкцию возврата к месту вызова
     compiler.code.add(Commands.MOV, [Registers.ESP, Registers.EBP]) \

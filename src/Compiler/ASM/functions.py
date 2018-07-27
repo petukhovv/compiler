@@ -34,6 +34,7 @@ def function(compiler, name, args, body):
     return_type = compiler.environment.get_return_type(name)
 
     if not return_type:
+        compiler.types.set(Types.NOTHING)
         return_function(compiler, args_map)
 
     compiler.code.add_label(finish_function)
@@ -46,12 +47,11 @@ def return_statement(compiler, expr):
     """ Компиляция выражения возврата к месту вызова """
     args = compiler.environment.get_args()
     return_type = expr.compile_asm(compiler)
-    compiler.types.pop()
     compiler.environment.set_return_type(return_type)
 
-    if return_type == Types.BOXED_ARR or return_type == Types.UNBOXED_ARR:
-        compiler.code.add(Commands.MOV, [Registers.ECX, return_type])
-        GC(compiler).increment()
+    compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s + 4]' % Registers.ESP])
+    compiler.code.add(Commands.MOV, [Registers.EBX, 'dword [%s]' % Registers.ESP])
+    GC(compiler).increment()
 
     return_function(compiler, args)
 
@@ -65,11 +65,10 @@ def call_statement(compiler, name, args):
     compiler.code.stack_align(align_factor, stack_remainder)
 
     for arg in args.elements:
-        arg_type = arg.compile_asm(compiler)
-        if arg_type == Types.BOXED_ARR or arg_type == Types.UNBOXED_ARR:
-            compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s + 4]' % Registers.ESP])
-            compiler.code.add(Commands.MOV, [Registers.ECX, arg_type])
-            GC(compiler).increment()
+        arg.compile_asm(compiler)
+        compiler.code.add(Commands.MOV, [Registers.EBX, 'dword [%s]' % Registers.ESP])
+        compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s + 4]' % Registers.ESP])
+        GC(compiler).increment()
 
     function_number = compiler.environment.get_number(name)
     compiler.code.add(Commands.CALL, FUNCTIONS_LABEL_PREFIX + str(function_number))

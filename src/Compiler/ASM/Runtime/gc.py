@@ -15,6 +15,7 @@ class GC(Base):
             return
 
         self.load('gc.asm', ['gc_decrease', 'gc_increase', 'gc_clean', 'gc_start_if_need'])
+        self.load('write_error.asm', ['write_error'])
         GC.is_loaded = True
         Free(compiler)
 
@@ -38,7 +39,7 @@ class GC(Base):
     def check_local_vars(self):
         for variable in self.compiler.environment.get_all_vars():
             var_name = self.compiler.environment.get_local_var(variable)
-            var_type = self.compiler.environment.get_local_var_type(variable)
-            if var_type == Types.BOXED_ARR or var_type == Types.UNBOXED_ARR:
-                self.compiler.code.add(Commands.MOV, [Registers.EAX, var_name])
-                self.run()
+            var_type = self.compiler.environment.get_local_var_runtime_type(variable)
+            self.compiler.code.add(Commands.MOV, [Registers.EAX, var_name])
+            self.compiler.code.add(Commands.MOV, [Registers.EBX, var_type])
+            self.compiler.code.add(Commands.CALL, ['gc_start_if_need'])

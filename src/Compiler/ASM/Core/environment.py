@@ -201,9 +201,11 @@ class Environment:
                 var_pointer = 'dword [ebp-%d]' % stack_pointer
             else:
                 var_pointer = 'dword [ebp-%d]' % stack_pointer
-        else:
+        elif 'args' in env:
             var_pointer = 'dword [ebp+%d]' % ((env['args'][name] + 2) * 8 - 8)\
                 if name in env['args'] else None
+        else:
+            var_pointer = None
 
         return var_pointer
 
