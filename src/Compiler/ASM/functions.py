@@ -58,12 +58,6 @@ def return_statement(compiler, expr):
 
 def call_statement(compiler, name, args):
     """ Компиляция выражения вызова функции """
-    align_factor = 16
-    args_len = len(args.elements)
-    stack_remainder = align_factor - ((args_len * 8 + 12) % align_factor)    # +8 - push of return address and saved ebp
-    stack_remainder = 0 if stack_remainder == align_factor else stack_remainder
-    compiler.code.stack_align(align_factor, stack_remainder)
-
     for arg in args.elements:
         arg.compile_asm(compiler)
         compiler.code.add(Commands.MOV, [Registers.EBX, 'dword [%s]' % Registers.ESP])
@@ -72,8 +66,6 @@ def call_statement(compiler, name, args):
 
     function_number = compiler.environment.get_number(name)
     compiler.code.add(Commands.CALL, FUNCTIONS_LABEL_PREFIX + str(function_number))
-
-    compiler.code.restore_stack_align()
 
     compiler.code.add(Commands.PUSH, Registers.EAX)
     compile_time_type = compiler.environment.get_return_type(name)

@@ -50,7 +50,7 @@ class StringCompiler:
         Loop.data(compiler, str_start_pointer)
 
     @staticmethod
-    def strget(compiler, type):
+    def strget(compiler):
         """ Генерация инструкций для получения определенного символа строки """
         # Прибавляем к номеру ячейки с началом строки номер требуемого символа (offset)
         compiler.code.add(Commands.POP, Registers.EAX)\
@@ -61,7 +61,7 @@ class StringCompiler:
             .add(Commands.PUSH, Registers.EBX)
 
     @staticmethod
-    def strset(compiler, type):
+    def strset(compiler):
         """ Генерация инструкций для замены определенного символа строки """
         # Вычисляем ячейки heap memory, где находится заменяемый символ
         compiler.code.add(Commands.POP, Registers.EAX)\
@@ -73,7 +73,7 @@ class StringCompiler:
         compiler.code.add(Commands.MOV, ['byte [%s]' % Registers.EAX, Registers.BL])
 
     @staticmethod
-    def strsub(compiler, type):
+    def strsub(compiler):
         """ Генерация инструкций для получение подстроки строки """
         substr_length = compiler.environment.add_local_var(Types.INT)
         substr_start_pointer = compiler.environment.add_local_var(Types.INT)
@@ -124,7 +124,7 @@ class StringCompiler:
         compiler.code.add(Commands.PUSH, start_substr_pointer)
 
     @staticmethod
-    def strdup(compiler, type):
+    def strdup(compiler):
         """ Генерация инструкций для дублирования строки """
         substr_length = compiler.environment.add_local_var(Types.INT)
         str_start_pointer = compiler.environment.add_local_var(Types.INT)

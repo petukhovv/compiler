@@ -45,9 +45,9 @@ def strget(compiler, args):
     # Порядок компиляции аргументов здесь и ниже задаём удобным для дальнейшей работы образом
     args.elements[1].compile_asm(compiler)
     compiler.types.pop()
-    array_type = args.elements[0].compile_asm(compiler)
+    args.elements[0].compile_asm(compiler)
     compiler.types.pop()
-    StringCompiler.strget(compiler, array_type)
+    StringCompiler.strget(compiler)
 
     return compiler.types.set(Types.CHAR)
 
@@ -58,29 +58,29 @@ def strset(compiler, args):
     compiler.types.pop()
     args.elements[1].compile_asm(compiler)
     compiler.types.pop()
-    array_type = args.elements[0].compile_asm(compiler)
+    args.elements[0].compile_asm(compiler)
     compiler.types.pop()
-    StringCompiler.strset(compiler, array_type)
+    StringCompiler.strset(compiler)
 
 
 def strsub(compiler, args):
     """ Компиляция built-in функции strsub (взятие подстроки строки) """
     args.elements[1].compile_asm(compiler)
     compiler.types.pop()
-    array_type = args.elements[0].compile_asm(compiler)
+    args.elements[0].compile_asm(compiler)
     compiler.types.pop()
     args.elements[2].compile_asm(compiler)
     compiler.types.pop()
-    StringCompiler.strsub(compiler, array_type)
+    StringCompiler.strsub(compiler)
 
     return compiler.types.set(Types.STRING)
 
 
 def strdup(compiler, args):
     """ Компиляция built-in функции strdup (дублирование строки) """
-    array_type = args.elements[0].compile_asm(compiler)
+    args.elements[0].compile_asm(compiler)
     compiler.types.pop()
-    StringCompiler.strdup(compiler, array_type)
+    StringCompiler.strdup(compiler)
 
     return compiler.types.set(Types.STRING)
 

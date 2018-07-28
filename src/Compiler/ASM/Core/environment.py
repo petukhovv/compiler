@@ -114,8 +114,8 @@ class Environment:
         if name in env['vars']:
             return self.get_local_var(name, as_object=type is None)
 
-        stack_pointer = env['memory']
-        size = size + 4 if size else Types.SIZE
+        stack_pointer = env['memory'] + Types.SIZE
+        size = size + Types.SIZE * 2 if size else Types.SIZE * 2
         env['vars'][name] = {
             'stack_pointer': stack_pointer,
             'size': size,
@@ -141,8 +141,9 @@ class Environment:
         if name in env['vars']:
             return self.get_local_var(name, as_object=type is None)
 
-        stack_pointer = env['memory']
-        size = size + 4 if size else Types.SIZE
+        stack_pointer = env['memory'] + Types.SIZE
+        size = size + Types.SIZE * 2 if size else Types.SIZE * 2
+
         env['vars'][name] = {
             'stack_pointer': stack_pointer,
             'size': size,
@@ -161,8 +162,6 @@ class Environment:
             stack_pointer = env['vars'][name]['stack_pointer']
             if as_object:
                 var_pointer = {'pointer': 'ebp', 'offset': stack_pointer + 4}
-            elif type:
-                var_pointer = 'dword [ebp-%d]' % (stack_pointer + 4)
             else:
                 var_pointer = 'dword [ebp-%d]' % (stack_pointer + 4)
         elif 'args' in env:
@@ -202,8 +201,7 @@ class Environment:
             else:
                 var_pointer = 'dword [ebp-%d]' % stack_pointer
         elif 'args' in env:
-            var_pointer = 'dword [ebp+%d]' % ((env['args'][name] + 2) * 8 - 8)\
-                if name in env['args'] else None
+            var_pointer = self.get_arg_runtime_type(name)
         else:
             var_pointer = None
 

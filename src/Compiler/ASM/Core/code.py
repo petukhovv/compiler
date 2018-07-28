@@ -6,35 +6,10 @@ from ..Runtime.write import Write
 
 
 class Code(list):
-    stack_align_points = []
-    stack = {
-        'size': 4,
-        'balance': 0
-    }
-
     def __init__(self, compiler):
         self.compiler = compiler
 
-    def stack_align(self, multiplicity, offset=0):
-        self.add(Commands.MOV, [Registers.EAX, Registers.EBP])
-        self.add(Commands.SUB, [Registers.EAX, Registers.ESP])
-
-        self.add(Commands.XOR, [Registers.EDX, Registers.EDX])
-        self.add(Commands.MOV, [Registers.EBX, multiplicity])
-        self.add(Commands.DIV, [Registers.EBX])
-        self.add(Commands.MOV, [Registers.EAX, multiplicity])
-        self.add(Commands.SUB, [Registers.EAX, Registers.EDX])
-        if offset != 0:
-            self.add(Commands.ADD, [Registers.EAX, offset])
-        self.add(Commands.SUB, [Registers.ESP, Registers.EAX])
-        self.add(Commands.PUSH, Registers.EAX)
-
-    def restore_stack_align(self):
-        self.add(Commands.POP, Registers.EBX)
-        self.add(Commands.ADD, [Registers.ESP, Registers.EBX])
-
     def stack_pop(self):
-        self.stack['balance'] -= 1
         self.add(Commands.ADD, [Registers.ESP, 4])
 
     def allocate_stack_memory(self, memory_size, place):
@@ -45,15 +20,7 @@ class Code(list):
 
         return self
 
-    def stack_size_write(self, stack_obj, command, args):
-        if command == Commands.PUSH:
-            stack_obj['balance'] += 1
-        elif command == Commands.POP:
-            stack_obj['balance'] -= 1
-
     def add(self, command, args=None, index=None):
-        self.stack_size_write(self.stack, command, args)
-
         if not isinstance(args, list):
             args = [args] if args is not None else []
 
