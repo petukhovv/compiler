@@ -60,6 +60,8 @@ def binop_aexp(compiler, op, left, right):
 def var_aexp(compiler, name, context, value_type):
     """ Variable compilation """
     if context == 'assign':
+        gc = GC(compiler)
+
         if compiler.environment.is_exist_local_var(name):
             var = compiler.environment.get_local_var(name)
             var_type = compiler.environment.get_local_var_runtime_type(name)
@@ -69,7 +71,7 @@ def var_aexp(compiler, name, context, value_type):
 
             compiler.code.add(Commands.MOV, [Registers.EAX, var])
             compiler.code.add(Commands.MOV, [Registers.EBX, var_type])
-            compiler.code.add(Commands.CALL, ['gc_start_if_need'])
+            gc.decrement()
         else:
             var = compiler.environment.add_local_var(value_type, name)
             var_type = compiler.environment.get_local_var_runtime_type(name)
@@ -80,7 +82,7 @@ def var_aexp(compiler, name, context, value_type):
 
         compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s + 4]' % Registers.ESP])
         compiler.code.add(Commands.MOV, [Registers.EBX, 'dword [%s]' % Registers.ESP])
-        GC(compiler).increment()
+        gc.increment()
 
         compiler.code.add(Commands.POP, var_type)
         compiler.code.add(Commands.POP, var)

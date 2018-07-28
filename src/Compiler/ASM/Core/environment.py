@@ -69,7 +69,6 @@ class Environment:
 
         env = env['parent']
         if name in env['vars']:
-            size = env['vars'][name]['size']
             stack_pointer = env['vars'][name]['stack_pointer']
             if as_object:
                 var_pointer = {'pointer': 'ebp', 'offset': stack_pointer + 4}
@@ -157,8 +156,6 @@ class Environment:
         env = self.list[self.current if self.current else 'root'] if env is None else env
 
         if name in env['vars']:
-            size = env['vars'][name]['size']
-            type = env['vars'][name]['type']
             stack_pointer = env['vars'][name]['stack_pointer']
             if as_object:
                 var_pointer = {'pointer': 'ebp', 'offset': stack_pointer + 4}
@@ -191,7 +188,6 @@ class Environment:
     def get_local_var_runtime_type(self, name=None, as_object=False):
         env = self.list[self.current if self.current else 'root']
         if name in env['vars']:
-            size = env['vars'][name]['size']
             type = env['vars'][name]['type']
             stack_pointer = env['vars'][name]['stack_pointer']
             if as_object:

@@ -113,7 +113,7 @@ def array_element(compiler, array, index, other_indexes, context, value_type):
         ArrayCompiler.calc_element_place(compiler)
 
         compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s + %s]' % (Registers.EBX, ArrayCompiler.ELEMENT_SIZE)])
-        compiler.code.add(Commands.CALL, ['gc_start_if_need'])
+        GC(compiler).decrement()
 
         compiler.code.add(Commands.POP, Registers.EAX)
         ArrayCompiler.set_element(compiler)

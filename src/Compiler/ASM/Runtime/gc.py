@@ -14,19 +14,16 @@ class GC(Base):
         if GC.is_loaded:
             return
 
-        self.load('gc.asm', ['gc_decrease', 'gc_increase', 'gc_clean', 'gc_start_if_need'])
+        self.load('gc.asm', ['gc_decrement', 'gc_increment'])
         self.load('write_error.asm', ['write_error'])
         GC.is_loaded = True
         Free(compiler)
 
-    def run(self):
-        self.compiler.code.add(Commands.CALL, ['gc_decrease'])
-
-    def clean(self):
-        self.compiler.code.add(Commands.CALL, ['gc_clean'])
+    def decrement(self):
+        self.compiler.code.add(Commands.CALL, ['gc_decrement'])
 
     def increment(self):
-        self.compiler.code.add(Commands.CALL, ['gc_increase'])
+        self.compiler.code.add(Commands.CALL, ['gc_increment'])
 
     def check_args(self, args):
         for arg in args:
@@ -34,7 +31,7 @@ class GC(Base):
             var_type_pointer = self.compiler.environment.get_arg_runtime_type(arg)
             self.compiler.code.add(Commands.MOV, [Registers.EAX, var_pointer])
             self.compiler.code.add(Commands.MOV, [Registers.EBX, var_type_pointer])
-            self.compiler.code.add(Commands.CALL, ['gc_start_if_need'])
+            self.decrement()
 
     def check_local_vars(self):
         for variable in self.compiler.environment.get_all_vars():
@@ -42,4 +39,4 @@ class GC(Base):
             var_type = self.compiler.environment.get_local_var_runtime_type(variable)
             self.compiler.code.add(Commands.MOV, [Registers.EAX, var_name])
             self.compiler.code.add(Commands.MOV, [Registers.EBX, var_type])
-            self.compiler.code.add(Commands.CALL, ['gc_start_if_need'])
+            self.decrement()
