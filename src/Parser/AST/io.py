@@ -18,9 +18,6 @@ class ReadStatement(AST):
     def interpret(self, env):
         return interpreter.read_statement(env)
 
-    def compile_vm(self, commands, data):
-        return compile_vm.read_statement(commands, data)
-
 
 class WriteStatement(AST):
     """
@@ -35,6 +32,3 @@ class WriteStatement(AST):
 
     def interpret(self, env):
         return interpreter.write_statement(env, self.aexp)
-
-    def compile_vm(self, commands, data):
-        return compile_vm.write_statement(commands, data, self.aexp)

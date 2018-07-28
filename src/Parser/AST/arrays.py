@@ -22,9 +22,6 @@ class UnboxedArray(AST):
     def interpret(self, env):
         return interpreter.unboxed_array(env, self.elements)
 
-    def compile_vm(self, commands, data):
-        return compile_vm.arrmake_inline(commands, data, self.elements, 'unboxed')
-
 
 class BoxedArray(AST):
     pointers = 0
@@ -38,9 +35,6 @@ class BoxedArray(AST):
 
     def interpret(self, env):
         return interpreter.boxed_array(env, self.elements)
-
-    def compile_vm(self, commands, data):
-        return compile_vm.arrmake_inline(commands, data, self.elements, 'boxed')
 
 
 class ArrayElement(AST):
@@ -59,9 +53,6 @@ class ArrayElement(AST):
     def interpret(self, env):
         return interpreter.array_element(env, self.array, self.index, self.other_indexes)
 
-    def compile_vm(self, commands, data):
-        return compile_vm.array_element(commands, data, self.array, self.index, self.other_indexes, self.context)
-
 
 class ArrLen(AST):
     def __init__(self, args):
@@ -73,8 +64,6 @@ class ArrLen(AST):
     def interpret(self, env):
         return interpreter.arr_len(env, self.args)
 
-    def compile_vm(self, commands, data):
-        return compile_vm.arrlen(commands, data, self.args)
 
 
 class UnboxedArrMake(AST):
@@ -88,9 +77,6 @@ class UnboxedArrMake(AST):
     def interpret(self, env):
         return interpreter.unboxed_arr_make(env, self.args)
 
-    def compile_vm(self, commands, data):
-        return compile_vm.arrmake(commands, data, self.args, 'unboxed')
-
 
 class BoxedArrMake(AST):
     def __init__(self, args):
@@ -102,6 +88,3 @@ class BoxedArrMake(AST):
 
     def interpret(self, env):
         return interpreter.boxed_arr_make(env, self.args)
-
-    def compile_vm(self, commands, data):
-        return compile_vm.arrmake(commands, data, self.args, 'boxed')

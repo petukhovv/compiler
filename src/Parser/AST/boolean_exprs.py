@@ -24,9 +24,6 @@ class RelopBexp(AST):
     def interpret(self, env):
         return interpreter.relop_bexp(env, self.op, self.left, self.right)
 
-    def compile_vm(self, commands, data):
-        return compile_vm.relop_bexp(commands, data, self.op, self.left, self.right)
-
 
 class AndBexp(AST):
     """
@@ -43,9 +40,6 @@ class AndBexp(AST):
 
     def interpret(self, env):
         return interpreter.and_bexp(env, self.left, self.right)
-
-    def compile_vm(self, commands, data):
-        return compile_vm.and_bexp(commands, data, self.left, self.right)
 
 
 class OrBexp(AST):
@@ -64,9 +58,6 @@ class OrBexp(AST):
     def interpret(self, env):
         return interpreter.or_bexp(env, self.left, self.right)
 
-    def compile_vm(self, commands, data):
-        return compile_vm.or_bexp(commands, data, self.left, self.right)
-
 
 class NotBexp(AST):
     """
@@ -82,6 +73,3 @@ class NotBexp(AST):
 
     def interpret(self, env):
         return interpreter.not_bexp(env, self.exp)
-
-    def compile_vm(self, commands, data):
-        return compile_vm.not_bexp(commands, data, self.exp)

@@ -14,24 +14,24 @@ relop_compare_map = {
 }
 
 
-def relop_bexp(commands, data, op, left, right):
+def relop_bexp(commands, data, node):
     """ Компиляция операторов сравнения """
-    left.compile_vm(commands, data)
+    node.left.compile_vm(commands, data)
     commands.clean_type()
-    right.compile_vm(commands, data)
+    node.right.compile_vm(commands, data)
     commands.clean_type()
 
-    commands.add(Compare, relop_compare_map[op])
+    commands.add(Compare, relop_compare_map[node.op])
 
     return commands.set_and_return_type(Types.INT)
 
 
-def and_bexp(commands, data, left, right):
+def and_bexp(commands, data, node):
     """ Компиляция оператора логического "И" (and) """
     finish_label = data.label()
     finish_false_label = data.label()
 
-    left.compile_vm(commands, data)
+    node.left.compile_vm(commands, data)
     commands.clean_type()
 
     # Если первый операнд == 0, второй уже не проверяем,
@@ -39,7 +39,7 @@ def and_bexp(commands, data, left, right):
     commands.add(Jz, finish_false_label)
 
     # Иначе будем проверять и второй
-    right.compile_vm(commands, data)
+    node.right.compile_vm(commands, data)
     commands.clean_type()
 
     # Если второй операнд == 0, то переходим к метке ложного результата
@@ -60,12 +60,12 @@ def and_bexp(commands, data, left, right):
     return commands.set_and_return_type(Types.BOOL)
 
 
-def or_bexp(commands, data, left, right):
+def or_bexp(commands, data, node):
     """ Компиляция оператора логического "ИЛИ" (or) """
     finish_label = data.label()
     finish_true_label = data.label()
 
-    left.compile_vm(commands, data)
+    node.left.compile_vm(commands, data)
     commands.clean_type()
 
     # Если первый операнд != 0, второй уже не проверяем,
@@ -73,7 +73,7 @@ def or_bexp(commands, data, left, right):
     commands.add(Jnz, finish_true_label)
 
     # Иначе будем проверять и второй
-    right.compile_vm(commands, data)
+    node.right.compile_vm(commands, data)
     commands.clean_type()
 
     # Если второй операнд != 0, то переходим к метке истинного результата
@@ -94,12 +94,12 @@ def or_bexp(commands, data, left, right):
     return commands.set_and_return_type(Types.BOOL)
 
 
-def not_bexp(commands, data, exp):
+def not_bexp(commands, data, node):
     """ Компиляция оператора логического "НЕ" (not) """
     finish_label = data.label()
     finish_false_label = data.label()
 
-    exp.compile_vm(commands, data)
+    node.exp.compile_vm(commands, data)
     commands.clean_type()
 
     # Если операнд == 0, переходим в секцию ложного результата

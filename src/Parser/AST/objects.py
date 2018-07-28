@@ -19,9 +19,6 @@ class Object(AST):
     def interpret(self, env):
         return interpreter.object_def(env, self.elements)
 
-    def compile_vm(self, commands, data):
-        return compile_vm.object_def(commands, data, self.elements)
-
 
 class ObjectValDef(AST):
     def __init__(self, name, value):
@@ -34,13 +31,9 @@ class ObjectValDef(AST):
     def interpret(self, env):
         return interpreter.object_val_def(env, self.name, self.value)
 
-    def compile_vm(self, commands, data):
-        return compile_vm.object_val_def(commands, data, self.name, self.value)
-
 
 class ObjectMethodDef(Function):
-    def compile_vm(self, commands, data):
-        return compile_vm.object_method_def(commands, data, self.name, self.args, self.body)
+    pass
 
 
 class ObjectVal(AST):
@@ -55,9 +48,6 @@ class ObjectVal(AST):
     def interpret(self, env):
         return interpreter.object_val(env, self.object_name, self.prop_name, self.other_prop_names)
 
-    def compile_vm(self, commands, data):
-        return compile_vm.object_val(commands, data, self.object_name, self.prop_name, self.other_prop_names, self.context)
-
 
 class ObjectMethod(AST):
     def __init__(self, object_name, method_name, args):
@@ -69,6 +59,3 @@ class ObjectMethod(AST):
 
     def interpret(self, env):
         return interpreter.object_method(env, self.object_name, self.method_name, self.args)
-
-    def compile_vm(self, commands, data):
-        return compile_vm.object_method(commands, data, self.object_name, self.method_name, self.args)

@@ -23,9 +23,6 @@ class AssignStatement(AST):
     def interpret(self, env):
         return interpreter.assign_statement(env, self.variable, self.aexp)
 
-    def compile_vm(self, commands, data):
-        return compile_vm.assign_statement(commands, data, self.variable, self.aexp)
-
 
 class CompoundStatement(AST):
     """
@@ -41,9 +38,6 @@ class CompoundStatement(AST):
 
     def interpret(self, env):
         return interpreter.compound_statement(env, self.first, self.second)
-
-    def compile_vm(self, commands, data):
-        return compile_vm.compound_statement(commands, data, self.first, self.second)
 
 
 class IfStatement(AST):
@@ -64,9 +58,6 @@ class IfStatement(AST):
     def interpret(self, env):
         return interpreter.if_statement(env, self.condition, self.true_stmt, self.alternatives_stmt, self.false_stmt)
 
-    def compile_vm(self, commands, data, label_endif=None):
-        return compile_vm.if_statement(commands, data, self.condition, self.true_stmt, self.alternatives_stmt, self.false_stmt, label_endif)
-
 
 class WhileStatement(AST):
     """
@@ -82,9 +73,6 @@ class WhileStatement(AST):
 
     def interpret(self, env):
         return interpreter.while_statement(env, self.condition, self.body)
-
-    def compile_vm(self, commands, data):
-        return compile_vm.while_statement(commands, data, self.condition, self.body)
 
 
 class ForStatement(AST):
@@ -104,9 +92,6 @@ class ForStatement(AST):
     def interpret(self, env):
         return interpreter.for_statement(env, self.stmt1, self.stmt2, self.stmt3, self.body)
 
-    def compile_vm(self, commands, data):
-        return compile_vm.for_statement(commands, data, self.stmt1, self.stmt2, self.stmt3, self.body)
-
 
 class RepeatStatement(AST):
     """
@@ -123,9 +108,6 @@ class RepeatStatement(AST):
     def interpret(self, env):
         return interpreter.repeat_statement(env, self.condition, self.body)
 
-    def compile_vm(self, commands, data):
-        return compile_vm.repeat_statement(commands, data, self.condition, self.body)
-
 
 class SkipStatement(AST):
     def __init__(self):
@@ -137,6 +119,3 @@ class SkipStatement(AST):
     """
     def interpret(self, env):
         return interpreter.skip_statement(env)
-
-    def compile_vm(self, commands, data):
-        return compile_vm.skip_statement(commands, data)

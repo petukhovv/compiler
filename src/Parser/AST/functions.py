@@ -25,9 +25,6 @@ class Function(AST):
     def interpret(self, env):
         return interpreter.function(env, self.name, self.args, self.body)
 
-    def compile_vm(self, commands, data):
-        return compile_vm.function(commands, data, self.name, self.args, self.body)
-
 
 class ReturnStatement(AST):
     """
@@ -42,9 +39,6 @@ class ReturnStatement(AST):
 
     def interpret(self, env):
         return interpreter.return_statement(env, self.expr)
-
-    def compile_vm(self, commands, data):
-        return compile_vm.return_statement(commands, data, self.expr)
 
 
 class FunctionCallStatement(AST):
@@ -70,6 +64,3 @@ class FunctionCallStatement(AST):
             args_counter += 1
         fun['body'].interpret(func_env)
         return func_env['r']
-
-    def compile_vm(self, commands, data):
-        return compile_vm.call_statement(commands, data, self.name, self.args)

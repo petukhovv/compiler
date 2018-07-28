@@ -6,14 +6,16 @@ from .Helpers.commands import *
 from .functions import function as compile_function
 from .functions import call_statement as compile_call_statement
 
+from copy import copy
+
 objects = sys.modules['Parser.AST.objects']
 
 
-def object_def(commands, data, elements):
+def object_def(commands, data, node):
     object_var = data.create_var(type=Types.OBJECT)
     data.context_objects.append(object_var)
 
-    for element in elements.elements:
+    for element in node.elements.elements:
         if isinstance(element, objects.ObjectValDef):
             var = data.create_var(alias=element.name.name, type=Types.DYNAMIC, double_size=True, object_namespace=object_var)
             element.compile_vm(commands, data)
@@ -28,25 +30,28 @@ def object_def(commands, data, elements):
     return commands.set_and_return_type(Types.OBJECT)
 
 
-def object_val_def(commands, data, name, value):
-    prop_var = data.get_var(name.name, object_namespace=data.context_objects[-1])
-    value.compile_vm(commands, data)
+def object_val_def(commands, data, node):
+    prop_var = data.get_var(node.name.name, object_namespace=data.context_objects[-1])
+    node.value.compile_vm(commands, data)
     commands.store_value(prop_var, type=Types.DYNAMIC)
 
 
-def object_method_def(commands, data, name, args, body):
-    return compile_function(commands, data, "o%s!%s" % (data.context_objects[-1], name), args, body)
+def object_method_def(commands, data, node):
+    new_node = copy(node)
+    new_node.name = "o%s!%s" % (data.context_objects[-1], node.name)
+
+    return compile_function(commands, data, new_node)
 
 
-def object_val(commands, data, object_name, prop_name, other_prop_names, context):
-    if object_name == 'this':
+def object_val(commands, data, node):
+    if node.object_name == 'this':
         obj_var = data.context_objects[-1]
     else:
-        obj_var = data.get_object_name(data.get_var(object_name, is_root=True))
+        obj_var = data.get_object_name(data.get_var(node.object_name, is_root=True))
 
-    prop_var = data.get_object_property(obj_var, prop_name, Types.DYNAMIC)
+    prop_var = data.get_object_property(obj_var, node.prop_name, Types.DYNAMIC)
 
-    if context == 'assign':
+    if node.context == 'assign':
         commands.store_value(prop_var, type=Types.DYNAMIC, is_parent_scope=len(data.context_objects) > 0)
     else:
         commands.load_value(prop_var, is_parent_scope=len(data.context_objects) > 0)
@@ -54,10 +59,13 @@ def object_val(commands, data, object_name, prop_name, other_prop_names, context
     return Types.DYNAMIC
 
 
-def object_method(commands, data, object_name, method_name, args):
-    if object_name == 'this':
+def object_method(commands, data, node):
+    if node.object_name == 'this':
         obj_var = data.context_objects[-1]
     else:
-        obj_var = data.get_object_name(data.get_var(object_name, is_root=True))
+        obj_var = data.get_object_name(data.get_var(node.object_name, is_root=True))
 
-    return compile_call_statement(commands, data, "o%s!%s" % (obj_var, method_name), args)
+    new_node = copy(node)
+    new_node.name = "o%s!%s" % (obj_var, node.method_name)
+
+    return compile_call_statement(commands, data, new_node)

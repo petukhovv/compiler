@@ -48,6 +48,10 @@ if args.stack_machine:
     ast = parse_program(target_file)
     vm_program = compile_vm(ast)
     commands = vm_parse(vm_program)
+
+    with open('commands.s', 'w') as f:
+        f.write(vm_program)
+
     vm_interpret(commands)
 
 if args.compile:

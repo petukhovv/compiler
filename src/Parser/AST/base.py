@@ -2,6 +2,7 @@ import sys
 
 
 COMPILER_ASM_MODULE = "Compiler.ASM"
+COMPILER_VM_MODULE = "Compiler.VM"
 
 
 class AST:
@@ -13,3 +14,8 @@ class AST:
         module = sys.modules["%s.%s" % (COMPILER_ASM_MODULE, self._class)]
 
         return getattr(module, self._name)(compiler, self)
+
+    def compile_vm(self, commands, data):
+        module = sys.modules["%s.%s" % (COMPILER_VM_MODULE, self._class)]
+
+        return getattr(module, self._name)(commands, data, self)

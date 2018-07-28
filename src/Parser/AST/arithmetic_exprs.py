@@ -21,9 +21,6 @@ class IntAexp(AST):
     def interpret(self, env):
         return interpreter.int_aexp(env, self.i)
 
-    def compile_vm(self, commands, data):
-        return compile_vm.int_aexp(commands, data, self.i)
-
 
 class VarAexp(AST):
     """
@@ -40,9 +37,6 @@ class VarAexp(AST):
 
     def interpret(self, env):
         return interpreter.var_aexp(env, self.name)
-
-    def compile_vm(self, commands, data):
-        return compile_vm.var_aexp(commands, data, self.name, self.context, self.type)
 
 
 class BinopAexp(AST):
@@ -61,6 +55,3 @@ class BinopAexp(AST):
 
     def interpret(self, env):
         return interpreter.binop_aexp(env, self.op, self.left, self.right)
-
-    def compile_vm(self, commands, data):
-        return compile_vm.binop_aexp(commands, data, self.op, self.left, self.right)

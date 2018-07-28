@@ -3,17 +3,17 @@
 from .Deep.arrays import *
 
 
-def arrmake(commands, data, args, type):
+def arrmake(commands, data, node):
     """ Компиляция built-in функции arrmake / Arrmake для создания boxed и unboxed массивов """
-    type = Types.BOXED_ARR if type == 'boxed' else Types.UNBOXED_ARR
+    type = Types.BOXED_ARR if node.type == 'boxed' else Types.UNBOXED_ARR
 
     # Если были переданы default values (2-м аргументом), смотрим, в каком именно формате
-    if len(args.elements) == 2:
-        default_value_type = args.elements[1].compile_vm(commands, data)
+    if len(node.args.elements) == 2:
+        default_value_type = node.args.elements[1].compile_vm(commands, data)
         commands.clean_type()
         # Если вторым аргументом был передан [] или {}, то дублируемым элементом будет 0
         # ( сигнатура: arrmake(n, []), Arrmake(n, {}) )
-        if default_value_type == type and len(args.elements[1].elements.elements) == 0:
+        if default_value_type == type and len(node.args.elements[1].elements.elements) == 0:
             # Очищаем указатель на пустой массив
             # TODO: после реализации GC сделать здесь delete массива
             commands.add(Pop)
@@ -29,7 +29,7 @@ def arrmake(commands, data, args, type):
     else:
         default_values_variant = 'none'
 
-    args.elements[0].compile_vm(commands, data)
+    node.args.elements[0].compile_vm(commands, data)
     commands.clean_type()
 
     ArrayCompiler.arrmake(commands, data, default_values_variant)
@@ -37,11 +37,11 @@ def arrmake(commands, data, args, type):
     return commands.set_and_return_type(type)
 
 
-def arrmake_inline(commands, data, elements, type):
+def arrmake_inline(commands, data, node):
     """ Компиляция конструкции inline задания boxed и unboxed массивов: [n1, n2, ...] / {a1, a2, ...}  """
-    type = Types.BOXED_ARR if type == 'boxed' else Types.UNBOXED_ARR
+    type = Types.BOXED_ARR if node.type == 'boxed' else Types.UNBOXED_ARR
 
-    arr_elements = elements.compile_vm(commands, data)
+    arr_elements = node.elements.compile_vm(commands, data)
 
     for element in reversed(arr_elements):
         if type == Types.BOXED_ARR:
@@ -61,9 +61,9 @@ def arrmake_inline(commands, data, elements, type):
     return commands.set_and_return_type(type)
 
 
-def array_element(commands, data, array, index, other_indexes, context):
+def array_element(commands, data, node):
     """ Компиляция оператора получения элемента массива: A[n] """
-    var_number = data.get_var(array)
+    var_number = data.get_var(node.array)
     var_type = data.get_type(var_number)
 
     # Компилируем получение указателя на начало массива
@@ -71,7 +71,7 @@ def array_element(commands, data, array, index, other_indexes, context):
     commands.clean_type()
 
     # Компилируем получение индекса
-    index.compile_vm(commands, data)
+    node.index.compile_vm(commands, data)
     commands.clean_type()
 
     def other_index_compile(other_index):
@@ -79,27 +79,27 @@ def array_element(commands, data, array, index, other_indexes, context):
         other_index.compile_vm(commands, data)
         commands.clean_type()
 
-    if context == 'assign':
+    if node.context == 'assign':
         # Если несколько последовательных индексов, разыменовываем каждый
-        if other_indexes is not None:
-            for other_index in other_indexes:
+        if node.other_indexes is not None:
+            for other_index in node.other_indexes:
                 ArrayCompiler.get_element(commands, data, var_type)
                 other_index_compile(other_index)
         ArrayCompiler.set_element(commands, data, var_type)
     else:
         ArrayCompiler.get_element(commands, data, var_type)
         # Если несколько последовательных индексов, разыменовываем каждый
-        if other_indexes is not None:
-            for other_index in other_indexes:
+        if node.other_indexes is not None:
+            for other_index in node.other_indexes:
                 other_index_compile(other_index)
                 ArrayCompiler.get_element(commands, data, var_type)
 
     return Types.DYNAMIC
 
 
-def arrlen(commands, data, args):
+def arrlen(commands, data, node):
     """ Компиляция built-in функции arrlen для получения длины массива """
-    args.elements[0].compile_vm(commands, data)
+    node.args.elements[0].compile_vm(commands, data)
     commands.clean_type()
 
     ArrayCompiler.arrlen(commands, data)

@@ -30,6 +30,3 @@ class Enumeration(AST):
 
     def interpret(self):
         return interpreter.enumeration(self.elements)
-
-    def compile_vm(self, commands, data):
-        return compile_vm.enumeration(commands, data, self.elements)
