@@ -13,21 +13,21 @@ relop_compare_map = {
 }
 
 
-def relop_bexp(compiler, op, left, right):
+def relop_bexp(compiler, node):
     """ Logic expression compilation """
     finish_label = compiler.labels.create()
     true_result_label = compiler.labels.create()
 
-    left.compile_asm(compiler)
+    node.left.compile_asm(compiler)
     compiler.types.pop()
-    right.compile_asm(compiler)
+    node.right.compile_asm(compiler)
     compiler.types.pop()
 
     compiler.code.add(Commands.POP, Registers.EBX)\
         .add(Commands.POP, Registers.EAX)\
         .add(Commands.CMP, [Registers.EBX, Registers.EAX])\
         .add(Commands.MOV, [Registers.EAX, 0])\
-        .add(relop_compare_map[op], true_result_label)
+        .add(relop_compare_map[node.op], true_result_label)
 
     compiler.code.add(Commands.MOV, [Registers.EAX, 0])\
         .add(Commands.JMP, finish_label)
@@ -41,12 +41,12 @@ def relop_bexp(compiler, op, left, right):
     return compiler.types.set(Types.INT)
 
 
-def and_bexp(compiler, left, right):
+def and_bexp(compiler, node):
     """ 'AND' operator compilation """
     finish_label = compiler.labels.create()
     false_result_label = compiler.labels.create()
 
-    left.compile_asm(compiler)
+    node.left.compile_asm(compiler)
     compiler.types.pop()
     compiler.code.add(Commands.POP, Registers.EAX)
 
@@ -56,7 +56,7 @@ def and_bexp(compiler, left, right):
         .add(Commands.JZ, false_result_label)
 
     # Otherwise, we will check the second operand
-    right.compile_asm(compiler)
+    node.right.compile_asm(compiler)
     compiler.types.pop()
     compiler.code.add(Commands.POP, Registers.EAX)
 
@@ -80,12 +80,12 @@ def and_bexp(compiler, left, right):
     return compiler.types.set(Types.BOOL)
 
 
-def or_bexp(compiler, left, right):
+def or_bexp(compiler, node):
     """ 'OR' operator compilation """
     finish_label = compiler.labels.create()
     finish_true_label = compiler.labels.create()
 
-    left.compile_asm(compiler)
+    node.left.compile_asm(compiler)
     compiler.types.pop()
     compiler.code.add(Commands.POP, Registers.EAX)
 
@@ -95,7 +95,7 @@ def or_bexp(compiler, left, right):
         .add(Commands.JNZ, finish_true_label)
 
     # Otherwise, we will check the second operand
-    right.compile_asm(compiler)
+    node.right.compile_asm(compiler)
     compiler.types.pop()
     compiler.code.add(Commands.POP, Registers.EAX)
 
@@ -119,12 +119,12 @@ def or_bexp(compiler, left, right):
     return compiler.types.set(Types.BOOL)
 
 
-def not_bexp(compiler, exp):
+def not_bexp(compiler, node):
     """ 'NOT' operator compilation """
     finish_label = compiler.labels.create()
     false_result_label = compiler.labels.create()
-    
-    exp.compile_asm(compiler)
+
+    node.exp.compile_asm(compiler)
     compiler.types.pop()
     compiler.code.add(Commands.POP, Registers.EAX)
 

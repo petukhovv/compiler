@@ -2,11 +2,15 @@ from Compiler.VM import strings as compile_vm
 from Interpreter import strings as interpreter
 from Compiler.ASM import strings as compile_asm
 
-from .base import *
+from .base import AST
+
+CLASS = "strings"
 
 
-class Char(Stackable):
+class Char(AST):
     def __init__(self, character):
+        super().__init__(CLASS, "char")
+
         self.character = character
 
     def interpret(self, env):
@@ -15,12 +19,11 @@ class Char(Stackable):
     def compile_vm(self, commands, data):
         return compile_vm.char(commands, data, self.character)
 
-    def compile_asm(self, compiler):
-        return compile_asm.char(compiler, self.character)
 
-
-class String(Heapable):
+class String(AST):
     def __init__(self, characters):
+        super().__init__(CLASS, "string")
+
         self.characters = characters
 
     def interpret(self, env):
@@ -29,12 +32,11 @@ class String(Heapable):
     def compile_vm(self, commands, data):
         return compile_vm.string(commands, data, self.characters)
 
-    def compile_asm(self, compiler):
-        return compile_asm.string(compiler, self.characters)
 
-
-class StrLen(Stackable):
+class StrLen(AST):
     def __init__(self, args):
+        super().__init__(CLASS, "strlen")
+
         self.args = args
         self.children = [args]
 
@@ -44,12 +46,11 @@ class StrLen(Stackable):
     def compile_vm(self, commands, data):
         return compile_vm.strlen(commands, data, self.args)
 
-    def compile_asm(self, compiler):
-        return compile_asm.strlen(compiler, self.args)
 
-
-class StrGet(Stackable):
+class StrGet(AST):
     def __init__(self, args):
+        super().__init__(CLASS, "strget")
+
         self.args = args
         self.children = [args]
 
@@ -59,12 +60,11 @@ class StrGet(Stackable):
     def compile_vm(self, commands, data):
         return compile_vm.strget(commands, data, self.args)
 
-    def compile_asm(self, compiler):
-        return compile_asm.strget(compiler, self.args)
 
-
-class StrSub(Heapable):
+class StrSub(AST):
     def __init__(self, args):
+        super().__init__(CLASS, "strsub")
+
         self.args = args
         self.children = [args]
 
@@ -74,12 +74,11 @@ class StrSub(Heapable):
     def compile_vm(self, commands, data):
         return compile_vm.strsub(commands, data, self.args)
 
-    def compile_asm(self, compiler):
-        return compile_asm.strsub(compiler, self.args)
 
-
-class StrDup(Heapable):
+class StrDup(AST):
     def __init__(self, args):
+        super().__init__(CLASS, "strdup")
+
         self.args = args
         self.children = [args]
 
@@ -89,12 +88,11 @@ class StrDup(Heapable):
     def compile_vm(self, commands, data):
         return compile_vm.strdup(commands, data, self.args)
 
-    def compile_asm(self, compiler):
-        return compile_asm.strdup(compiler, self.args)
 
-
-class StrSet:
+class StrSet(AST):
     def __init__(self, args):
+        super().__init__(CLASS, "strset")
+
         self.args = args
         self.children = [args]
 
@@ -104,12 +102,11 @@ class StrSet:
     def compile_vm(self, commands, data):
         return compile_vm.strset(commands, data, self.args)
 
-    def compile_asm(self, compiler):
-        return compile_asm.strset(compiler, self.args)
 
-
-class StrCat(Heapable):
+class StrCat(AST):
     def __init__(self, args):
+        super().__init__(CLASS, "strcat")
+
         self.args = args
         self.children = [args]
 
@@ -119,12 +116,11 @@ class StrCat(Heapable):
     def compile_vm(self, commands, data):
         return compile_vm.strcat(commands, data, self.args)
 
-    def compile_asm(self, compiler):
-        return compile_asm.strcat(compiler, self.args)
 
-
-class StrCmp:
+class StrCmp(AST):
     def __init__(self, args):
+        super().__init__(CLASS, "strcmp")
+
         self.args = args
         self.children = [args]
 
@@ -134,12 +130,11 @@ class StrCmp:
     def compile_vm(self, commands, data):
         return compile_vm.strcmp(commands, data, self.args)
 
-    def compile_asm(self, compiler):
-        return compile_asm.strcmp(compiler, self.args)
 
-
-class StrMake:
+class StrMake(AST):
     def __init__(self, args):
+        super().__init__(CLASS, "strmake")
+
         self.args = args
         self.children = [args]
 
@@ -148,6 +143,3 @@ class StrMake:
 
     def compile_vm(self, commands, data):
         return compile_vm.strmake(commands, data, self.args)
-
-    def compile_asm(self, compiler):
-        return compile_asm.strmake(compiler, self.args)

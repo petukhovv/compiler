@@ -1,2 +1,2 @@
-def enumeration(compiler, elements):
-    return elements
+def enumeration(compiler, node):
+    return node.elements

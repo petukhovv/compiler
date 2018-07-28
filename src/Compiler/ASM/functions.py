@@ -8,9 +8,9 @@ from .Runtime.gc import GC
 from .Deep.functions import return_function
 
 
-def function(compiler, name, args, body):
+def function(compiler, node):
     """ Компиляция функций (объявление, вызов, исполнение, возврат к месту вызова) """
-    function_number = compiler.environment.start(name)
+    function_number = compiler.environment.start(node.name)
     finish_function = compiler.labels.create()
     function_start_place = compiler.code.get_current_place() + 4
 
@@ -25,13 +25,13 @@ def function(compiler, name, args, body):
         .add(Commands.MOV, [Registers.EBP, Registers.ESP])
 
     # Привязываем мапу аргументов с их порядковыми номерами к метке функции
-    args_map = {k: v for v, k in enumerate(reversed(args.elements))}
+    args_map = {k: v for v, k in enumerate(reversed(node.args.elements))}
     compiler.environment.set_args(args_map)
 
     # Компилируем код тела функции
-    body.compile_asm(compiler)
+    node.body.compile_asm(compiler)
 
-    return_type = compiler.environment.get_return_type(name)
+    return_type = compiler.environment.get_return_type(node.name)
 
     if not return_type:
         compiler.types.set(Types.NOTHING)
@@ -43,10 +43,10 @@ def function(compiler, name, args, body):
     compiler.code.allocate_stack_memory(need_memory, function_start_place)
 
 
-def return_statement(compiler, expr):
+def return_statement(compiler, node):
     """ Компиляция выражения возврата к месту вызова """
     args = compiler.environment.get_args()
-    return_type = expr.compile_asm(compiler)
+    return_type = node.expr.compile_asm(compiler)
     compiler.environment.set_return_type(return_type)
 
     compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s + 4]' % Registers.ESP])
@@ -56,18 +56,18 @@ def return_statement(compiler, expr):
     return_function(compiler, args)
 
 
-def call_statement(compiler, name, args):
+def call_statement(compiler, node):
     """ Компиляция выражения вызова функции """
-    for arg in args.elements:
+    for arg in node.args.elements:
         arg.compile_asm(compiler)
         compiler.code.add(Commands.MOV, [Registers.EBX, 'dword [%s]' % Registers.ESP])
         compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s + 4]' % Registers.ESP])
         GC(compiler).increment()
 
-    function_number = compiler.environment.get_number(name)
+    function_number = compiler.environment.get_number(node.name)
     compiler.code.add(Commands.CALL, FUNCTIONS_LABEL_PREFIX + str(function_number))
 
     compiler.code.add(Commands.PUSH, Registers.EAX)
-    compile_time_type = compiler.environment.get_return_type(name)
+    compile_time_type = compiler.environment.get_return_type(node.name)
 
     return compiler.types.set(compile_time_type)

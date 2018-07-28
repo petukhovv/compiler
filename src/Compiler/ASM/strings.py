@@ -3,16 +3,16 @@
 from .Deep.strings import *
 
 
-def char(compiler, character):
+def char(compiler, node):
     """ Компиляция выражения "символ" """
-    compiler.code.add(Commands.PUSH, ord(character))
+    compiler.code.add(Commands.PUSH, ord(node.character))
 
     return compiler.types.set(Types.CHAR)
 
 
-def string(compiler, characters):
+def string(compiler, node):
     """ Компиляция выражения "строка" """
-    str_length = len(characters)
+    str_length = len(node.characters)
     str_pointer = compiler.environment.add_local_var(size=str_length + 5)
 
     compiler.code.add(Commands.MOV, [Registers.EAX, str_pointer['pointer']])\
@@ -20,7 +20,7 @@ def string(compiler, characters):
         .add(Commands.MOV, ['dword [%s-%d]' % (str_pointer['pointer'], str_pointer['offset']), Registers.EAX])\
         .add(Commands.MOV, ['byte [%s-%d]' % (str_pointer['pointer'], str_pointer['offset'] + 4), 0])
 
-    for i, character in enumerate(reversed(characters)):
+    for i, character in enumerate(reversed(node.characters)):
         compiler.code.add(Commands.MOV,
                           ['byte [%s-%d]' % (str_pointer['pointer'], i + 5 + str_pointer['offset']), ord(character)])
 
@@ -30,9 +30,9 @@ def string(compiler, characters):
     return compiler.types.set(Types.STRING)
 
 
-def strlen(compiler, args):
+def strlen(compiler, node):
     """ Компиляция built-in функции strlen (длина строки) """
-    args.elements[0].compile_asm(compiler)
+    node.args.elements[0].compile_asm(compiler)
     compiler.types.pop()
 
     StringCompiler.strlen(compiler)
@@ -40,56 +40,56 @@ def strlen(compiler, args):
     return compiler.types.set(Types.INT)
 
 
-def strget(compiler, args):
+def strget(compiler, node):
     """ Компиляция built-in функции strget (получение символа строки) """
     # Порядок компиляции аргументов здесь и ниже задаём удобным для дальнейшей работы образом
-    args.elements[1].compile_asm(compiler)
+    node.args.elements[1].compile_asm(compiler)
     compiler.types.pop()
-    args.elements[0].compile_asm(compiler)
+    node.args.elements[0].compile_asm(compiler)
     compiler.types.pop()
     StringCompiler.strget(compiler)
 
     return compiler.types.set(Types.CHAR)
 
 
-def strset(compiler, args):
+def strset(compiler, node):
     """ Компиляция built-in функции strset (задание символа строки) """
-    args.elements[2].compile_asm(compiler)
+    node.args.elements[2].compile_asm(compiler)
     compiler.types.pop()
-    args.elements[1].compile_asm(compiler)
+    node.args.elements[1].compile_asm(compiler)
     compiler.types.pop()
-    args.elements[0].compile_asm(compiler)
+    node.args.elements[0].compile_asm(compiler)
     compiler.types.pop()
     StringCompiler.strset(compiler)
 
 
-def strsub(compiler, args):
+def strsub(compiler, node):
     """ Компиляция built-in функции strsub (взятие подстроки строки) """
-    args.elements[1].compile_asm(compiler)
+    node.args.elements[1].compile_asm(compiler)
     compiler.types.pop()
-    args.elements[0].compile_asm(compiler)
+    node.args.elements[0].compile_asm(compiler)
     compiler.types.pop()
-    args.elements[2].compile_asm(compiler)
+    node.args.elements[2].compile_asm(compiler)
     compiler.types.pop()
     StringCompiler.strsub(compiler)
 
     return compiler.types.set(Types.STRING)
 
 
-def strdup(compiler, args):
+def strdup(compiler, node):
     """ Компиляция built-in функции strdup (дублирование строки) """
-    args.elements[0].compile_asm(compiler)
+    node.args.elements[0].compile_asm(compiler)
     compiler.types.pop()
     StringCompiler.strdup(compiler)
 
     return compiler.types.set(Types.STRING)
 
 
-def strcat(compiler, args):
+def strcat(compiler, node):
     """ Компиляция built-in функции strcat (конкатенация двух строк) """
-    args.elements[0].compile_asm(compiler)
+    node.args.elements[0].compile_asm(compiler)
     compiler.types.pop()
-    args.elements[1].compile_asm(compiler)
+    node.args.elements[1].compile_asm(compiler)
     compiler.types.pop()
 
     StringCompiler.strcat_calc_length(compiler)
@@ -98,22 +98,22 @@ def strcat(compiler, args):
     return compiler.types.set(Types.STRING)
 
 
-def strmake(compiler, args):
+def strmake(compiler, node):
     """ Компиляция built-in функции strmake (создание строки из n одинаковых символов) """
-    args.elements[1].compile_asm(compiler)
+    node.args.elements[1].compile_asm(compiler)
     compiler.types.pop()
-    args.elements[0].compile_asm(compiler)
+    node.args.elements[0].compile_asm(compiler)
     compiler.types.pop()
     StringCompiler.strmake(compiler)
 
     return compiler.types.set(Types.STRING)
 
 
-def strcmp(compiler, args):
+def strcmp(compiler, node):
     """ Компиляция built-in функции strcmp (посимвольное сравнение двух строк) """
-    args.elements[0].compile_asm(compiler)
+    node.args.elements[0].compile_asm(compiler)
     compiler.types.pop()
-    args.elements[1].compile_asm(compiler)
+    node.args.elements[1].compile_asm(compiler)
     compiler.types.pop()
     StringCompiler.strcmp(compiler)
 

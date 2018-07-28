@@ -4,13 +4,19 @@ from Compiler.VM import functions as compile_vm
 from Compiler.ASM import functions as compile_asm
 from Interpreter import functions as interpreter
 
+from .base import AST
 
-class Function:
+CLASS = "functions"
+
+
+class Function(AST):
     """
     'Function' statement class for AST.
     interpret - runtime function for Evaluator (empty function).
     """
     def __init__(self, name, args, body):
+        super().__init__(CLASS, "function")
+
         self.name = name
         self.args = args
         self.body = body
@@ -22,16 +28,15 @@ class Function:
     def compile_vm(self, commands, data):
         return compile_vm.function(commands, data, self.name, self.args, self.body)
 
-    def compile_asm(self, compiler):
-        return compile_asm.function(compiler, self.name, self.args, self.body)
 
-
-class ReturnStatement:
+class ReturnStatement(AST):
     """
     'Return' statement class for AST.
     interpret - runtime function for Evaluator (empty function).
     """
     def __init__(self, expr):
+        super().__init__(CLASS, "return_statement")
+
         self.expr = expr
         self.children = [expr]
 
@@ -41,16 +46,15 @@ class ReturnStatement:
     def compile_vm(self, commands, data):
         return compile_vm.return_statement(commands, data, self.expr)
 
-    def compile_asm(self, compiler):
-        return compile_asm.return_statement(compiler, self.expr)
 
-
-class FunctionCallStatement:
+class FunctionCallStatement(AST):
     """
     'Function call' statement class for AST.
     interpret - runtime function for Evaluator (empty function).
     """
     def __init__(self, name, args):
+        super().__init__(CLASS, "call_statement")
+
         self.name = name
         self.args = args
         self.children = [args]
@@ -69,6 +73,3 @@ class FunctionCallStatement:
 
     def compile_vm(self, commands, data):
         return compile_vm.call_statement(commands, data, self.name, self.args)
-
-    def compile_asm(self, compiler):
-        return compile_asm.call_statement(compiler, self.name, self.args)

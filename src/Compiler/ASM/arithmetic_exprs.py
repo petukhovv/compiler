@@ -27,29 +27,29 @@ binop_compare_map = {
 }
 
 
-def int_aexp(compiler, i):
+def int_aexp(compiler, node):
     """ Integer compilation """
-    compiler.code.add(Commands.MOV, [Registers.EAX, i])\
+    compiler.code.add(Commands.MOV, [Registers.EAX, node.i])\
         .add(Commands.PUSH, Registers.EAX)
 
     return compiler.types.set(Types.INT)
 
 
-def binop_aexp(compiler, op, left, right):
+def binop_aexp(compiler, node):
     """ Arithmetic expression compilation """
-    left.compile_asm(compiler)
+    node.left.compile_asm(compiler)
     compiler.types.pop()
-    right.compile_asm(compiler)
+    node.right.compile_asm(compiler)
     compiler.types.pop()
     compiler.code.add(Commands.POP, Registers.EBX)\
         .add(Commands.POP, Registers.EAX)
 
-    if op == '/' or op == '%':
+    if node.op == '/' or node.op == '%':
         compiler.code.add(Commands.CDQ)
 
-    compiler.code.add(binop_compare_map[op]['operator'], binop_compare_map[op]['operands'])
+    compiler.code.add(binop_compare_map[node.op]['operator'], binop_compare_map[node.op]['operands'])
 
-    if op == '%':
+    if node.op == '%':
         compiler.code.add(Commands.MOV, [Registers.EAX, Registers.EDX])
 
     compiler.code.add(Commands.PUSH, Registers.EAX)
@@ -57,24 +57,24 @@ def binop_aexp(compiler, op, left, right):
     return compiler.types.set(Types.INT)
 
 
-def var_aexp(compiler, name, context, value_type):
+def var_aexp(compiler, node):
     """ Variable compilation """
-    if context == 'assign':
+    if node.context == 'assign':
         gc = GC(compiler)
 
-        if compiler.environment.is_exist_local_var(name):
-            var = compiler.environment.get_local_var(name)
-            var_type = compiler.environment.get_local_var_runtime_type(name)
+        if compiler.environment.is_exist_local_var(node.name):
+            var = compiler.environment.get_local_var(node.name)
+            var_type = compiler.environment.get_local_var_runtime_type(node.name)
             compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s]' % Registers.ESP])
             compiler.code.add(Commands.MOV, [var_type, Registers.EAX])
-            compiler.environment.update_local_var_type(name, value_type)
+            compiler.environment.update_local_var_type(node.name, node.type)
 
             compiler.code.add(Commands.MOV, [Registers.EAX, var])
             compiler.code.add(Commands.MOV, [Registers.EBX, var_type])
             gc.decrement()
         else:
-            var = compiler.environment.add_local_var(value_type, name)
-            var_type = compiler.environment.get_local_var_runtime_type(name)
+            var = compiler.environment.add_local_var(node.type, node.name)
+            var_type = compiler.environment.get_local_var_runtime_type(node.name)
 
         if compiler.environment.defined_object is not None:
             compiler.environment.set_link_object(var, compiler.environment.defined_object)
@@ -87,10 +87,10 @@ def var_aexp(compiler, name, context, value_type):
         compiler.code.add(Commands.POP, var_type)
         compiler.code.add(Commands.POP, var)
     else:
-        compiler.code.add(Commands.MOV, [Registers.EAX, compiler.environment.get_local_var(name)])\
+        compiler.code.add(Commands.MOV, [Registers.EAX, compiler.environment.get_local_var(node.name)])\
             .add(Commands.PUSH, Registers.EAX)
-        runtime_var_type = compiler.environment.get_local_var_runtime_type(name)
+        runtime_var_type = compiler.environment.get_local_var_runtime_type(node.name)
         compiler.types.set(runtime_var_type)
 
-        var_type = compiler.environment.get_local_var_type(name)
+        var_type = compiler.environment.get_local_var_type(node.name)
         return var_type

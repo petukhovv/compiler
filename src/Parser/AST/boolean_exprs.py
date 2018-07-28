@@ -2,14 +2,20 @@ from Compiler.ASM import boolean_exprs as compile_asm
 from Compiler.VM import boolean_exprs as compile_vm
 from Interpreter import boolean_exprs as interpreter
 
+from .base import AST
 
-class RelopBexp:
+CLASS = "boolean_exprs"
+
+
+class RelopBexp(AST):
     """
     Relation operation boolean expression class for AST.
     interpret - runtime function for Evaluator (return result of applying the boolean operation to left and right values).
     Example: x > 56
     """
     def __init__(self, op, left, right):
+        super().__init__(CLASS, "relop_bexp")
+
         self.op = op
         self.left = left
         self.right = right
@@ -21,17 +27,16 @@ class RelopBexp:
     def compile_vm(self, commands, data):
         return compile_vm.relop_bexp(commands, data, self.op, self.left, self.right)
 
-    def compile_asm(self, compiler):
-        return compile_asm.relop_bexp(compiler, self.op, self.left, self.right)
 
-
-class AndBexp:
+class AndBexp(AST):
     """
     'And' operation boolean expression class for AST.
     interpret - runtime function for Evaluator (return result of applying the 'and' operation to left and right values).
     Example: x > 56 and x < 61
     """
     def __init__(self, left, right):
+        super().__init__(CLASS, "and_bexp")
+
         self.left = left
         self.right = right
         self.children = [left, right]
@@ -42,17 +47,16 @@ class AndBexp:
     def compile_vm(self, commands, data):
         return compile_vm.and_bexp(commands, data, self.left, self.right)
 
-    def compile_asm(self, compiler):
-        return compile_asm.and_bexp(compiler, self.left, self.right)
 
-
-class OrBexp:
+class OrBexp(AST):
     """
     'Or' operation boolean expression class for AST.
     interpret - runtime function for Evaluator (return result of applying the 'or' operation to left and right values).
     Example: x < 11 or x > 100
     """
     def __init__(self, left, right):
+        super().__init__(CLASS, "or_bexp")
+
         self.left = left
         self.right = right
         self.children = [left, right]
@@ -63,17 +67,16 @@ class OrBexp:
     def compile_vm(self, commands, data):
         return compile_vm.or_bexp(commands, data, self.left, self.right)
 
-    def compile_asm(self, compiler):
-        return compile_asm.or_bexp(compiler, self.left, self.right)
 
-
-class NotBexp:
+class NotBexp(AST):
     """
     'Not' operation boolean expression class for AST.
     interpret - runtime function for Evaluator (return result of applying the 'not' operation to value).
     Example: x not 11
     """
     def __init__(self, exp):
+        super().__init__(CLASS, "not_bexp")
+
         self.exp = exp
         self.children = [exp]
 
@@ -82,6 +85,3 @@ class NotBexp:
 
     def compile_vm(self, commands, data):
         return compile_vm.not_bexp(commands, data, self.exp)
-
-    def compile_asm(self, compiler):
-        return compile_asm.not_bexp(compiler, self.exp)

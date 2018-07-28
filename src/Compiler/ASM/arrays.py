@@ -2,17 +2,17 @@ from .Deep.arrays import *
 from .Runtime.gc import GC
 
 
-def arrmake(compiler, args, type):
+def arrmake(compiler, node):
     """ Built-in arrmake (create unboxed arrays) / Arrmake (create boxed arrays) functions compilation """
-    type = Types.BOXED_ARR if type == 'boxed' else Types.UNBOXED_ARR
+    type = Types.BOXED_ARR if node.type == 'boxed' else Types.UNBOXED_ARR
 
     # When they passed default values (in second argument), we look, in what particular format
-    if len(args.elements) == 2:
-        default_value_type = args.elements[1].compile_asm(compiler)
+    if len(node.args.elements) == 2:
+        default_value_type = node.args.elements[1].compile_asm(compiler)
         compiler.types.pop()
         # If the second argument was passed [] or {}, then the duplicated element will be 0
         # ( signature: arrmake(n, []), Arrmake(n, {}) )
-        if default_value_type == type and len(args.elements[1].elements.elements) == 0:
+        if default_value_type == type and len(node.args.elements[1].elements.elements) == 0:
             # We clear the pointer to an empty array
             compiler.code.stack_pop()
             compiler.code.add(Commands.PUSH, 0)
@@ -32,7 +32,7 @@ def arrmake(compiler, args, type):
     else:
         default_values_variant = 'none'
 
-    args.elements[0].compile_asm(compiler)
+    node.args.elements[0].compile_asm(compiler)
     compiler.types.pop()
 
     ArrayCompiler.arrmake(compiler, default_values_variant)
@@ -40,11 +40,11 @@ def arrmake(compiler, args, type):
     return compiler.types.set(type)
 
 
-def arrmake_inline(compiler, elements, type):
+def arrmake_inline(compiler, node):
     """ Compilation the inline construction to create boxed and unboxed arrays: [n1, n2, ...] / {a1, a2, ...} """
-    type = Types.BOXED_ARR if type == 'boxed' else Types.UNBOXED_ARR
+    type = Types.BOXED_ARR if node.type == 'boxed' else Types.UNBOXED_ARR
 
-    arr_elements = elements.compile_asm(compiler)
+    arr_elements = node.elements.compile_asm(compiler)
     arr_length = len(arr_elements)
     arr_size = arr_length * 2 * 4 + 4
     if arr_length == 0:
@@ -81,12 +81,12 @@ def arrmake_inline(compiler, elements, type):
     return compiler.types.set(type)
 
 
-def array_element(compiler, array, index, other_indexes, context, value_type):
+def array_element(compiler, node):
     """ Compilation the get array element operator: A[n] """
-    var_name = compiler.environment.get_local_var(array)
-    var_type = compiler.environment.get_local_var_type(array)
+    var_name = compiler.environment.get_local_var(node.array)
+    var_type = compiler.environment.get_local_var_type(node.array)
 
-    if context == 'assign':
+    if node.context == 'assign':
         compiler.code.add(Commands.MOV, [Registers.EAX, 'dword [%s + 4]' % Registers.ESP])
         compiler.code.add(Commands.MOV, [Registers.EBX, 'dword [%s]' % Registers.ESP])
         GC(compiler).increment()
@@ -95,7 +95,7 @@ def array_element(compiler, array, index, other_indexes, context, value_type):
     compiler.code.add(Commands.PUSH, var_name)
 
     # Compilation obtain an index construction
-    index.compile_asm(compiler)
+    node.index.compile_asm(compiler)
     compiler.types.pop()
 
     def other_index_compile(other_index):
@@ -103,10 +103,10 @@ def array_element(compiler, array, index, other_indexes, context, value_type):
         other_index.compile_asm(compiler)
         compiler.types.pop()
 
-    if context == 'assign':
+    if node.context == 'assign':
         # If several consecutive indices, compile each
-        if other_indexes is not None:
-            for other_index in other_indexes:
+        if node.other_indexes is not None:
+            for other_index in node.other_indexes:
                 ArrayCompiler.get_element(compiler, var_type)
                 other_index_compile(other_index)
 
@@ -120,17 +120,17 @@ def array_element(compiler, array, index, other_indexes, context, value_type):
     else:
         ArrayCompiler.get_element(compiler, var_type)
         # If several consecutive indices, compile each
-        if other_indexes is not None:
-            for other_index in other_indexes:
+        if node.other_indexes is not None:
+            for other_index in node.other_indexes:
                 other_index_compile(other_index)
                 ArrayCompiler.get_element(compiler, var_type)
 
     return var_type
 
 
-def arrlen(compiler, args):
+def arrlen(compiler, node):
     """ Built-in arrlen function compilation to get array length """
-    args.elements[0].compile_asm(compiler)
+    node.args.elements[0].compile_asm(compiler)
     compiler.types.pop()
 
     ArrayCompiler.arrlen(compiler)
