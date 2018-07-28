@@ -1,35 +1,35 @@
 from .Helpers.environment import *
 
 
-def function(env, name, args, body):
+def function(env, node):
     """
     'Function' statement def for AST.
     interpret - runtime function for Evaluator (empty function).
     """
-    env['f'][name] = {
-        'args': args,
-        'body': body
+    env['f'][node.name] = {
+        'args': node.args,
+        'body': node.body
     }
 
 
-def return_statement(env, expr):
+def return_statement(env, node):
     """
     'Return' statement def for AST.
     interpret - runtime function for Evaluator (empty function).
     """
-    env['r'] = expr.interpret(env)
+    env['r'] = node.expr.interpret(env)
     return
 
 
-def function_call_statement(env, name, call_args):
+def call_statement(env, node):
     """
     'Function call' statement def for AST.
     interpret - runtime function for Evaluator (empty function).
     """
-    fun = env['f'][name]
+    fun = env['f'][node.name]
     func_env = Environment(env).create(env['f'])
-    args = fun['args'].interpret()
-    call_args_interpretuated = call_args.interpret()
+    args = fun['args'].interpret(env)
+    call_args_interpretuated = node.args.interpret(env)
     args_counter = 0
     for arg in args:
         func_env['v'][arg] = call_args_interpretuated[args_counter].interpret(env)

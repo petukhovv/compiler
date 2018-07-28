@@ -3,6 +3,7 @@ import sys
 
 COMPILER_ASM_MODULE = "Compiler.ASM"
 COMPILER_VM_MODULE = "Compiler.VM"
+INTERPRETER_MODULE = "Interpreter"
 
 
 class AST:
@@ -19,3 +20,8 @@ class AST:
         module = sys.modules["%s.%s" % (COMPILER_VM_MODULE, self._class)]
 
         return getattr(module, self._name)(commands, data, self)
+
+    def interpret(self, env):
+        module = sys.modules["%s.%s" % (INTERPRETER_MODULE, self._class)]
+
+        return getattr(module, self._name)(env, self)

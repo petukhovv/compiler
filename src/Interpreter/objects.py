@@ -16,33 +16,33 @@ class ObjectWrap:
         self.env['v'][name] = value
 
 
-def object_def(env, elements):
+def object_def(env, node):
     obj_env = Environment(env).create()
     obj = ObjectWrap(obj_env)
     Environment.context_objects.append(obj)
 
-    for element in elements.elements:
+    for element in node.elements.elements:
         element.interpret(obj_env)
 
     return obj
 
 
-def object_val_def(env, variable, value):
-    value = value.interpret(env)
-    Environment(env).set(variable.name, value)
+def object_val_def(env, node):
+    value = node.value.interpret(env)
+    Environment(env).set(node.variable.name, value)
 
     return value
 
 
-def object_val(env, object_name, prop_name, other_prop_names):
-    if object_name == 'this':
-        value = Environment.context_objects[-1].get_var(prop_name)
+def object_val(env, node):
+    if node.object_name == 'this':
+        value = Environment.context_objects[-1].get_var(node.prop_name)
     else:
-        obj = Environment(env).get(object_name)
-        value = obj.get_var(prop_name)
+        obj = Environment(env).get(node.object_name)
+        value = obj.get_var(node.prop_name)
 
-    if other_prop_names:
-        for other_prop_name in other_prop_names:
+    if node.other_prop_names:
+        for other_prop_name in node.other_prop_names:
             if isinstance(value, UnboxedArrayWrap) or isinstance(value, BoxedArrayWrap):
                 other_index = other_prop_name.interpret(value.env)
                 value = value[other_index]
@@ -52,16 +52,16 @@ def object_val(env, object_name, prop_name, other_prop_names):
     return value
 
 
-def object_method(env, object_name, method_name, call_args):
-    if object_name == 'this':
-        method = Environment.context_objects[-1].get_method(method_name)
+def object_method(env, node):
+    if node.object_name == 'this':
+        method = Environment.context_objects[-1].get_method(node.method_name)
     else:
-        obj = Environment(env).get(object_name)
-        method = obj.get_method(method_name)
+        obj = Environment(env).get(node.object_name)
+        method = obj.get_method(node.method_name)
 
     func_env = Environment(env).create(env['f'])
     args = method['args'].interpret()
-    call_args_interpreted = call_args.interpret()
+    call_args_interpreted = node.call_args.interpret()
 
     args_counter = 0
     for arg in args:

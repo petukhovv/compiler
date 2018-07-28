@@ -13,18 +13,12 @@ class Char(AST):
 
         self.character = character
 
-    def interpret(self, env):
-        return interpreter.char(env, self.character)
-
 
 class String(AST):
     def __init__(self, characters):
         super().__init__(CLASS, "string")
 
         self.characters = characters
-
-    def interpret(self, env):
-        return interpreter.string(env, self.characters)
 
 
 class StrLen(AST):
@@ -34,9 +28,6 @@ class StrLen(AST):
         self.args = args
         self.children = [args]
 
-    def interpret(self, env):
-        return interpreter.str_len(env, self.args)
-
 
 class StrGet(AST):
     def __init__(self, args):
@@ -44,9 +35,6 @@ class StrGet(AST):
 
         self.args = args
         self.children = [args]
-
-    def interpret(self, env):
-        return interpreter.str_get(env, self.args)
 
 
 class StrSub(AST):
@@ -56,9 +44,6 @@ class StrSub(AST):
         self.args = args
         self.children = [args]
 
-    def interpret(self, env):
-        return interpreter.str_sub(env, self.args)
-
 
 class StrDup(AST):
     def __init__(self, args):
@@ -66,9 +51,6 @@ class StrDup(AST):
 
         self.args = args
         self.children = [args]
-
-    def interpret(self, env):
-        return interpreter.str_dup(env, self.args)
 
 
 class StrSet(AST):
@@ -78,9 +60,6 @@ class StrSet(AST):
         self.args = args
         self.children = [args]
 
-    def interpret(self, env):
-        return interpreter.str_set(env, self.args)
-
 
 class StrCat(AST):
     def __init__(self, args):
@@ -88,9 +67,6 @@ class StrCat(AST):
 
         self.args = args
         self.children = [args]
-
-    def interpret(self, env):
-        return interpreter.str_cat(env, self.args)
 
 
 class StrCmp(AST):
@@ -100,9 +76,6 @@ class StrCmp(AST):
         self.args = args
         self.children = [args]
 
-    def interpret(self, env):
-        return interpreter.str_cmp(env, self.args)
-
 
 class StrMake(AST):
     def __init__(self, args):
@@ -110,6 +83,3 @@ class StrMake(AST):
 
         self.args = args
         self.children = [args]
-
-    def interpret(self, env):
-        return interpreter.str_make(env, self.args)

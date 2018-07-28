@@ -1,24 +1,24 @@
 from .Helpers.environment import *
 
 
-def char(env, character):
-    return ord(character)
+def char(env, node):
+    return ord(node.character)
 
 
-def string(env, characters):
-    return characters
+def string(env, node):
+    return node.characters
 
 
-def str_len(env, args):
-    args_node = args.interpret()
+def strlen(env, node):
+    args_node = node.args.interpret(env)
     if len(args_node) == 0:
         raise RuntimeError('strlen call without arguments')
     str = args_node[0].interpret(env)
     return len(str)
 
 
-def str_get(env, args):
-    args_node = args.interpret()
+def strget(env, node):
+    args_node = node.args.interpret(env)
     if len(args_node) == 0 or len(args_node) == 1:
         raise RuntimeError('strget is not call with two arguments')
     str = args_node[0].interpret(env)
@@ -28,8 +28,8 @@ def str_get(env, args):
     return ord(str[char_index])
 
 
-def str_sub(env, args):
-    args_node = args.interpret()
+def strsub(env, node):
+    args_node = node.args.interpret(env)
     if len(args_node) == 0 or len(args_node) == 1 or len(args_node) == 2:
         raise RuntimeError('strsub is not call with three arguments')
     str = args_node[0].interpret(env)
@@ -42,16 +42,16 @@ def str_sub(env, args):
     return str[char_index_start:char_index_start + substring_length]
 
 
-def str_dup(env, args):
-    args_node = args.interpret()
+def strdup(env, node):
+    args_node = node.args.interpret(env)
     if len(args_node) == 0:
         raise RuntimeError('strdup call without arguments')
     str = args_node[0].interpret(env)
     return str
 
 
-def str_set(env, args):
-    args_node = args.interpret()
+def strset(env, node):
+    args_node = node.args.interpret(env)
     if len(args_node) == 0 or len(args_node) == 1 or len(args_node) == 2:
         raise RuntimeError('strset is not call with three arguments')
     str = args_node[0].interpret(env)
@@ -65,8 +65,8 @@ def str_set(env, args):
     Environment(env).set(var_name, "".join(new_str))
 
 
-def str_cat(env, args):
-    args_node = args.interpret()
+def strcat(env, node):
+    args_node = node.args.interpret(env)
     if len(args_node) == 0 or len(args_node) == 1:
         raise RuntimeError('strcat is not call with two arguments')
     str1 = args_node[0].interpret(env)
@@ -74,8 +74,8 @@ def str_cat(env, args):
     return str1 + str2
 
 
-def str_cmp(env, args):
-    args_node = args.interpret()
+def strcmp(env, node):
+    args_node = node.args.interpret(env)
     if len(args_node) == 0 or len(args_node) == 1:
         raise RuntimeError('strcmp is not call with two arguments')
     str1 = args_node[0].interpret(env)
@@ -95,8 +95,8 @@ def str_cmp(env, args):
         return 1  # str1 is a substring of str2 (str2 is greater than str1)
 
 
-def str_make(env, args):
-    args_node = args.interpret()
+def strmake(env, node):
+    args_node = node.args.interpret(env)
     if len(args_node) == 0 or len(args_node) == 1:
         raise RuntimeError('strmake is not call with two arguments')
     repeat_count = args_node[0].interpret(env)

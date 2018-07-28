@@ -18,9 +18,6 @@ class IntAexp(AST):
 
         self.i = i
 
-    def interpret(self, env):
-        return interpreter.int_aexp(env, self.i)
-
 
 class VarAexp(AST):
     """
@@ -34,9 +31,6 @@ class VarAexp(AST):
         self.name = name
         self.context = 'get'
         self.type = None
-
-    def interpret(self, env):
-        return interpreter.var_aexp(env, self.name)
 
 
 class BinopAexp(AST):
@@ -52,6 +46,3 @@ class BinopAexp(AST):
         self.left = left
         self.right = right
         self.children = [left, right]
-
-    def interpret(self, env):
-        return interpreter.binop_aexp(env, self.op, self.left, self.right)

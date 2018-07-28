@@ -1,10 +1,10 @@
-def pointer(env, element):
-    return element.interpret(env)
+def pointer(env, node):
+    return node.element.interpret(node.env)
 
 
-def enumeration(elements):
+def enumeration(env, node):
     """
     'Enumeration' statement class for AST.
     interpret - runtime function for Evaluator (empty function).
     """
-    return elements
+    return node.elements

@@ -19,9 +19,6 @@ class UnboxedArray(AST):
         self.children = [elements]
         self.type = 'unboxed'
 
-    def interpret(self, env):
-        return interpreter.unboxed_array(env, self.elements)
-
 
 class BoxedArray(AST):
     pointers = 0
@@ -32,9 +29,6 @@ class BoxedArray(AST):
         self.elements = elements
         self.children = [elements]
         self.type = 'boxed'
-
-    def interpret(self, env):
-        return interpreter.boxed_array(env, self.elements)
 
 
 class ArrayElement(AST):
@@ -50,9 +44,6 @@ class ArrayElement(AST):
         self.type = None
         self.children = [array, index, other_indexes]
 
-    def interpret(self, env):
-        return interpreter.array_element(env, self.array, self.index, self.other_indexes)
-
 
 class ArrLen(AST):
     def __init__(self, args):
@@ -60,10 +51,6 @@ class ArrLen(AST):
 
         self.args = args
         self.children = [args]
-
-    def interpret(self, env):
-        return interpreter.arr_len(env, self.args)
-
 
 
 class UnboxedArrMake(AST):
@@ -74,9 +61,6 @@ class UnboxedArrMake(AST):
         self.children = [args]
         self.type = 'unboxed'
 
-    def interpret(self, env):
-        return interpreter.unboxed_arr_make(env, self.args)
-
 
 class BoxedArrMake(AST):
     def __init__(self, args):
@@ -86,5 +70,3 @@ class BoxedArrMake(AST):
         self.children = [args]
         self.type = 'boxed'
 
-    def interpret(self, env):
-        return interpreter.boxed_arr_make(env, self.args)

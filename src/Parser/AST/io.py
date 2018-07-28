@@ -15,9 +15,6 @@ class ReadStatement(AST):
     def __init__(self):
         super().__init__(CLASS, "read_statement")
 
-    def interpret(self, env):
-        return interpreter.read_statement(env)
-
 
 class WriteStatement(AST):
     """
@@ -29,6 +26,3 @@ class WriteStatement(AST):
 
         self.aexp = aexp
         self.children = [aexp]
-
-    def interpret(self, env):
-        return interpreter.write_statement(env, self.aexp)

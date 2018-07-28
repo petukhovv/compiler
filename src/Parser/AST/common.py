@@ -7,14 +7,13 @@ from .base import AST
 CLASS = "common"
 
 
-class Pointer:
+class Pointer(AST):
     def __init__(self, env, element):
+        super().__init__(CLASS, "pointer")
+
         self.env = env
         self.element = element
         self.children = [element]
-
-    def interpret(self):
-        return interpreter.pointer(self.env, self.element)
 
 
 class Enumeration(AST):
@@ -27,6 +26,3 @@ class Enumeration(AST):
 
         self.elements = elements
         self.children = elements
-
-    def interpret(self):
-        return interpreter.enumeration(self.elements)

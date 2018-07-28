@@ -16,9 +16,6 @@ class Object(AST):
         self.elements = elements
         self.children = [elements]
 
-    def interpret(self, env):
-        return interpreter.object_def(env, self.elements)
-
 
 class ObjectValDef(AST):
     def __init__(self, name, value):
@@ -27,9 +24,6 @@ class ObjectValDef(AST):
         self.name = name
         self.value = value
         self.children = [name, value]
-
-    def interpret(self, env):
-        return interpreter.object_val_def(env, self.name, self.value)
 
 
 class ObjectMethodDef(Function):
@@ -45,9 +39,6 @@ class ObjectVal(AST):
         self.other_prop_names = other_prop_names
         self.context = None
 
-    def interpret(self, env):
-        return interpreter.object_val(env, self.object_name, self.prop_name, self.other_prop_names)
-
 
 class ObjectMethod(AST):
     def __init__(self, object_name, method_name, args):
@@ -56,6 +47,3 @@ class ObjectMethod(AST):
         self.object_name = object_name
         self.method_name = method_name
         self.args = args
-
-    def interpret(self, env):
-        return interpreter.object_method(env, self.object_name, self.method_name, self.args)
