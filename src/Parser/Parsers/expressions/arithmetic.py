@@ -67,7 +67,7 @@ def aexp_group():
     from ..common import keyword
     from ..expressions import logical
 
-    return keyword('(') + (Lazy(logical.bexp_relop) | Lazy(aexp)) + keyword(')') ^ process_group
+    return keyword('(') + (Lazy(logical.bexp) | Lazy(aexp)) + keyword(')') ^ process_group
 
 
 def aexp_term():

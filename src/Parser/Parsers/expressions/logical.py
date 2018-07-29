@@ -27,9 +27,9 @@ def bexp_relop():
     from ..expressions import arithmetic, strings
 
     relops = ['<', '<=', '>', '>=', '==', '!=']
-    return (bexp_group() | arithmetic.aexp() | strings.str_exp() | strings.char_exp()) + \
+    return (arithmetic.aexp() | strings.str_exp() | strings.char_exp() | bexp_group()) + \
        arithmetic.any_operator_in_list(relops) + \
-        (bexp_group() | arithmetic.aexp() | strings.str_exp() | strings.char_exp()) ^ process_relop
+        (arithmetic.aexp() | strings.str_exp() | strings.char_exp() | bexp_group()) ^ process_relop
 
 
 def bexp_boolop():
@@ -58,7 +58,7 @@ def bexp_group():
     from ..common import keyword
     from ..expressions import arithmetic
 
-    return keyword('(') + Lazy(bexp) + keyword(')') ^ arithmetic.process_group
+    return keyword('(') + (Lazy(arithmetic.aexp) | Lazy(bexp)) + keyword(')') ^ arithmetic.process_group
 
 
 def bexp_term(allow_single):
@@ -68,10 +68,12 @@ def bexp_term(allow_single):
     if not possible - as just binary expressions,
     if not possible - as a parentheses group of binary expressions.
     """
+    from ..expressions import arithmetic
+
     if allow_single:
-        return bexp_not() | bexp_relop() | bexp_boolop() | bexp_group()
+        return bexp_not() | bexp_relop() | bexp_boolop() | arithmetic.aexp() | bexp_group()
     else:
-        return bexp_not() | bexp_relop() | bexp_group()
+        return bexp_not() | bexp_relop() | arithmetic.aexp() | bexp_group()
 
 
 def process_logic(op):

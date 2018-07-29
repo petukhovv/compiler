@@ -26,7 +26,6 @@ def relop_bexp(compiler, node):
     compiler.code.add(Commands.POP, Registers.EBX)\
         .add(Commands.POP, Registers.EAX)\
         .add(Commands.CMP, [Registers.EBX, Registers.EAX])\
-        .add(Commands.MOV, [Registers.EAX, 0])\
         .add(relop_compare_map[node.op], true_result_label)
 
     compiler.code.add(Commands.MOV, [Registers.EAX, 0])\
@@ -101,7 +100,7 @@ def or_bexp(compiler, node):
 
     # If the second operand is not equal 0, then go to the true result label
     compiler.code.add(Commands.CMP, [Registers.EAX, 0])\
-        .add(Commands.JZ, finish_true_label)
+        .add(Commands.JNZ, finish_true_label)
 
     # If both operands are 0, then the result of 'OR' execution is 0, it write to the eax register
     # and go to the completion label 'OR' (bypassing the true result section).

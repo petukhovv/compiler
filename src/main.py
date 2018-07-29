@@ -1,6 +1,5 @@
 import argparse
 import os
-import sys
 
 from Compiler.ASM.Core.run import compile_asm
 from Compiler.VM.Helpers.run import compile_vm
@@ -27,13 +26,12 @@ def parse_program(target_file):
     tokens = lex(program)
     parse_result = parse(tokens)
     if not parse_result:
-        print('Parse error!')
         exit()
        
     ast = parse_result.value
 
     if ast_print_arg:
-        print(ast)
+        ast_print(ast)
 
     return ast
 
@@ -68,12 +66,18 @@ if args.compile:
     if not os.path.exists(runtime_folder):
         os.makedirs(runtime_folder)
 
-    with open('%s.asm' % runtime_path, 'w') as f:
-        f.write(runtime)
+    if not os.path.isfile('%s.o' % runtime_path):
+        with open('%s.asm' % runtime_path, 'w') as f:
+            f.write(runtime)
 
     with open('%s.asm' % program_path, 'w') as f:
         f.write(program)
 
-    os.system('nasm -g -f macho -l %s.lst %s.asm' % (runtime_path, runtime_path))
-    os.system('nasm -g -f macho -l %s.lst %s.asm' % (program_path, program_path))
+    if not os.path.isfile('%s.o' % runtime_path):
+        os.system('nasm -g -f macho %s.asm' % runtime_path)
+    os.system('nasm -g -f macho %s.asm' % program_path)
+
     os.system('gcc -m32 -Wl,-no_pie -o ./%s %s.o %s.o' % (filename, runtime_path, program_path))
+
+    os.unlink("%s.asm" % program_path)
+    os.unlink("%s.o" % program_path)
