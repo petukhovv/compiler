@@ -4,7 +4,7 @@ from ...AST.expressions.objects import ObjectVal, ObjectMethod
 
 def object_val():
     from ..common import id, keyword
-    from .arithmetic import aexp
+    from ..expressions import arithmetic
 
     def process(parsed):
         ((object_name, (_, prop_name)), other_prop_names) = parsed
@@ -22,16 +22,16 @@ def object_val():
         return ObjectVal(object_name, prop_name, other_props)
 
     deref_op_obj = keyword('.') + id
-    deref_op_arr = keyword('[') + Lazy(aexp) + keyword(']')
+    deref_op_arr = keyword('[') + Lazy(arithmetic.aexp) + keyword(']')
 
     return id + deref_op_obj + Opt(Rep(deref_op_obj | deref_op_arr)) ^ process
 
 
 def object_method():
     from ..common import id, keyword
-    from .arguments import arguments
+    from ..expressions import arguments
 
     def process(parsed):
         (((((object_name, _), method_name), _),  args), _) = parsed
         return ObjectMethod(object_name, method_name, args)
-    return id + keyword('.') + id + keyword('(') + Opt(Lazy(arguments)) + keyword(')') ^ process
+    return id + keyword('.') + id + keyword('(') + Opt(Lazy(arguments.arguments)) + keyword(')') ^ process

@@ -44,12 +44,10 @@ def aexp_value():
     Converts the values returned by 'num' and 'id' to the object of AST classes.
     First of all, try to parse integer, if unsuccessful, try to parse as a variable (via Alternate combinator).
     """
-    from .objects import object_val
-    from .arrays import el_exp
-    from .call import fun_call_stmt
     from ..common import id, boolean, num
+    from ..expressions import objects, arrays, call
 
-    return object_val() | el_exp() | fun_call_stmt() | \
+    return objects.object_val() | arrays.el_exp() | call.fun_call_stmt() | \
         ((boolean | num) ^ (lambda i: IntAexp(i))) | \
         (id ^ (lambda v: VarAexp(v)))
 
@@ -66,10 +64,10 @@ def aexp_group():
     """
     Parse the arithmetic expression in parentheses.
     """
-    from .logical import bexp_relop
     from ..common import keyword
+    from ..expressions import logical
 
-    return keyword('(') + (Lazy(bexp_relop) | Lazy(aexp)) + keyword(')') ^ process_group
+    return keyword('(') + (Lazy(logical.bexp_relop) | Lazy(aexp)) + keyword(')') ^ process_group
 
 
 def aexp_term():

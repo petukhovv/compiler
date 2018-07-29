@@ -3,12 +3,8 @@ def arguments():
     Parsing function arguments statement (call point).
     """
     from ..common import enumeration
-    from ..expressions.arrays import arr_exp
-    from ..expressions.arithmetic import aexp
-    from ..expressions.objects import object_method, object_val
-    from ..expressions.logical import bexp
-    from ..expressions.strings import str_exp, char_exp
-    from ..declarations.object import object_def
+    from ..declarations import object
+    from ..expressions import arrays, arithmetic, objects, logical, strings
 
-    return enumeration(alternative_args_parser=(object_def() | object_val() | object_method()
-                                                | aexp() | bexp() | str_exp() | char_exp() | arr_exp()))
+    return enumeration(alternative_args_parser=(object.object_def() | objects.object_val() | objects.object_method()
+                                                | arithmetic.aexp() | logical.bexp() | strings.str_exp() | strings.char_exp() | arrays.arr_exp()))

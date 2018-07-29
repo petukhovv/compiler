@@ -7,8 +7,8 @@ def if_stmt():
     Parsing 'if' statement.
     """
     from ..common import keyword
-    from ..expressions.logical import bexp
-    from .base import stmt_list
+    from ..expressions import logical
+    from ..statements import base
 
     def process(parsed):
         ((((((_, condition), _), true_stmt), alternatives_stmt_parsed), false_stmt_parsed), _) = parsed
@@ -24,8 +24,8 @@ def if_stmt():
         else:
             alternatives_stmt = None
         return IfStatement(condition, true_stmt, alternatives_stmt, false_stmt)
-    return keyword('if') + bexp(allow_single=True) + keyword('then') + Lazy(stmt_list) + \
-           Opt(Rep(keyword('elif') + bexp(allow_single=True) + keyword('then') + Lazy(stmt_list))) + \
-           Opt(keyword('else') + Lazy(stmt_list)) + \
+    return keyword('if') + logical.bexp(allow_single=True) + keyword('then') + Lazy(base.stmt_list) + \
+           Opt(Rep(keyword('elif') + logical.bexp(allow_single=True) + keyword('then') + Lazy(base.stmt_list))) + \
+           Opt(keyword('else') + Lazy(base.stmt_list)) + \
            keyword('fi') ^ process
 

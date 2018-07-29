@@ -24,13 +24,12 @@ def bexp_relop():
     """
     Parsing boolean expression (arithmetic expression + compare operator + arithmetic expression).
     """
-    from .arithmetic import aexp, any_operator_in_list
-    from .strings import str_exp, char_exp
+    from ..expressions import arithmetic, strings
 
     relops = ['<', '<=', '>', '>=', '==', '!=']
-    return (bexp_group() | aexp() | str_exp() | char_exp()) + \
-        any_operator_in_list(relops) + \
-        (bexp_group() | aexp() | str_exp() | char_exp()) ^ process_relop
+    return (bexp_group() | arithmetic.aexp() | strings.str_exp() | strings.char_exp()) + \
+       arithmetic.any_operator_in_list(relops) + \
+        (bexp_group() | arithmetic.aexp() | strings.str_exp() | strings.char_exp()) ^ process_relop
 
 
 def bexp_boolop():
@@ -38,9 +37,9 @@ def bexp_boolop():
     Parsing single value expression (arithmetic expression).
     Convert single value to object of AST-class 'RelopBexp' with '!=' operator and '0' right value.
     """
-    from .arithmetic import aexp
+    from ..expressions import arithmetic
 
-    return aexp() | aexp() ^ (lambda parsed: RelopBexp('!=', parsed, IntAexp(0)))
+    return arithmetic.aexp() | arithmetic.aexp() ^ (lambda parsed: RelopBexp('!=', parsed, IntAexp(0)))
 
 
 def bexp_not():
@@ -57,9 +56,9 @@ def bexp_group():
     Parse the binary expression in parentheses.
     """
     from ..common import keyword
-    from .arithmetic import process_group
+    from ..expressions import arithmetic
 
-    return keyword('(') + Lazy(bexp) + keyword(')') ^ process_group
+    return keyword('(') + Lazy(bexp) + keyword(')') ^ arithmetic.process_group
 
 
 def bexp_term(allow_single):
@@ -92,6 +91,6 @@ def bexp(allow_single=False):
     """
     Main binary expressions parser.
     """
-    from .arithmetic import precedence
+    from ..expressions import arithmetic
 
-    return precedence(bexp_term(allow_single), bexp_precedence_levels, process_logic)
+    return arithmetic.precedence(bexp_term(allow_single), bexp_precedence_levels, process_logic)

@@ -7,15 +7,11 @@ def return_stmt():
     Parsing function call statement.
     """
     from ..common import keyword
-    from ..declarations.object import object_def
-    from ..expressions.objects import object_val
-    from ..expressions.arithmetic import aexp
-    from ..expressions.logical import bexp
-    from ..expressions.strings import str_exp, char_exp
-    from ..expressions.arrays import arr_exp
+    from ..declarations import object
+    from ..expressions import objects, arithmetic, logical, strings, arrays
 
     def process(parsed):
         (_, expr) = parsed
         return ReturnStatement(expr)
-    return keyword('return') + Opt(object_def() | object_val() | aexp() | bexp() | str_exp() | char_exp() | arr_exp()) ^ process
+    return keyword('return') + Opt(object.object_def() | objects.object_val() | arithmetic.aexp() | logical.bexp() | strings.str_exp() | strings.char_exp() | arrays.arr_exp()) ^ process
 

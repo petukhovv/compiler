@@ -11,9 +11,9 @@ array_predefined_functions = {
 
 def arr_exp():
     from ..common import id, boolean, num, enumeration
-    from .strings import str_exp, char_exp
+    from ..expressions import strings
 
-    elements = enumeration(alternative_args_parser=(num | str_exp() | char_exp() | boolean | id))
+    elements = enumeration(alternative_args_parser=(num | strings.str_exp() | strings.char_exp() | boolean | id))
     return arr_unboxed_exp(elements) | arr_boxed_exp(elements)
 
 
@@ -37,7 +37,7 @@ def arr_boxed_exp(elements):
 
 def el_exp():
     from ..common import keyword, id
-    from .arithmetic import aexp
+    from ..expressions import arithmetic
 
     def process(parsed):
         ((name, ((_, index), _)), other_indexes_parsed) = parsed
@@ -49,5 +49,5 @@ def el_exp():
                 other_indexes.append(other_index)
         return ArrayElement(name, index, other_indexes)
     deref_op_obj = keyword('.') + id
-    deref_op_arr = keyword('[') + Lazy(aexp) + keyword(']')
+    deref_op_arr = keyword('[') + Lazy(arithmetic.aexp) + keyword(']')
     return id + deref_op_arr + Opt(Rep(deref_op_arr | deref_op_obj)) ^ process

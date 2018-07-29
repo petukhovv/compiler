@@ -13,6 +13,6 @@ def parser():
     """
     Run the top-level parser (statement list).
     """
-    from .Parsers.statements.base import stmt_list
+    from .Parsers.statements import base
 
-    return Phrase(stmt_list())
+    return Phrase(base.stmt_list())

@@ -7,12 +7,12 @@ def fun():
     Parsing function statement.
     """
     from ..common import id, keyword, enumeration
-    from ..statements.base import stmt_list
+    from ..statements import base
 
     def process(parsed):
         (((((((_, name), _), args), _), _), body), _) = parsed
         return Function(name, args, body)
     return keyword('fun') + id + \
         keyword('(') + Opt(enumeration()) + keyword(')') + \
-           keyword('begin') + Opt(Lazy(stmt_list)) + \
+           keyword('begin') + Opt(Lazy(base.stmt_list)) + \
         keyword('end') ^ process

@@ -8,17 +8,12 @@ def assign_stmt():
     Example: x := 56
     """
     from ..common import id, keyword
-    from ..expressions.arrays import el_exp, arr_exp
-    from ..expressions.arithmetic import aexp
-    from ..expressions.objects import object_method, object_val
-    from ..expressions.logical import bexp
-    from ..expressions.read import read_stmt
-    from ..expressions.strings import str_exp, char_exp
-    from ..declarations.object import object_def
+    from ..expressions import arrays, arithmetic, objects, logical, read, strings
+    from ..declarations import object
 
     def process(parsed):
         ((name, _), exp) = parsed
         return AssignmentStatement(name, exp)
-    return (el_exp() | object_val() | id ^ (lambda v: VarAexp(v))) + keyword(':=') + \
-        (bexp(allow_single=True) | aexp() | object_method() | object_val() | bexp() | read_stmt()
-         | str_exp() | char_exp() | arr_exp() | object_def()) ^ process
+    return (arrays.el_exp() | objects.object_val() | id ^ (lambda v: VarAexp(v))) + keyword(':=') + \
+        (logical.bexp(allow_single=True) | arithmetic.aexp() | objects.object_method() | objects.object_val() | logical.bexp() | read.read_stmt()
+         | strings.str_exp() | strings.char_exp() | arrays.arr_exp() | object.object_def()) ^ process

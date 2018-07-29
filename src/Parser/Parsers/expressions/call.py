@@ -37,7 +37,7 @@ def fun_call_stmt():
     Parsing function call statement.
     """
     from ..common import keyword, id
-    from .arguments import arguments
+    from ..expressions import arguments
 
     def process(parsed):
         (((name, _), args), _) = parsed
@@ -46,4 +46,4 @@ def fun_call_stmt():
         else:
             return FunctionCallStatement(name, args)
     return id + \
-        keyword('(') + Opt(Lazy(arguments)) + keyword(')') ^ process
+        keyword('(') + Opt(Lazy(arguments.arguments)) + keyword(')') ^ process
