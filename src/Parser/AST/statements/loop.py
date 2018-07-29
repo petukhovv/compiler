@@ -1,7 +1,3 @@
-from Compiler.ASM.Codegen.statements import loop as compile_asm
-from Compiler.VM.Codegen.statements import loop as compile_vm
-from Interpreter.Eval.statements import loop as interpreter
-
 from ..base import AST
 
 CLASS = "statements.loop"

@@ -1,7 +1,3 @@
-from Compiler.ASM.Codegen.statements import assignment as compile_asm
-from Compiler.VM.Codegen.statements import assignment as compile_vm
-from Interpreter.Eval.statements import assignment as interpreter
-
 from ..base import AST
 
 CLASS = "statements.assignment"

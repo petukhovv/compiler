@@ -1,7 +1,3 @@
-from Compiler.VM.Codegen.expressions import call as compile_vm
-from Compiler.ASM.Codegen.expressions import call as compile_asm
-from Interpreter.Eval.expressions import call as interpreter
-
 from ..base import AST
 
 CLASS = "expressions.call"

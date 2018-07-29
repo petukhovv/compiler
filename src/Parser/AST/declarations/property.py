@@ -1,7 +1,3 @@
-from Compiler.VM.Codegen.declarations import property as compile_vm
-from Compiler.ASM.Codegen.declarations import property as compile_asm
-from Interpreter.Eval.declarations import property as interpreter
-
 from ..base import AST
 
 CLASS = "declarations.property"

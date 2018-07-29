@@ -1,7 +1,3 @@
-from Compiler.VM.Codegen.statements import return_ as compile_vm
-from Compiler.ASM.Codegen.statements import return_ as compile_asm
-from Interpreter.Eval.statements import return_ as interpreter
-
 from ..base import AST
 
 CLASS = "statements.return_"

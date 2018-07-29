@@ -1,7 +1,3 @@
-from Compiler.ASM.Codegen.statements import conditional as compile_asm
-from Compiler.VM.Codegen.statements import conditional as compile_vm
-from Interpreter.Eval.statements import conditional as interpreter
-
 from ..base import AST
 
 CLASS = "statements.conditional"

@@ -1,7 +1,3 @@
-from Compiler.ASM.Codegen import common as compile_asm
-from Compiler.VM.Codegen import common as compile_vm
-from Interpreter.Eval import common as interpreter
-
 from .base import AST
 
 CLASS = "common"

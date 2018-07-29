@@ -1,7 +1,3 @@
-from Compiler.ASM.Codegen.expressions import logical as compile_asm
-from Compiler.VM.Codegen.expressions import logical as compile_vm
-from Interpreter.Eval.expressions import logical as interpreter
-
 from Parser.AST.base import AST
 
 CLASS = "expressions.logical"

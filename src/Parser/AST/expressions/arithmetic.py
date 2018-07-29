@@ -1,7 +1,3 @@
-from Compiler.ASM.Codegen.expressions import arithmetic as compile_asm
-from Compiler.VM.Codegen.expressions import arithmetic as compile_vm
-from Interpreter.Eval.expressions import arithmetic as interpreter
-
 from Parser.AST.base import AST
 
 CLASS = "expressions.arithmetic"

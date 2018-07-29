@@ -1,7 +1,3 @@
-from Compiler.VM.Codegen.expressions import arrays as compile_vm
-from Compiler.ASM.Codegen.expressions import arrays as compile_asm
-from Interpreter.Eval.expressions import arrays as interpreter
-
 from Parser.AST.base import AST
 
 CLASS = "expressions.arrays"

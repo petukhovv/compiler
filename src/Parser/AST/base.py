@@ -1,4 +1,5 @@
 import sys
+import importlib
 
 
 COMPILER_ASM_MODULE = "Compiler.ASM.Codegen"
@@ -12,16 +13,25 @@ class AST:
         self._name = _name
 
     def compile_asm(self, compiler):
-        module = sys.modules["%s.%s" % (COMPILER_ASM_MODULE, self._class)]
+        module_name = "%s.%s" % (COMPILER_ASM_MODULE, self._class)
 
-        return getattr(module, self._name)(compiler, self)
+        if module_name not in sys.modules:
+            importlib.import_module(module_name)
+
+        return getattr(sys.modules[module_name], self._name)(compiler, self)
 
     def compile_vm(self, commands, data):
-        module = sys.modules["%s.%s" % (COMPILER_VM_MODULE, self._class)]
+        module_name = "%s.%s" % (COMPILER_VM_MODULE, self._class)
 
-        return getattr(module, self._name)(commands, data, self)
+        if module_name not in sys.modules:
+            importlib.import_module(module_name)
+
+        return getattr(sys.modules[module_name], self._name)(commands, data, self)
 
     def interpret(self, env):
-        module = sys.modules["%s.%s" % (INTERPRETER_MODULE, self._class)]
+        module_name = "%s.%s" % (INTERPRETER_MODULE, self._class)
 
-        return getattr(module, self._name)(env, self)
+        if module_name not in sys.modules:
+            importlib.import_module(module_name)
+
+        return getattr(sys.modules[module_name], self._name)(env, self)

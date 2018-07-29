@@ -1,7 +1,3 @@
-from Compiler.ASM.Codegen.expressions import read as compile_asm
-from Compiler.VM.Codegen.expressions import read as compile_vm
-from Interpreter.Eval.expressions import read as interpreter
-
 from ..base import AST
 
 CLASS = "expressions.read"

@@ -1,7 +1,3 @@
-from Compiler.VM.Codegen.declarations import function as compile_vm
-from Compiler.ASM.Codegen.declarations import function as compile_asm
-from Interpreter.Eval.declarations import function as interpreter
-
 from ..base import AST
 
 CLASS = "declarations.function"
