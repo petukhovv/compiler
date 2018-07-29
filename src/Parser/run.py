@@ -1,5 +1,4 @@
-from .Parsers.statements import stmt_list
-from .combinators import *
+from .combinators import Phrase
 
 
 def parse(tokens):
@@ -14,4 +13,6 @@ def parser():
     """
     Run the top-level parser (statement list).
     """
+    from .Parsers.statements.base import stmt_list
+
     return Phrase(stmt_list())

@@ -1,9 +1,9 @@
 import sys
 
 
-COMPILER_ASM_MODULE = "Compiler.ASM"
-COMPILER_VM_MODULE = "Compiler.VM"
-INTERPRETER_MODULE = "Interpreter"
+COMPILER_ASM_MODULE = "Compiler.ASM.Codegen"
+COMPILER_VM_MODULE = "Compiler.VM.Codegen"
+INTERPRETER_MODULE = "Interpreter.Eval"
 
 
 class AST:

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from ..Core.registers import Registers
-from ..Core.types import *
+from ..Core.commands import Commands
+from ..Core.types import Types
 
 
 class Loop:

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from .commands import *
-from .vm import *
+from .commands import Label, Function, Store, Return, BStore
+from .vm import Commands, Scope, VM
 
 
 def run(commands_list):

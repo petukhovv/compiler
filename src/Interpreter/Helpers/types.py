@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 
-""" Перечень compile-time типов """
 class Types:
+    """ Перечень compile-time типов """
     NONE = 0
     INT = 1
     CHAR = 2

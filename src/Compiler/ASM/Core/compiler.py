@@ -5,7 +5,7 @@ from .labels import Labels
 from .registers import Registers
 from .types import Types
 from .vars import Vars
-from .config import *
+from .config import ASM_COMMANDS_SEPARATOR
 
 
 class Compiler:

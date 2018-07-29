@@ -1,5 +1,6 @@
 from ..Core.registers import Registers
-from ..Core.types import *
+from ..Core.commands import Commands
+from ..Core.types import Types
 
 from .base import Base
 from .itoa_and_write import ItoaWrite

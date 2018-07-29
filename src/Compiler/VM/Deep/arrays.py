@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from ..Helpers.types import *
-from ..Helpers.base import *
+from ..Helpers.types import Types
+from ..Helpers.base import calc_arr_element_address
 from ..Helpers.loop import Loop
+from ..Helpers.commands import Dup, Store, Push, Mul, DMalloc, Load, Compare, DBStore, Add, DBLoad, Jnz, Label
 
 
 class ArrayCompiler:

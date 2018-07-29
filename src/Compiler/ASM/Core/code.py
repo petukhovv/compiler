@@ -1,8 +1,6 @@
 from .commands import Commands
 from .registers import Registers
-from .config import *
-
-from ..Runtime.write import Write
+from .config import ASM_ARGS_SEPARATOR
 
 
 class Code(list):

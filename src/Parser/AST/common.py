@@ -1,10 +1,23 @@
-from Compiler.VM import common as compile_vm
-from Compiler.ASM import common as compile_asm
-from Interpreter import common as interpreter
+from Compiler.ASM.Codegen import common as compile_asm
+from Compiler.VM.Codegen import common as compile_vm
+from Interpreter.Eval import common as interpreter
 
 from .base import AST
 
 CLASS = "common"
+
+
+class CompoundStatement(AST):
+    """
+    Compound statement class for AST.
+    interpret - runtime function for Evaluator (interpret first and second statement operators).
+    """
+    def __init__(self, first, second):
+        super().__init__(CLASS, "compound_statement")
+
+        self.first = first
+        self.second = second
+        self.children = [first, second]
 
 
 class Pointer(AST):

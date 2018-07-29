@@ -41,35 +41,35 @@ Log = 'LOG'
 
 
 class Commands(list):
-    """ Добалвение команды в список команд для стековой машины """
     def add(self, command, argument=None):
+        """ Добалвение команды в список команд для стековой машины """
         self.append(self.gen(command, argument))
         return self
 
-    """ Генерация строкового представления заданной команды для стековой машины """
     @staticmethod
     def gen(command, argument=None):
+        """ Генерация строкового представления заданной команды для стековой машины """
         argument = '' if argument is None else ARGS_SEPARATOR + str(argument)
         return command + argument
 
-    """ Генерация строкового представления заданной команды для стековой машины """
     def push_value(self, value, value_type):
+        """ Генерация строкового представления заданной команды для стековой машины """
         self.add(Push, value)
         self.add(Push, value_type)
 
-    """ Генерация строкового представления заданной команды для стековой машины """
     def pop_value(self):
+        """ Генерация строкового представления заданной команды для стековой машины """
         self.add(Pop)
         self.add(Pop)
 
-    """ Генерация строкового представления заданной команды для стековой машины """
     def load_value(self, variable, only_value=False, is_parent_scope=False):
+        """ Генерация строкового представления заданной команды для стековой машины """
         if not only_value:
             self.add(PLoad if is_parent_scope else Load, variable)
         self.add(PLoad if is_parent_scope else Load, variable + 1)
 
-    """ Генерация строкового представления заданной команды для стековой машины """
     def store_value(self, variable, type=None, type_variable=None, is_parent_scope=False):
+        """ Генерация строкового представления заданной команды для стековой машины """
         if type is not None:
             self.add(Push, type)
         elif type_variable:
@@ -78,8 +78,8 @@ class Commands(list):
         self.add(BPStore if is_parent_scope else BStore, 1)
         self.add(PStore if is_parent_scope else Store, variable)
 
-    """ Генерация строкового представления заданной команды для стековой машины """
     def bload_value(self, data, only_value=False):
+        """ Генерация строкового представления заданной команды для стековой машины """
         variable = data.var()
 
         if not only_value:
@@ -89,8 +89,8 @@ class Commands(list):
             self.add(Load, variable)
         self.add(BLoad, 1)
 
-    """ Генерация строкового представления заданной команды для стековой машины """
     def bstore_value(self, data):
+        """ Генерация строкового представления заданной команды для стековой машины """
         variable = data.var()
 
         self.add(Dup)
@@ -99,13 +99,13 @@ class Commands(list):
         self.add(Load, variable)
         self.add(BStore, 1)
 
-    """ Генерация строкового представления заданной команды для стековой машины """
     def dbload_value(self, value_type, value=0):
+        """ Генерация строкового представления заданной команды для стековой машины """
         self.add(DBLoad, value)
         self.add(Push, value_type)
 
-    """ Генерация строкового представления заданной команды для стековой машины """
     def compare(self, compare_type):
+        """ Генерация строкового представления заданной команды для стековой машины """
         self.add(Compare, compare_type)
         self.add(Pop)
 

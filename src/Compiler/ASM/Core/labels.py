@@ -1,4 +1,4 @@
-from .config import *
+from .config import ASM_COMMANDS_SEPARATOR
 
 
 class Labels(list):

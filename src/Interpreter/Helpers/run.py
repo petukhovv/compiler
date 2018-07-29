@@ -1,6 +1,6 @@
 import sys
 
-from .environment import *
+from .environment import Environment
 
 RECURSION_LIMIT = 10000
 

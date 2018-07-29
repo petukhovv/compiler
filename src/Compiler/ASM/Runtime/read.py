@@ -1,6 +1,7 @@
 from ..Core.commands import Commands
 from ..Core.registers import Registers
-from ..Runtime.atoi import *
+from ..Runtime.base import Base
+from ..Runtime.atoi import Atoi
 
 from .write import Write
 

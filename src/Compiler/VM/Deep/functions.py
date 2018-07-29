@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from ..Helpers.types import *
-from ..Helpers.base import *
+from ..Helpers.types import Types
+from ..Helpers.commands import Store
 
 
 class FunctionCompiler:

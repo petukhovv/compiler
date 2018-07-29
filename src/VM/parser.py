@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .conf import *
+from .conf import COMMAND_SEPARATOR, ARGS_SEPARATOR, commands_map
 
 
 def parse(program):

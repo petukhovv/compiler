@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 
 from ..Core.registers import Registers
-from ..Core.types import *
+from ..Core.types import Types
+from ..Core.commands import Commands
 
 
 def dbload(compiler, address, offset, size='dword'):
-    """ Хелпер для генерации инструкций для загрузки значения из heap memory по заданному адресу с заданным смещением """
+    """
+    Хелпер для генерации инструкций для загрузки значения
+    из heap memory по заданному адресу с заданным смещением
+    """
     compiler.code.add(Commands.MOV, [Registers.EAX, address])\
         .add(Commands.MOV, [Registers.EBX, offset])\
         .add(Commands.ADD, [Registers.EAX, Registers.EBX])
@@ -19,7 +23,10 @@ def dbload(compiler, address, offset, size='dword'):
 
 
 def dbstore(compiler, address, offset, invert=False, value=0):
-    """ Хелпер для генерации инструкций для сохранения значения в heap memory по заданному адресу с заданным смещением """
+    """
+    Хелпер для генерации инструкций для сохранения значения
+    в heap memory по заданному адресу с заданным смещением
+    """
     compiler.code.add(Commands.MOV, [Registers.EAX, address])
 
     if offset is None:
@@ -34,7 +41,10 @@ def dbstore(compiler, address, offset, invert=False, value=0):
 
 
 def calc_arr_element_address(compiler, arr_pointer, counter):
-    """ Хелпер для генерации инструкций для сохранения значения в heap memory по заданному адресу с заданным смещением """
+    """
+    Хелпер для генерации инструкций для сохранения значения
+    в heap memory по заданному адресу с заданным смещением
+    """
     element_place = compiler.environment.add_local_var(Types.INT)
 
     compiler.code.add(Commands.MOV, [Registers.EAX, counter])\

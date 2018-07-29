@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from ..Helpers.base import *
 from ..Helpers.loop import Loop
+from ..Helpers.base import calc_arr_element_address
 from ..Core.registers import Registers
+from ..Core.types import Types
+from ..Core.commands import Commands
 from ..Runtime.malloc import Malloc
 
 
